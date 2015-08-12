@@ -91,6 +91,17 @@
     }
 }
 
+- (void)setPreviewFrame:(CGRect)frame{
+    self.previewLayer.frame = frame;
+}
+
+- (void) changeOrientation:(UIInterfaceOrientation)orientation {
+    AVCaptureConnection *previewLayerConnection=self.previewLayer.connection;
+    
+    if ([previewLayerConnection isVideoOrientationSupported])
+        [previewLayerConnection setVideoOrientation:(AVCaptureVideoOrientation)orientation];
+}
+
 - (void)resetFormat {
 
     BOOL isRunning = self.captureSession.isRunning;

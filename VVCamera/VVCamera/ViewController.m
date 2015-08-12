@@ -19,14 +19,8 @@
 }
 @property (nonatomic, strong) AVCaptureManager *captureManager;
 @property (nonatomic, assign) NSTimer *timer;
-@property (nonatomic, strong) UIImage *recStartImage;
-@property (nonatomic, strong) UIImage *recStopImage;
-@property (nonatomic, strong) UIImage *outerImage1;
-@property (nonatomic, strong) UIImage *outerImage2;
 
 @property (nonatomic, weak) IBOutlet UILabel *statusLabel;
-@property (nonatomic, weak) IBOutlet UISegmentedControl *fpsControl;
-@property (nonatomic, weak) IBOutlet UIButton *recBtn;
 @property (nonatomic, weak) IBOutlet UIImageView *outerImageView;
 @end
 
@@ -37,8 +31,9 @@
 {
     [super viewDidLoad];
     
-    self.captureManager = [[AVCaptureManager alloc] initWithPreviewView:self.view];
-    self.captureManager.delegate = self;
+    //self.captureManager = [[AVCaptureManager alloc] initWithPreviewView:self.view];
+    
+    //self.captureManager.delegate = self;
     
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self
                                                                                  action:@selector(handleDoubleTap:)];
@@ -47,28 +42,21 @@
     
     
     // Setup images for the Shutter Button
-    UIImage *image;
-    image = [UIImage imageNamed:@"ShutterButtonStart"];
-    self.recStartImage = [image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-    [self.recBtn setImage:self.recStartImage
-                 forState:UIControlStateNormal];
-    
-    image = [UIImage imageNamed:@"ShutterButtonStop"];
-    self.recStopImage = [image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
 
-    [self.recBtn setTintColor:[UIColor colorWithRed:245./255.
-                                              green:51./255.
-                                               blue:51./255.
-                                              alpha:1.0]];
-    self.outerImage1 = [UIImage imageNamed:@"outer1"];
-    self.outerImage2 = [UIImage imageNamed:@"outer2"];
-    self.outerImageView.image = self.outerImage1;
+    //self.outerImageView.image = self.outerImage1;
+
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
 }
+
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+}
+
+
 
 
 // =============================================================================
@@ -151,6 +139,7 @@
         return;
     }
     
+    // TODO: Get bytes and send video to server
     [self saveRecordedFile:outputFileURL];
 }
 
@@ -162,11 +151,6 @@
     
     // REC START
     if (!self.captureManager.isRecording) {
-
-        // change UI
-        [self.recBtn setImage:self.recStopImage
-                     forState:UIControlStateNormal];
-        self.fpsControl.enabled = NO;
         
         // timer start
         startTime = [[NSDate date] timeIntervalSince1970];
@@ -186,11 +170,6 @@
         
         [self.timer invalidate];
         self.timer = nil;
-        
-        // change UI
-        [self.recBtn setImage:self.recStartImage
-                     forState:UIControlStateNormal];
-        self.fpsControl.enabled = YES;
     }
 }
 
@@ -209,43 +188,43 @@
     
     // Switch FPS
     
-    CGFloat desiredFps = 0.0;;
-    switch (self.fpsControl.selectedSegmentIndex) {
-        case 0:
-        default:
-        {
-            break;
-        }
-        case 1:
-            desiredFps = 60.0;
-            break;
-        case 2:
-            desiredFps = 120.0;
-            break;
-    }
+//    CGFloat desiredFps = 0.0;;
+//    switch (self.fpsControl.selectedSegmentIndex) {
+//        case 0:
+//        default:
+//        {
+//            break;
+//        }
+//        case 1:
+//            desiredFps = 60.0;
+//            break;
+//        case 2:
+//            desiredFps = 120.0;
+//            break;
+//    }
     
     
         
-    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    dispatch_async(queue, ^{
-        
-        if (desiredFps > 0.0) {
-            [self.captureManager switchFormatWithDesiredFPS:desiredFps];
-        }
-        else {
-            [self.captureManager resetFormat];
-        }
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-
-            if (desiredFps > 30.0) {
-                self.outerImageView.image = self.outerImage2;
-            }
-            else {
-                self.outerImageView.image = self.outerImage1;
-            }
-        });
-    });
+//    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+//    dispatch_async(queue, ^{
+//        
+//        if (desiredFps > 0.0) {
+//            [self.captureManager switchFormatWithDesiredFPS:desiredFps];
+//        }
+//        else {
+//            [self.captureManager resetFormat];
+//        }
+//        
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//
+//            if (desiredFps > 30.0) {
+//                self.outerImageView.image = self.outerImage2;
+//            }
+//            else {
+//                self.outerImageView.image = self.outerImage1;
+//            }
+//        });
+//    });
 }
 
 @end
