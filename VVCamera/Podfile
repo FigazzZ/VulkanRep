@@ -1,0 +1,16 @@
+platform :ios, "7.0"
+
+source 'https://github.com/CocoaPods/Specs.git'
+
+xcodeproj 'VVCamera.xcodeproj'
+
+pod 'CocoaAsyncSocket', '~> 7.3'
+
+#target "VVCamera" do
+#
+#end
+#
+#target "VVCameraTests" do
+#
+#end
+

@@ -13,6 +13,14 @@
 		902A01271B7A27FE00488808 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 902A01261B7A27FE00488808 /* Images.xcassets */; };
 		902A01361B7A27FE00488808 /* VVCameraTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 902A01351B7A27FE00488808 /* VVCameraTests.m */; };
 		902A01461B7A2E2400488808 /* AVCaptureManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 902A01451B7A2E2400488808 /* AVCaptureManager.m */; };
+		904E8A401B7B77120054CD3E /* CameraMessageHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 904E8A3F1B7B77120054CD3E /* CameraMessageHandler.m */; };
+		904E8A421B7B85C60054CD3E /* CameraProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 904E8A411B7B85C60054CD3E /* CameraProtocol.m */; };
+		904E8A511B7B8D360054CD3E /* Command.m in Sources */ = {isa = PBXBuildFile; fileRef = 904E8A441B7B8D360054CD3E /* Command.m */; };
+		904E8A521B7B8D360054CD3E /* CommandWithValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 904E8A471B7B8D360054CD3E /* CommandWithValue.m */; };
+		904E8A531B7B8D360054CD3E /* MessageHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 904E8A491B7B8D360054CD3E /* MessageHandler.m */; };
+		904E8A541B7B8D360054CD3E /* Packet.m in Sources */ = {isa = PBXBuildFile; fileRef = 904E8A4B1B7B8D360054CD3E /* Packet.m */; };
+		904E8A551B7B8D360054CD3E /* VVNetworkSocketHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 904E8A4E1B7B8D360054CD3E /* VVNetworkSocketHandler.m */; };
+		904E8A561B7B8D360054CD3E /* VVProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 904E8A501B7B8D360054CD3E /* VVProtocol.m */; };
 		E2E47E911B7B39E900F2184C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E2E47E901B7B39E900F2184C /* Main.storyboard */; };
 /* End PBXBuildFile section */
 
@@ -40,6 +48,22 @@
 		902A01351B7A27FE00488808 /* VVCameraTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VVCameraTests.m; sourceTree = "<group>"; };
 		902A01441B7A2E2400488808 /* AVCaptureManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVCaptureManager.h; sourceTree = "<group>"; };
 		902A01451B7A2E2400488808 /* AVCaptureManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVCaptureManager.m; sourceTree = "<group>"; };
+		904E8A3F1B7B77120054CD3E /* CameraMessageHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CameraMessageHandler.m; sourceTree = "<group>"; };
+		904E8A411B7B85C60054CD3E /* CameraProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CameraProtocol.m; sourceTree = "<group>"; };
+		904E8A431B7B8D360054CD3E /* Command.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Command.h; path = Common/Command.h; sourceTree = "<group>"; };
+		904E8A441B7B8D360054CD3E /* Command.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Command.m; path = Common/Command.m; sourceTree = "<group>"; };
+		904E8A451B7B8D360054CD3E /* CommandType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CommandType.h; path = Common/CommandType.h; sourceTree = "<group>"; };
+		904E8A461B7B8D360054CD3E /* CommandWithValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CommandWithValue.h; path = Common/CommandWithValue.h; sourceTree = "<group>"; };
+		904E8A471B7B8D360054CD3E /* CommandWithValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CommandWithValue.m; path = Common/CommandWithValue.m; sourceTree = "<group>"; };
+		904E8A481B7B8D360054CD3E /* MessageHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageHandler.h; path = Common/MessageHandler.h; sourceTree = "<group>"; };
+		904E8A491B7B8D360054CD3E /* MessageHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MessageHandler.m; path = Common/MessageHandler.m; sourceTree = "<group>"; };
+		904E8A4A1B7B8D360054CD3E /* Packet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Packet.h; path = Common/Packet.h; sourceTree = "<group>"; };
+		904E8A4B1B7B8D360054CD3E /* Packet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Packet.m; path = Common/Packet.m; sourceTree = "<group>"; };
+		904E8A4C1B7B8D360054CD3E /* ProtocolUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProtocolUtility.h; path = Common/ProtocolUtility.h; sourceTree = "<group>"; };
+		904E8A4D1B7B8D360054CD3E /* VVNetworkSocketHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVNetworkSocketHandler.h; path = Common/VVNetworkSocketHandler.h; sourceTree = "<group>"; };
+		904E8A4E1B7B8D360054CD3E /* VVNetworkSocketHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVNetworkSocketHandler.m; path = Common/VVNetworkSocketHandler.m; sourceTree = "<group>"; };
+		904E8A4F1B7B8D360054CD3E /* VVProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVProtocol.h; path = Common/VVProtocol.h; sourceTree = "<group>"; };
+		904E8A501B7B8D360054CD3E /* VVProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVProtocol.m; path = Common/VVProtocol.m; sourceTree = "<group>"; };
 		E2E47E901B7B39E900F2184C /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -82,11 +106,14 @@
 		902A01181B7A27FE00488808 /* VVCamera */ = {
 			isa = PBXGroup;
 			children = (
+				904E8A571B7B8E1E0054CD3E /* Common */,
 				902A01471B7A2E3300488808 /* AVCaptureManager */,
 				902A011D1B7A27FE00488808 /* AppDelegate.h */,
 				902A011E1B7A27FE00488808 /* AppDelegate.m */,
 				902A01201B7A27FE00488808 /* ViewController.h */,
 				902A01211B7A27FE00488808 /* ViewController.m */,
+				904E8A3F1B7B77120054CD3E /* CameraMessageHandler.m */,
+				904E8A411B7B85C60054CD3E /* CameraProtocol.m */,
 				E2E47E901B7B39E900F2184C /* Main.storyboard */,
 				902A01261B7A27FE00488808 /* Images.xcassets */,
 				902A01191B7A27FE00488808 /* Supporting Files */,
@@ -127,6 +154,27 @@
 				902A01451B7A2E2400488808 /* AVCaptureManager.m */,
 			);
 			name = AVCaptureManager;
+			sourceTree = "<group>";
+		};
+		904E8A571B7B8E1E0054CD3E /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				904E8A431B7B8D360054CD3E /* Command.h */,
+				904E8A441B7B8D360054CD3E /* Command.m */,
+				904E8A451B7B8D360054CD3E /* CommandType.h */,
+				904E8A461B7B8D360054CD3E /* CommandWithValue.h */,
+				904E8A471B7B8D360054CD3E /* CommandWithValue.m */,
+				904E8A481B7B8D360054CD3E /* MessageHandler.h */,
+				904E8A491B7B8D360054CD3E /* MessageHandler.m */,
+				904E8A4A1B7B8D360054CD3E /* Packet.h */,
+				904E8A4B1B7B8D360054CD3E /* Packet.m */,
+				904E8A4C1B7B8D360054CD3E /* ProtocolUtility.h */,
+				904E8A4D1B7B8D360054CD3E /* VVNetworkSocketHandler.h */,
+				904E8A4E1B7B8D360054CD3E /* VVNetworkSocketHandler.m */,
+				904E8A4F1B7B8D360054CD3E /* VVProtocol.h */,
+				904E8A501B7B8D360054CD3E /* VVProtocol.m */,
+			);
+			name = Common;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -229,10 +277,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				904E8A421B7B85C60054CD3E /* CameraProtocol.m in Sources */,
+				904E8A561B7B8D360054CD3E /* VVProtocol.m in Sources */,
 				902A01221B7A27FE00488808 /* ViewController.m in Sources */,
 				902A011F1B7A27FE00488808 /* AppDelegate.m in Sources */,
+				904E8A511B7B8D360054CD3E /* Command.m in Sources */,
+				904E8A531B7B8D360054CD3E /* MessageHandler.m in Sources */,
+				904E8A541B7B8D360054CD3E /* Packet.m in Sources */,
 				902A011C1B7A27FE00488808 /* main.m in Sources */,
+				904E8A521B7B8D360054CD3E /* CommandWithValue.m in Sources */,
+				904E8A401B7B77120054CD3E /* CameraMessageHandler.m in Sources */,
 				902A01461B7A2E2400488808 /* AVCaptureManager.m in Sources */,
+				904E8A551B7B8D360054CD3E /* VVNetworkSocketHandler.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
