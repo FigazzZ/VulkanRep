@@ -7,12 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "Common/VVProtocol.h"
-#import "Common/CommandType.h"
-
-@interface CameraProtocol : VVProtocol<CommandHandlingDelegate>
-
-@end
+#import "CameraProtocol.h"
+#import "CameraMessageHandler.h"
+#import "CommandType.h"
 
 @implementation CameraProtocol
 
@@ -20,6 +17,7 @@
     self = [super init];
     if(self){
         commandHandlerDelegate = self;
+        messageHandler = [[CameraMessageHandler alloc] init];
     }
     return self;
 }

@@ -7,16 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "Common/Command.h"
-#import "Common/MessageHandler.h"
-
-@interface CameraMessageHandler : MessageHandler
-
-@end
+#import "Command.h"
+#import "CameraMessageHandler.h"
 
 @implementation CameraMessageHandler
 
-+ (void)handleMessage:(Command *)command
+- (void)handleMessage:(Command *)command
 {
     NSDictionary *cmd = [NSDictionary dictionaryWithObject:command forKey:@"command"];
     // TODO: Handle properly

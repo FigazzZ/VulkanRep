@@ -9,6 +9,11 @@
 #import "ViewController.h"
 #import "AVCaptureManager.h"
 #import <AssetsLibrary/AssetsLibrary.h>
+#import "VVNetworkSocketHandler.h"
+#import "CameraProtocol.h"
+#import "CommandType.h"
+#import "Command.h"
+#import "CommandWithValue.h"
 
 
 @interface ViewController ()
@@ -20,31 +25,73 @@
 @property (nonatomic, strong) AVCaptureManager *captureManager;
 @property (nonatomic, assign) NSTimer *timer;
 
-@property (nonatomic, weak) IBOutlet UILabel *statusLabel;
-@property (nonatomic, weak) IBOutlet UIImageView *outerImageView;
 @end
 
 
-@implementation ViewController
+@implementation ViewController{
+    VVNetworkSocketHandler *socketHandler;
+}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    //self.captureManager = [[AVCaptureManager alloc] initWithPreviewView:self.view];
+    self.captureManager = [[AVCaptureManager alloc] initWithPreviewView:self.view];
     
-    //self.captureManager.delegate = self;
+    self.captureManager.delegate = self;
     
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self
                                                                                  action:@selector(handleDoubleTap:)];
     tapGesture.numberOfTapsRequired = 2;
     [self.view addGestureRecognizer:tapGesture];
-    
-    
+    socketHandler = [[VVNetworkSocketHandler alloc] init:1111 protocol:[[CameraProtocol alloc] init]];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(receiveProtocolNotification:)
+                                                 name:@"ProtocolNotification"
+                                               object:nil];
     // Setup images for the Shutter Button
 
     //self.outerImageView.image = self.outerImage1;
 
+}
+
+- (void)receiveProtocolNotification:(NSNotification *) notification{
+    NSDictionary *cmdDict = [notification userInfo];
+    Command *command = [cmdDict objectForKey:@"command"];
+    CommandType cType = [command getCommandType];
+    
+    switch (cType) {
+        case START:
+            [self startRecording];
+            break;
+        case STOP:
+            [self stopRecording];
+            break;
+        case POSITION:
+            // set position
+            break;
+        case GET_POSITION:
+            [self getPosition];
+            break;
+        case VERSION:
+            // check version
+            break;
+        case WRONG_VERSION:
+            break;
+        case CAMERA_SETTINGS:
+            // Camera settings stuff
+            break;
+        case DELETE:
+            // delete video from phone
+            break;
+        case SLEEP:
+            // sleep if possible
+            break;
+        case WAKE:
+            break;
+        default:
+            break;
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -56,7 +103,24 @@
     [super viewWillAppear:animated];
 }
 
+- (void) startRecording{
+    if(!_captureManager.isRecording){
+        [_captureManager startRecording];
+        [socketHandler sendCommand:[[Command alloc] init:OK]];
+    }
+}
 
+- (void) stopRecording{
+    if(_captureManager.isRecording){
+        [_captureManager stopRecording];
+        // TODO: build json and stuff
+        //[socketHandler sendCommand:[[Command alloc] init:OK]];
+    }
+}
+
+- (void) getPosition{
+    
+}
 
 
 // =============================================================================
@@ -117,10 +181,8 @@
 
 - (void)timerHandler:(NSTimer *)timer {
     
-    NSTimeInterval current = [[NSDate date] timeIntervalSince1970];
-    NSTimeInterval recorded = current - startTime;
-    
-    self.statusLabel.text = [NSString stringWithFormat:@"%.2f", recorded];
+//    NSTimeInterval current = [[NSDate date] timeIntervalSince1970];
+//    NSTimeInterval recorded = current - startTime;
 }
 
 
