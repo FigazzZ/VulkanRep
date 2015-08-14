@@ -1,19 +1,21 @@
 //
 //  ViewController.m
-//  SlowMotionVideoRecorder
+//  VVCamera
 //
-//  Created by shuichi on 12/17/13.
-//  Copyright (c) 2013 Shuichi Tsutsumi. All rights reserved.
+//  Created by Juuso Kaitila on 11.8.2015.
+//  Copyright (c) 2015 Bitwise. All rights reserved.
 //
 
 #import "ViewController.h"
 #import "AVCaptureManager.h"
-#import <AssetsLibrary/AssetsLibrary.h>
 #import "VVNetworkSocketHandler.h"
 #import "CameraProtocol.h"
 #import "CommandType.h"
 #import "Command.h"
 #import "CommandWithValue.h"
+#import "CameraVariables.h"
+#import "VVUtility.h"
+#import <AssetsLibrary/AssetsLibrary.h>
 
 
 @interface ViewController ()
@@ -30,15 +32,21 @@
 
 @implementation ViewController{
     VVNetworkSocketHandler *socketHandler;
+    NSTimer *autoStopper;
+    
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    self.captureManager = [[AVCaptureManager alloc] initWithPreviewView:self.view];
+    CGRect frame = self.view.frame;
+    frame.size.width = frame.size.width-_controlsView.frame.size.width;
+    _previewView.frame = frame;
+    self.captureManager = [[AVCaptureManager alloc] initWithPreviewView:_previewView];
     
     self.captureManager.delegate = self;
+    
+    [self setCameraFramerate];
     
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self
                                                                                  action:@selector(handleDoubleTap:)];
@@ -49,9 +57,48 @@
                                              selector:@selector(receiveProtocolNotification:)
                                                  name:@"ProtocolNotification"
                                                object:nil];
+    
+    [self hideStatusBar];
     // Setup images for the Shutter Button
 
     //self.outerImageView.image = self.outerImage1;
+
+}
+
+- (void)hideStatusBar
+{
+    if ([self respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)]) {
+        // iOS 7
+        [self prefersStatusBarHidden];
+        [self performSelector:@selector(setNeedsStatusBarAppearanceUpdate)];
+    } else {
+        // iOS 6
+        [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
+    }
+}
+
+-(BOOL)prefersStatusBarHidden{
+    return YES;
+}
+
+- (NSUInteger)supportedInterfaceOrientations
+{
+    return UIInterfaceOrientationMaskLandscapeRight;
+}
+
+- (void)setCameraFramerate{
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(queue, ^{
+        if ([self.captureManager switchFormatWithDesiredFPS:120.0]) {
+            // TODO: something
+        }
+        else if ([self.captureManager switchFormatWithDesiredFPS:60.0]){
+            // TODO: something
+        }
+        else {
+            [self.captureManager resetFormat];
+        }
+    });
 
 }
 
@@ -103,23 +150,68 @@
     [super viewWillAppear:animated];
 }
 
-- (void) startRecording{
+- (void)startRecording{
     if(!_captureManager.isRecording){
         [_captureManager startRecording];
         [socketHandler sendCommand:[[Command alloc] init:OK]];
+        autoStopper = [NSTimer scheduledTimerWithTimeInterval:16
+                                         target:self
+                                       selector:@selector(stopRecording)
+                                       userInfo:nil
+                                        repeats:NO];
+        
     }
 }
 
-- (void) stopRecording{
+- (void)stopRecording{
     if(_captureManager.isRecording){
+        [autoStopper invalidate];
+        autoStopper = nil;
         [_captureManager stopRecording];
-        // TODO: build json and stuff
-        //[socketHandler sendCommand:[[Command alloc] init:OK]];
+        NSMutableDictionary *json = [[NSMutableDictionary alloc] init];
+        CameraVariables *sharedVars = [CameraVariables sharedVariables];
+        // TODO: calculate delay if possible
+        NSDictionary *pov = [sharedVars getPositionJson];
+        NSNumber *fps = [NSNumber numberWithFloat:[sharedVars framerate]];
+        [json setObject:fps forKey:@"fps"];
+        [json setObject:pov forKey:@"pointOfView"];
+        NSURL *movieURL = [_captureManager getVideoFile];
+        AVURLAsset *sourceAsset = [AVURLAsset URLAssetWithURL:movieURL options:nil];
+        CMTime duration = sourceAsset.duration;
+        NSNumber *dur = [NSNumber numberWithFloat:CMTimeGetSeconds(duration)];
+        [json setObject:dur forKey:@"duration"];
+        NSString *jsonStr = [VVUtility convertNSDictToJSONString:json];
+        [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:VIDEO_COMING :jsonStr]];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSString *path = [movieURL path];
+            NSData *bytes = [[NSData alloc] initWithContentsOfFile:path];
+            [socketHandler sendCommand:[[CommandWithValue alloc] init:VIDEODATA :bytes]];
+        });
+
     }
 }
 
-- (void) getPosition{
-    
+- (void)setPosition:(Command *)command{
+    if ([command isKindOfClass:[CommandWithValue class]]) {
+        CameraVariables *sharedVars = [CameraVariables sharedVariables];
+        NSString *JSONString = [[NSString alloc] initWithData:[command getData] encoding:NSUTF8StringEncoding];
+        NSDictionary *json = [VVUtility getNSDictFromJSONString:JSONString];
+        [sharedVars setDist:(int)[json valueForKey:@"dist"]];
+        [sharedVars setYaw:(int)[json valueForKey:@"yaw"]];
+        [sharedVars setPitch:(int)[json valueForKey:@"pitch"]];
+    }
+}
+
+- (void)getPosition{
+    CameraVariables *sharedVars = [CameraVariables sharedVariables];
+    NSNumber *dst = [NSNumber numberWithInt: [sharedVars dist]];
+    NSNumber *yw = [NSNumber numberWithInt: [sharedVars yaw]];
+    NSNumber *ptch = [NSNumber numberWithInt: [sharedVars pitch]];
+    NSArray *positions = [[NSArray alloc] initWithObjects:dst, yw, ptch, nil];
+    NSArray *keys = [[NSArray alloc] initWithObjects:@"dist", @"yaw", @"pitch", nil];
+    NSDictionary *pov = [[NSDictionary alloc] initWithObjects:positions forKeys:keys];
+    NSString *jsonStr = [VVUtility convertNSDictToJSONString:pov];
+    [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:POSITION :jsonStr]];
 }
 
 
@@ -245,48 +337,5 @@
 //    
 //    self.statusLabel.text = nil;
 //}
-
-- (IBAction)fpsChanged:(UISegmentedControl *)sender {
-    
-    // Switch FPS
-    
-//    CGFloat desiredFps = 0.0;;
-//    switch (self.fpsControl.selectedSegmentIndex) {
-//        case 0:
-//        default:
-//        {
-//            break;
-//        }
-//        case 1:
-//            desiredFps = 60.0;
-//            break;
-//        case 2:
-//            desiredFps = 120.0;
-//            break;
-//    }
-    
-    
-        
-//    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-//    dispatch_async(queue, ^{
-//        
-//        if (desiredFps > 0.0) {
-//            [self.captureManager switchFormatWithDesiredFPS:desiredFps];
-//        }
-//        else {
-//            [self.captureManager resetFormat];
-//        }
-//        
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//
-//            if (desiredFps > 30.0) {
-//                self.outerImageView.image = self.outerImage2;
-//            }
-//            else {
-//                self.outerImageView.image = self.outerImage1;
-//            }
-//        });
-//    });
-}
 
 @end

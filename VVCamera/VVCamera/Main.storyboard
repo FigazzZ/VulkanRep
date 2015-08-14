@@ -2,7 +2,6 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Z1h-yx-sK9">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -17,37 +16,65 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ULR-Ea-F6y">
+                                <rect key="frame" x="0.0" y="0.0" width="508" height="600"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9Lu-eY-n3Y">
-                                <rect key="frame" x="0.0" y="527" width="600" height="73"/>
+                                <rect key="frame" x="509" y="0.0" width="91" height="600"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Phr-Hb-GEM">
-                                        <rect key="frame" x="213" y="22" width="46" height="30"/>
-                                        <state key="normal" title="Button">
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Rzr-FH-Ton">
+                                        <rect key="frame" x="18" y="233" width="55" height="30"/>
+                                        <state key="normal" title="Button2">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Rzr-FH-Ton">
-                                        <rect key="frame" x="346" y="22" width="61" height="30"/>
-                                        <state key="normal" title="Button2">
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Phr-Hb-GEM">
+                                        <rect key="frame" x="22" y="359" width="46" height="30"/>
+                                        <state key="normal" title="Button">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" secondItem="9Lu-eY-n3Y" secondAttribute="height" multiplier="600:73" id="q64-TZ-Qh6"/>
+                                    <constraint firstItem="Phr-Hb-GEM" firstAttribute="leading" secondItem="9Lu-eY-n3Y" secondAttribute="leading" constant="22" id="5IT-hQ-vco"/>
+                                    <constraint firstAttribute="bottom" relation="lessThanOrEqual" secondItem="Phr-Hb-GEM" secondAttribute="bottom" constant="211" id="73C-Wp-grP"/>
+                                    <constraint firstAttribute="trailing" secondItem="Rzr-FH-Ton" secondAttribute="trailing" constant="18" id="80i-2J-ehB"/>
+                                    <constraint firstItem="Phr-Hb-GEM" firstAttribute="top" secondItem="Rzr-FH-Ton" secondAttribute="bottom" constant="96" id="Bl1-OL-Yqd"/>
+                                    <constraint firstAttribute="centerY" secondItem="Rzr-FH-Ton" secondAttribute="centerY" constant="52" id="Q01-If-SE3"/>
+                                    <constraint firstAttribute="trailing" secondItem="Phr-Hb-GEM" secondAttribute="trailing" constant="23" id="SzZ-TI-WG4"/>
+                                    <constraint firstItem="Rzr-FH-Ton" firstAttribute="leading" secondItem="9Lu-eY-n3Y" secondAttribute="leading" constant="18" id="a7X-zZ-fz1"/>
+                                    <constraint firstAttribute="centerY" secondItem="Phr-Hb-GEM" secondAttribute="centerY" constant="-74" id="cG4-dj-xrI"/>
+                                    <constraint firstItem="Rzr-FH-Ton" firstAttribute="top" relation="lessThanOrEqual" secondItem="9Lu-eY-n3Y" secondAttribute="top" constant="233" id="naq-WW-q06"/>
                                 </constraints>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="Q01-If-SE3"/>
+                                        <exclude reference="cG4-dj-xrI"/>
+                                    </mask>
+                                </variation>
                             </view>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="bottom" secondItem="9Lu-eY-n3Y" secondAttribute="bottom" id="3tJ-V7-U1j"/>
-                            <constraint firstAttribute="trailing" secondItem="9Lu-eY-n3Y" secondAttribute="trailing" id="MxB-1a-mE6"/>
-                            <constraint firstItem="9Lu-eY-n3Y" firstAttribute="leading" secondItem="ALk-c9-gXC" secondAttribute="leading" id="qX9-mj-GNy"/>
+                            <constraint firstAttribute="trailing" secondItem="9Lu-eY-n3Y" secondAttribute="trailing" id="1Eb-kT-tqc"/>
+                            <constraint firstItem="9Lu-eY-n3Y" firstAttribute="top" secondItem="ULR-Ea-F6y" secondAttribute="top" id="6Cv-qr-1vx"/>
+                            <constraint firstItem="ULR-Ea-F6y" firstAttribute="leading" secondItem="ALk-c9-gXC" secondAttribute="leading" id="6pd-Km-m4p"/>
+                            <constraint firstItem="ULR-Ea-F6y" firstAttribute="bottom" secondItem="m6L-Bq-Nd9" secondAttribute="top" id="Bds-Te-a9r"/>
+                            <constraint firstItem="9Lu-eY-n3Y" firstAttribute="leading" secondItem="ULR-Ea-F6y" secondAttribute="trailing" constant="1" id="hgA-2t-VjJ"/>
+                            <constraint firstItem="9Lu-eY-n3Y" firstAttribute="top" secondItem="VlZ-jV-slf" secondAttribute="bottom" id="lr1-DU-KeB"/>
+                            <constraint firstItem="9Lu-eY-n3Y" firstAttribute="bottom" secondItem="m6L-Bq-Nd9" secondAttribute="top" id="yAd-L4-HEk"/>
                         </constraints>
                     </view>
                     <nil key="simulatedStatusBarMetrics"/>
-                    <simulatedOrientationMetrics key="simulatedOrientationMetrics"/>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <nil key="simulatedBottomBarMetrics"/>
+                    <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
+                    <connections>
+                        <outlet property="controlsView" destination="9Lu-eY-n3Y" id="qEI-F6-f9m"/>
+                        <outlet property="previewView" destination="ULR-Ea-F6y" id="pcd-47-tfu"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tA6-ey-RAx" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

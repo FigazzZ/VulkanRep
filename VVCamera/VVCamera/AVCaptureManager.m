@@ -9,6 +9,7 @@
 
 #import "AVCaptureManager.h"
 #import <AVFoundation/AVFoundation.h>
+#import "CameraVariables.h"
 
 
 @interface AVCaptureManager ()
@@ -48,7 +49,8 @@
             NSLog(@"Video input add-to-session failed");
             return nil;
         }
-        [self.captureSession addInput:videoIn];
+        [self.captureSession addInputWithNoConnections:videoIn];
+        
         
         
         // save the default format
@@ -56,20 +58,32 @@
         defaultVideoMaxFrameDuration = videoDevice.activeVideoMaxFrameDuration;
         
         
-        AVCaptureDevice *audioDevice= [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
-        AVCaptureDeviceInput *audioIn = [AVCaptureDeviceInput deviceInputWithDevice:audioDevice error:&error];
-        [self.captureSession addInput:audioIn];
+//        AVCaptureDevice *audioDevice= [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
+//        AVCaptureDeviceInput *audioIn = [AVCaptureDeviceInput deviceInputWithDevice:audioDevice error:&error];
+//        [self.captureSession addInput:audioIn];
         
         self.fileOutput = [[AVCaptureMovieFileOutput alloc] init];
-        [self.captureSession addOutput:self.fileOutput];
-        
+        AVCaptureConnection *connection = [[AVCaptureConnection alloc] initWithInputPorts:[videoIn ports] output:self.fileOutput];
+        if ([connection isVideoOrientationSupported])
+        {
+            AVCaptureVideoOrientation orientation = AVCaptureVideoOrientationLandscapeRight;
+            [connection setVideoOrientation:orientation];
+        }
+        [self.captureSession addOutputWithNoConnections:self.fileOutput];
+        [self.captureSession addConnection:connection];
+
         
         self.previewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:self.captureSession];
-        self.previewLayer.frame = previewView.bounds;
+        self.previewLayer.frame = previewView.frame;
         self.previewLayer.contentsGravity = kCAGravityResizeAspectFill;
         self.previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
         [previewView.layer insertSublayer:self.previewLayer atIndex:0];
-        
+        AVCaptureConnection *connection2 = [self.previewLayer connection];
+        if ([connection2 isVideoOrientationSupported])
+        {
+            AVCaptureVideoOrientation orientation = AVCaptureVideoOrientationLandscapeRight;
+            [connection2 setVideoOrientation:orientation];
+        }
         [self.captureSession startRunning];
     }
     return self;
@@ -95,13 +109,6 @@
     self.previewLayer.frame = frame;
 }
 
-- (void) changeOrientation:(UIInterfaceOrientation)orientation {
-    AVCaptureConnection *previewLayerConnection=self.previewLayer.connection;
-    
-    if ([previewLayerConnection isVideoOrientationSupported])
-        [previewLayerConnection setVideoOrientation:(AVCaptureVideoOrientation)orientation];
-}
-
 - (void)resetFormat {
 
     BOOL isRunning = self.captureSession.isRunning;
@@ -121,9 +128,10 @@
     }
 }
 
-- (void)switchFormatWithDesiredFPS:(CGFloat)desiredFPS
+- (BOOL)switchFormatWithDesiredFPS:(CGFloat)desiredFPS
 {
     BOOL isRunning = self.captureSession.isRunning;
+    BOOL framerateChanged = NO;
     
     if (isRunning)  [self.captureSession stopRunning];
     
@@ -145,6 +153,8 @@
                 selectedFormat = format;
                 frameRateRange = range;
                 maxWidth = width;
+                [[CameraVariables sharedVariables] setFramerate:desiredFPS];
+                framerateChanged = YES;
             }
         }
     }
@@ -162,6 +172,7 @@
     }
     
     if (isRunning) [self.captureSession startRunning];
+    return framerateChanged;
 }
 
 - (void)startRecording {
@@ -179,6 +190,9 @@
     while ([[NSFileManager defaultManager] fileExistsAtPath:filePath]);
     
     NSURL *fileURL = [NSURL URLWithString:[@"file://" stringByAppendingString:filePath]];
+    
+    CMTime fragmentInterval = CMTimeMake(1,1);
+    [self.fileOutput setMovieFragmentInterval:fragmentInterval];
     [self.fileOutput startRecordingToOutputFileURL:fileURL recordingDelegate:self];
 }
 
@@ -187,6 +201,9 @@
     [self.fileOutput stopRecording];
 }
 
+- (NSURL *)getVideoFile{
+    return [self.fileOutput outputFileURL];
+}
 
 // =============================================================================
 #pragma mark - AVCaptureFileOutputRecordingDelegate

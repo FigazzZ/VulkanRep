@@ -24,10 +24,10 @@
 
 - (id)initWithPreviewView:(UIView *)previewView;
 - (void)toggleContentsGravity;
-- (void)changeOrientation:(UIInterfaceOrientation)orientation;
 - (void)setPreviewFrame:(CGRect)frame;
 - (void)resetFormat;
-- (void)switchFormatWithDesiredFPS:(CGFloat)desiredFPS;
+- (NSURL *)getVideoFile;
+- (BOOL)switchFormatWithDesiredFPS:(CGFloat)desiredFPS;
 - (void)startRecording;
 - (void)stopRecording;
 

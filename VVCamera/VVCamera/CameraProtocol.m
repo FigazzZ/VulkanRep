@@ -2,7 +2,7 @@
 //  CameraProtocol.m
 //  VVCamera
 //
-//  Created by Käyttäjä on 12.8.2015.
+//  Created by Juuso Kaitila on 12.8.2015.
 //  Copyright (c) 2015 Bitwise. All rights reserved.
 //
 
