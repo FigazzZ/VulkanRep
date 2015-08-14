@@ -24,13 +24,13 @@
                                 <rect key="frame" x="509" y="0.0" width="91" height="600"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Rzr-FH-Ton">
-                                        <rect key="frame" x="18" y="233" width="55" height="30"/>
+                                        <rect key="frame" x="18" y="14" width="55" height="30"/>
                                         <state key="normal" title="Button2">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Phr-Hb-GEM">
-                                        <rect key="frame" x="22" y="359" width="46" height="30"/>
+                                        <rect key="frame" x="22" y="556" width="46" height="30"/>
                                         <state key="normal" title="Button">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
@@ -38,33 +38,23 @@
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstItem="Phr-Hb-GEM" firstAttribute="leading" secondItem="9Lu-eY-n3Y" secondAttribute="leading" constant="22" id="5IT-hQ-vco"/>
-                                    <constraint firstAttribute="bottom" relation="lessThanOrEqual" secondItem="Phr-Hb-GEM" secondAttribute="bottom" constant="211" id="73C-Wp-grP"/>
-                                    <constraint firstAttribute="trailing" secondItem="Rzr-FH-Ton" secondAttribute="trailing" constant="18" id="80i-2J-ehB"/>
-                                    <constraint firstItem="Phr-Hb-GEM" firstAttribute="top" secondItem="Rzr-FH-Ton" secondAttribute="bottom" constant="96" id="Bl1-OL-Yqd"/>
-                                    <constraint firstAttribute="centerY" secondItem="Rzr-FH-Ton" secondAttribute="centerY" constant="52" id="Q01-If-SE3"/>
-                                    <constraint firstAttribute="trailing" secondItem="Phr-Hb-GEM" secondAttribute="trailing" constant="23" id="SzZ-TI-WG4"/>
-                                    <constraint firstItem="Rzr-FH-Ton" firstAttribute="leading" secondItem="9Lu-eY-n3Y" secondAttribute="leading" constant="18" id="a7X-zZ-fz1"/>
-                                    <constraint firstAttribute="centerY" secondItem="Phr-Hb-GEM" secondAttribute="centerY" constant="-74" id="cG4-dj-xrI"/>
-                                    <constraint firstItem="Rzr-FH-Ton" firstAttribute="top" relation="lessThanOrEqual" secondItem="9Lu-eY-n3Y" secondAttribute="top" constant="233" id="naq-WW-q06"/>
+                                    <constraint firstItem="Rzr-FH-Ton" firstAttribute="leading" secondItem="9Lu-eY-n3Y" secondAttribute="leading" constant="18" id="D5n-ff-xZK"/>
+                                    <constraint firstItem="Phr-Hb-GEM" firstAttribute="centerX" secondItem="9Lu-eY-n3Y" secondAttribute="centerX" id="YL9-11-kTN"/>
+                                    <constraint firstItem="Rzr-FH-Ton" firstAttribute="top" secondItem="9Lu-eY-n3Y" secondAttribute="top" constant="14" id="ZfQ-IC-TuP"/>
+                                    <constraint firstItem="Phr-Hb-GEM" firstAttribute="centerX" secondItem="Rzr-FH-Ton" secondAttribute="centerX" id="hAt-Bg-pOx"/>
+                                    <constraint firstAttribute="bottom" secondItem="Phr-Hb-GEM" secondAttribute="bottom" constant="14" id="kcL-2b-jbs"/>
                                 </constraints>
-                                <variation key="default">
-                                    <mask key="constraints">
-                                        <exclude reference="Q01-If-SE3"/>
-                                        <exclude reference="cG4-dj-xrI"/>
-                                    </mask>
-                                </variation>
                             </view>
                         </subviews>
                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="9Lu-eY-n3Y" secondAttribute="trailing" id="1Eb-kT-tqc"/>
-                            <constraint firstItem="9Lu-eY-n3Y" firstAttribute="top" secondItem="ULR-Ea-F6y" secondAttribute="top" id="6Cv-qr-1vx"/>
-                            <constraint firstItem="ULR-Ea-F6y" firstAttribute="leading" secondItem="ALk-c9-gXC" secondAttribute="leading" id="6pd-Km-m4p"/>
-                            <constraint firstItem="ULR-Ea-F6y" firstAttribute="bottom" secondItem="m6L-Bq-Nd9" secondAttribute="top" id="Bds-Te-a9r"/>
-                            <constraint firstItem="9Lu-eY-n3Y" firstAttribute="leading" secondItem="ULR-Ea-F6y" secondAttribute="trailing" constant="1" id="hgA-2t-VjJ"/>
-                            <constraint firstItem="9Lu-eY-n3Y" firstAttribute="top" secondItem="VlZ-jV-slf" secondAttribute="bottom" id="lr1-DU-KeB"/>
-                            <constraint firstItem="9Lu-eY-n3Y" firstAttribute="bottom" secondItem="m6L-Bq-Nd9" secondAttribute="top" id="yAd-L4-HEk"/>
+                            <constraint firstItem="ULR-Ea-F6y" firstAttribute="leading" secondItem="ALk-c9-gXC" secondAttribute="leading" id="5Sz-wj-8oe"/>
+                            <constraint firstItem="ULR-Ea-F6y" firstAttribute="bottom" secondItem="m6L-Bq-Nd9" secondAttribute="top" id="GbO-YH-XZI"/>
+                            <constraint firstItem="ULR-Ea-F6y" firstAttribute="top" secondItem="9Lu-eY-n3Y" secondAttribute="top" id="NJp-9M-9nf"/>
+                            <constraint firstItem="9Lu-eY-n3Y" firstAttribute="top" secondItem="VlZ-jV-slf" secondAttribute="bottom" id="Nts-q4-fs2"/>
+                            <constraint firstItem="9Lu-eY-n3Y" firstAttribute="bottom" secondItem="m6L-Bq-Nd9" secondAttribute="top" id="fDR-A1-Z2x"/>
+                            <constraint firstItem="9Lu-eY-n3Y" firstAttribute="leading" secondItem="ULR-Ea-F6y" secondAttribute="trailing" constant="1" id="mDa-zL-9OC"/>
+                            <constraint firstAttribute="trailing" secondItem="9Lu-eY-n3Y" secondAttribute="trailing" id="xxj-1k-kYj"/>
                         </constraints>
                     </view>
                     <nil key="simulatedStatusBarMetrics"/>

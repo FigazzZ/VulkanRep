@@ -39,9 +39,11 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    CGRect frame = self.view.frame;
-    frame.size.width = frame.size.width-_controlsView.frame.size.width;
-    _previewView.frame = frame;
+    [UIApplication sharedApplication].idleTimerDisabled = YES;
+//    CGRect frame = self.view.frame;
+//    frame.size.width = frame.size.width-_controlsView.frame.size.width;
+//    _previewView.frame = frame;
+    // TODO: Close camera and stuff when view disappears
     self.captureManager = [[AVCaptureManager alloc] initWithPreviewView:_previewView];
     
     self.captureManager.delegate = self;
@@ -59,10 +61,11 @@
                                                object:nil];
     
     [self hideStatusBar];
-    // Setup images for the Shutter Button
 
-    //self.outerImageView.image = self.outerImage1;
+}
 
+- (void)viewDidDisappear:(BOOL)animated{
+    [socketHandler sendCommand:[[Command alloc] init:QUIT]];
 }
 
 - (void)hideStatusBar
