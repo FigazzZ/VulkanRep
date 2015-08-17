@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Z1h-yx-sK9">
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
     </dependencies>
     <scenes>
@@ -16,11 +17,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ULR-Ea-F6y">
-                                <rect key="frame" x="0.0" y="0.0" width="508" height="600"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ULR-Ea-F6y">
+                                <rect key="frame" x="0.0" y="0.0" width="509" height="600"/>
+                                <color key="backgroundColor" red="0.085858585858585745" green="0.085858585858585745" blue="0.085858585858585745" alpha="1" colorSpace="calibratedRGB"/>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9Lu-eY-n3Y">
+                            <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9Lu-eY-n3Y">
                                 <rect key="frame" x="509" y="0.0" width="91" height="600"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Rzr-FH-Ton">
@@ -36,7 +37,7 @@
                                         </state>
                                     </button>
                                 </subviews>
-                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstItem="Rzr-FH-Ton" firstAttribute="leading" secondItem="9Lu-eY-n3Y" secondAttribute="leading" constant="18" id="D5n-ff-xZK"/>
                                     <constraint firstItem="Phr-Hb-GEM" firstAttribute="centerX" secondItem="9Lu-eY-n3Y" secondAttribute="centerX" id="YL9-11-kTN"/>
@@ -46,14 +47,16 @@
                                 </constraints>
                             </view>
                         </subviews>
-                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.12152777777777779" green="0.12152777777777779" blue="0.12152777777777779" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
-                            <constraint firstItem="ULR-Ea-F6y" firstAttribute="leading" secondItem="ALk-c9-gXC" secondAttribute="leading" id="5Sz-wj-8oe"/>
-                            <constraint firstItem="ULR-Ea-F6y" firstAttribute="bottom" secondItem="m6L-Bq-Nd9" secondAttribute="top" id="GbO-YH-XZI"/>
-                            <constraint firstItem="ULR-Ea-F6y" firstAttribute="top" secondItem="9Lu-eY-n3Y" secondAttribute="top" id="NJp-9M-9nf"/>
+                            <constraint firstItem="9Lu-eY-n3Y" firstAttribute="top" secondItem="ALk-c9-gXC" secondAttribute="top" id="DEb-CR-Ke9"/>
+                            <constraint firstItem="ULR-Ea-F6y" firstAttribute="bottom" secondItem="m6L-Bq-Nd9" secondAttribute="top" id="FSz-RG-ky3"/>
+                            <constraint firstItem="ULR-Ea-F6y" firstAttribute="top" secondItem="9Lu-eY-n3Y" secondAttribute="top" id="IqT-ee-gyP"/>
                             <constraint firstItem="9Lu-eY-n3Y" firstAttribute="top" secondItem="VlZ-jV-slf" secondAttribute="bottom" id="Nts-q4-fs2"/>
+                            <constraint firstItem="9Lu-eY-n3Y" firstAttribute="leading" secondItem="ULR-Ea-F6y" secondAttribute="trailing" id="abV-q8-jU8"/>
+                            <constraint firstAttribute="bottom" secondItem="9Lu-eY-n3Y" secondAttribute="bottom" id="cSM-ZK-NDo"/>
                             <constraint firstItem="9Lu-eY-n3Y" firstAttribute="bottom" secondItem="m6L-Bq-Nd9" secondAttribute="top" id="fDR-A1-Z2x"/>
-                            <constraint firstItem="9Lu-eY-n3Y" firstAttribute="leading" secondItem="ULR-Ea-F6y" secondAttribute="trailing" constant="1" id="mDa-zL-9OC"/>
+                            <constraint firstItem="ULR-Ea-F6y" firstAttribute="leading" secondItem="ALk-c9-gXC" secondAttribute="leading" id="rGf-Za-cZv"/>
                             <constraint firstAttribute="trailing" secondItem="9Lu-eY-n3Y" secondAttribute="trailing" id="xxj-1k-kYj"/>
                         </constraints>
                     </view>

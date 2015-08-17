@@ -13,7 +13,7 @@
 #import "CommandType.h"
 #import "Command.h"
 #import "CommandWithValue.h"
-#import "CameraVariables.h"
+#import "CameraSettings.h"
 #import "VVUtility.h"
 #import <AssetsLibrary/AssetsLibrary.h>
 
@@ -44,7 +44,7 @@
 //    frame.size.width = frame.size.width-_controlsView.frame.size.width;
 //    _previewView.frame = frame;
     // TODO: Close camera and stuff when view disappears
-    self.captureManager = [[AVCaptureManager alloc] initWithPreviewView:_previewView];
+    self.captureManager = [[AVCaptureManager alloc] initWithPreviewView:self.view];
     
     self.captureManager.delegate = self;
     
@@ -59,7 +59,6 @@
                                              selector:@selector(receiveProtocolNotification:)
                                                  name:@"ProtocolNotification"
                                                object:nil];
-    
     [self hideStatusBar];
 
 }
@@ -172,7 +171,7 @@
         autoStopper = nil;
         [_captureManager stopRecording];
         NSMutableDictionary *json = [[NSMutableDictionary alloc] init];
-        CameraVariables *sharedVars = [CameraVariables sharedVariables];
+        CameraSettings *sharedVars = [CameraSettings sharedVariables];
         // TODO: calculate delay if possible
         NSDictionary *pov = [sharedVars getPositionJson];
         NSNumber *fps = [NSNumber numberWithFloat:[sharedVars framerate]];
@@ -196,7 +195,7 @@
 
 - (void)setPosition:(Command *)command{
     if ([command isKindOfClass:[CommandWithValue class]]) {
-        CameraVariables *sharedVars = [CameraVariables sharedVariables];
+        CameraSettings *sharedVars = [CameraSettings sharedVariables];
         NSString *JSONString = [[NSString alloc] initWithData:[command getData] encoding:NSUTF8StringEncoding];
         NSDictionary *json = [VVUtility getNSDictFromJSONString:JSONString];
         [sharedVars setDist:(int)[json valueForKey:@"dist"]];
@@ -206,7 +205,7 @@
 }
 
 - (void)getPosition{
-    CameraVariables *sharedVars = [CameraVariables sharedVariables];
+    CameraSettings *sharedVars = [CameraSettings sharedVariables];
     NSNumber *dst = [NSNumber numberWithInt: [sharedVars dist]];
     NSNumber *yw = [NSNumber numberWithInt: [sharedVars yaw]];
     NSNumber *ptch = [NSNumber numberWithInt: [sharedVars pitch]];
@@ -223,7 +222,7 @@
 
 - (void)handleDoubleTap:(UITapGestureRecognizer *)sender {
 
-    [self.captureManager toggleContentsGravity];
+    [self.captureManager setCameraSettings];
 }
 
 

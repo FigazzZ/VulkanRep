@@ -17,6 +17,15 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    NSArray *objects = @[[NSNumber numberWithFloat:120.0],
+                         [NSNumber numberWithInt:0],
+                         [NSNumber numberWithInt:0],
+                         [NSNumber numberWithInt:10]];
+    NSArray *keys = @[@"framerate", @"yaw", @"pitch", @"dist"];
+    NSDictionary *appDefaults = [NSDictionary
+                                 dictionaryWithObjects:objects forKeys:keys];
+    [[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];
+    
     return YES;
 }
 
