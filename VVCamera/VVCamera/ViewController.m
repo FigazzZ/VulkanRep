@@ -14,6 +14,7 @@
 #import "Command.h"
 #import "CommandWithValue.h"
 #import "CameraSettings.h"
+#import "StreamServer.h"
 #import "VVUtility.h"
 #import <AssetsLibrary/AssetsLibrary.h>
 
@@ -25,6 +26,7 @@
     BOOL isNeededToSave;
 }
 @property (nonatomic, strong) AVCaptureManager *captureManager;
+@property (nonatomic, strong) StreamServer *streamServer;
 @property (nonatomic, assign) NSTimer *timer;
 
 @end
@@ -45,10 +47,13 @@
 //    _previewView.frame = frame;
     // TODO: Close camera and stuff when view disappears
     self.captureManager = [[AVCaptureManager alloc] initWithPreviewView:self.view];
-    
     self.captureManager.delegate = self;
     
     [self setCameraFramerate];
+    
+    self.streamServer = [[StreamServer alloc] init];
+    [self.captureManager setStreamServer:self.streamServer];
+    [self.streamServer startAcceptingConnections];
     
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self
                                                                                  action:@selector(handleDoubleTap:)];

@@ -9,6 +9,7 @@
 
 #import "AVCaptureManager.h"
 #import "CameraSettings.h"
+#import <AssetsLibrary/AssetsLibrary.h>
 
 
 @interface AVCaptureManager ()
@@ -18,6 +19,7 @@
 }
 @property (nonatomic, strong) AVCaptureSession *captureSession;
 @property (nonatomic, strong) AVCaptureMovieFileOutput *fileOutput;
+@property (nonatomic, strong) AVCaptureStillImageOutput *streamOutput;
 @property (nonatomic, strong) AVCaptureDeviceFormat *defaultFormat;
 @property (nonatomic, strong) AVCaptureVideoPreviewLayer *previewLayer;
 @property (nonatomic, strong) dispatch_queue_t videoDataQueue;
@@ -25,14 +27,17 @@
 @end
 
 
-@implementation AVCaptureManager
+@implementation AVCaptureManager{
+    NSTimer *timer;
+    CGSize size;
+}
 
 - (id)initWithPreviewView:(UIView *)previewView {
     
     self = [super init];
     
     if (self) {
-        
+        size = CGSizeMake(320, 180);
         NSError *error;
         
         self.captureSession = [[AVCaptureSession alloc] init];
@@ -52,7 +57,10 @@
         }
         [self.captureSession addInputWithNoConnections:videoIn];
         
-        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(receiveStreamNotification:)
+                                                     name:@"StreamNotification"
+                                                   object:nil];
         
         // save the default format
         self.defaultFormat = videoDevice.activeFormat;
@@ -63,35 +71,23 @@
 //        AVCaptureDeviceInput *audioIn = [AVCaptureDeviceInput deviceInputWithDevice:audioDevice error:&error];
 //        [self.captureSession addInput:audioIn];
         
-        // Create a VideoDataOutput and add it to the session
-        AVCaptureVideoDataOutput *output = [AVCaptureVideoDataOutput new];
-        
-        // Specify the pixel format
-        output.videoSettings =
-        [NSDictionary dictionaryWithObject:
-        [NSNumber numberWithInt:kCVPixelFormatType_32BGRA]
-                                    forKey:(id)kCVPixelBufferPixelFormatTypeKey];
-                                            
-        [output setAlwaysDiscardsLateVideoFrames:YES];
-        
-        // Configure your output.
-        _videoDataQueue = dispatch_queue_create("videoDataQueue", DISPATCH_QUEUE_SERIAL);
-        _streamDelegate = [[StreamDelegate alloc] init];
-        [output setSampleBufferDelegate:_streamDelegate queue:_videoDataQueue];
-        
-        
         
         // If you wish to cap the frame rate to a known value, such as 15 fps, set
         // minFrameDuration.
         // TODO: replace with non-deprecated function
         // http://stackoverflow.com/questions/8058891/avcapturesession-with-multiple-outputs/22037685#22037685
         
-        [self.captureSession addOutput:output];
         
-//        AVCaptureConnection *streamConnection = [[AVCaptureConnection alloc] initWithInputPorts:[videoIn ports] output:output];
-//        if([streamConnection isVideoStabilizationSupported]){
-//            streamConnection.preferredVideoStabilizationMode = [sharedVars stabilizationMode];
-//        }
+        self.streamOutput = [[AVCaptureStillImageOutput alloc] init];
+        [self.streamOutput setHighResolutionStillImageOutputEnabled:NO];
+        self.videoDataQueue = dispatch_queue_create("streamQueue", DISPATCH_QUEUE_SERIAL);
+        
+        if ([self.captureSession canAddOutput:self.streamOutput])
+        {
+            [self.streamOutput setOutputSettings:@{AVVideoCodecKey : AVVideoCodecJPEG}];
+            [self.captureSession addOutput:self.streamOutput];
+        }
+
         
         self.fileOutput = [[AVCaptureMovieFileOutput alloc] init];
         AVCaptureConnection *connection = [[AVCaptureConnection alloc] initWithInputPorts:[videoIn ports] output:self.fileOutput];
@@ -105,13 +101,11 @@
         }
         [self.captureSession addOutputWithNoConnections:self.fileOutput];
         [self.captureSession addConnection:connection];
-//        [self.captureSession addConnection:streamConnection];
         
         
         self.previewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:self.captureSession];
         CGRect frame = previewView.frame;
         if(frame.size.width < frame.size.height){
-            NSLog(@"noniin");
             CGPoint origin = previewView.frame.origin;
             frame = CGRectMake(origin.x, origin.y, previewView.frame.size.height, previewView.frame.size.width);
         }
@@ -131,6 +125,17 @@
         [self.captureSession startRunning];
     }
     return self;
+}
+
+- (void)receiveStreamNotification:(NSNotification *) notification{
+    NSDictionary *cmdDict = [notification userInfo];
+    NSString *msg = [cmdDict objectForKey:@"message"];
+    if ([msg isEqualToString:@"start"]){
+        [self startStreaming];
+    }
+    else if([msg isEqualToString:@"stop"]){
+        [self stopStreaming];
+    }
 }
 
 
@@ -160,6 +165,65 @@
     [videoDevice unlockForConfiguration];
    
     
+}
+
+- (void)startStreaming{
+    timer = [NSTimer scheduledTimerWithTimeInterval:0.07
+                                             target:self
+                                           selector:@selector(captureImage)
+                                           userInfo:nil
+                                            repeats:YES];
+}
+
+- (void)stopStreaming{
+    [timer invalidate];
+}
+
+- (void)captureImage{
+    dispatch_async([self videoDataQueue], ^{
+        // Update the orientation on the still image output video connection before capturing.
+        [[[self streamOutput] connectionWithMediaType:AVMediaTypeVideo] setVideoOrientation:[[self.previewLayer connection] videoOrientation]];
+        
+        // Capture a still image.
+        [[self streamOutput] captureStillImageAsynchronouslyFromConnection:[[self streamOutput] connectionWithMediaType:AVMediaTypeVideo] completionHandler:^(CMSampleBufferRef imageDataSampleBuffer, NSError *error) {
+            NSTimeInterval timestamp = [[NSDate date] timeIntervalSince1970];
+            if (imageDataSampleBuffer)
+            {
+                NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageDataSampleBuffer];
+                UIImage *image = [self imageWithImage:[[UIImage alloc] initWithData:imageData] scaledToSize:size];
+                GCDAsyncSocket *socket = [_streamServer connectedSocket];
+                if(socket != nil){
+                    NSString *content = [[NSString alloc] initWithFormat:@"%@%@%lu%@%@%lu%@",
+                                         @"Content-type: image/jpeg\r\n",
+                                         @"Content-Length: ",
+                                         (unsigned long)[imageData length],
+                                         @"\r\n",
+                                         @"X-Timestamp:",
+                                         (unsigned long)timestamp,
+                                         @"\r\n\r\n"];
+                    NSString *end = [[NSString alloc] initWithFormat:@"%@%@%@",
+                                     @"\r\n--", BOUNDARY, @"\r\n"];
+                    [socket writeData:[content dataUsingEncoding:NSUTF8StringEncoding] withTimeout:-1 tag:0];
+                    [socket writeData:UIImageJPEGRepresentation(image, 0.2) withTimeout:-1 tag:1];
+                    [socket writeData:[end dataUsingEncoding:NSUTF8StringEncoding] withTimeout:-1 tag:2];
+                    
+                }
+//                UIImage *image = [[UIImage alloc] initWithData:imageData];
+//                [[[ALAssetsLibrary alloc] init] writeImageToSavedPhotosAlbum:[image CGImage] orientation:(ALAssetOrientation)[image imageOrientation] completionBlock:nil];
+            }
+        }];
+    });
+}
+
+- (UIImage *)imageWithImage:(UIImage *)image scaledToSize:(CGSize)newSize {
+    //UIGraphicsBeginImageContext(newSize);
+    // In next line, pass 0.0 to use the current device's pixel scaling factor (and thus account for Retina resolution).
+    // Pass 1.0 to force exact pixel size.
+    UIGraphicsBeginImageContextWithOptions(newSize, NO, 0.0);
+    [image drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return newImage;
 }
 
 - (void)setPreviewFrame:(CGRect)frame{

@@ -1,5 +1,5 @@
 //
-//  CameraVariables.m
+//  CameraSettings.m
 //  VVCamera
 //
 //  Created by Juuso Kaitila on 13.8.2015.
