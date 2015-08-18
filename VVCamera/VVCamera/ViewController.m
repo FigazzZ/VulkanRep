@@ -20,11 +20,6 @@
 
 
 @interface ViewController ()
-<AVCaptureManagerDelegate>
-{
-    NSTimeInterval startTime;
-    BOOL isNeededToSave;
-}
 @property (nonatomic, strong) AVCaptureManager *captureManager;
 @property (nonatomic, strong) StreamServer *streamServer;
 @property (nonatomic, assign) NSTimer *timer;
@@ -35,7 +30,7 @@
 @implementation ViewController{
     VVNetworkSocketHandler *socketHandler;
     NSTimer *autoStopper;
-    
+    NSTimeInterval startTime;
 }
 
 - (void)viewDidLoad
@@ -47,7 +42,6 @@
 //    _previewView.frame = frame;
     // TODO: Close camera and stuff when view disappears
     self.captureManager = [[AVCaptureManager alloc] initWithPreviewView:self.view];
-    self.captureManager.delegate = self;
     
     [self setCameraFramerate];
     
@@ -64,12 +58,41 @@
                                              selector:@selector(receiveProtocolNotification:)
                                                  name:@"ProtocolNotification"
                                                object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(sendJsonAndVideo)
+                                                 name:@"StopNotification"
+                                               object:nil];
     [self hideStatusBar];
 
 }
 
-- (void)viewDidDisappear:(BOOL)animated{
+- (void)registerToNotifications{
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center addObserver:self
+               selector:@selector(receiveProtocolNotification:)
+                   name:@"ProtocolNotification"
+                 object:nil];
+    [center addObserver:self
+               selector:@selector(sendJsonAndVideo)
+                   name:@"StopNotification"
+                 object:nil];
+    [center addObserver:self
+               selector:@selector(wentToBackground)
+                   name:@"Background"
+                 object:nil];
+    [center addObserver:self
+               selector:@selector(cameToForeground)
+                   name:@"Foreground"
+                 object:nil];
+}
+
+- (void)wentToBackground{
+    // TODO: close socket, stream stuff, camera?
     [socketHandler sendCommand:[[Command alloc] init:QUIT]];
+}
+
+- (void)cameToForeground{
+    // TODO: restore what was closed when went to background
 }
 
 - (void)hideStatusBar
@@ -122,7 +145,7 @@
             [self stopRecording];
             break;
         case POSITION:
-            // set position
+            [self setPosition:command];
             break;
         case GET_POSITION:
             [self getPosition];
@@ -136,7 +159,7 @@
             // Camera settings stuff
             break;
         case DELETE:
-            // delete video from phone
+            [self deleteVideo];
             break;
         case SLEEP:
             // sleep if possible
@@ -148,54 +171,58 @@
     }
 }
 
+- (void)deleteVideo{
+    NSLog(@"Deleting video");
+    NSURL *movieURL = [_captureManager getVideoFile];
+    NSFileManager *manager = [NSFileManager defaultManager];
+    
+    NSError *error = nil;
+    
+    NSString *path = [movieURL path];
+    [manager removeItemAtPath:path error:&error];
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
 }
 
--(void)viewWillAppear:(BOOL)animated{
-    [super viewWillAppear:animated];
-}
-
 - (void)startRecording{
     if(!_captureManager.isRecording){
+        startTime = [[NSDate date] timeIntervalSince1970];
         [_captureManager startRecording];
         [socketHandler sendCommand:[[Command alloc] init:OK]];
-        autoStopper = [NSTimer scheduledTimerWithTimeInterval:16
-                                         target:self
-                                       selector:@selector(stopRecording)
-                                       userInfo:nil
-                                        repeats:NO];
-        
     }
 }
 
 - (void)stopRecording{
     if(_captureManager.isRecording){
-        [autoStopper invalidate];
-        autoStopper = nil;
         [_captureManager stopRecording];
-        NSMutableDictionary *json = [[NSMutableDictionary alloc] init];
-        CameraSettings *sharedVars = [CameraSettings sharedVariables];
-        // TODO: calculate delay if possible
-        NSDictionary *pov = [sharedVars getPositionJson];
-        NSNumber *fps = [NSNumber numberWithFloat:[sharedVars framerate]];
-        [json setObject:fps forKey:@"fps"];
-        [json setObject:pov forKey:@"pointOfView"];
-        NSURL *movieURL = [_captureManager getVideoFile];
-        AVURLAsset *sourceAsset = [AVURLAsset URLAssetWithURL:movieURL options:nil];
-        CMTime duration = sourceAsset.duration;
-        NSNumber *dur = [NSNumber numberWithFloat:CMTimeGetSeconds(duration)];
-        [json setObject:dur forKey:@"duration"];
-        NSString *jsonStr = [VVUtility convertNSDictToJSONString:json];
-        [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:VIDEO_COMING :jsonStr]];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            NSString *path = [movieURL path];
-            NSData *bytes = [[NSData alloc] initWithContentsOfFile:path];
-            [socketHandler sendCommand:[[CommandWithValue alloc] init:VIDEODATA :bytes]];
-        });
-
     }
+}
+
+- (void)sendJsonAndVideo{
+    NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
+    NSNumber *delay = [NSNumber numberWithDouble:now-startTime];
+    NSMutableDictionary *json = [[NSMutableDictionary alloc] init];
+    CameraSettings *sharedVars = [CameraSettings sharedVariables];
+    NSDictionary *pov = [sharedVars getPositionJson];
+    NSNumber *fps = [NSNumber numberWithFloat:[sharedVars framerate]];
+    [json setObject:fps forKey:@"fps"];
+    [json setObject:pov forKey:@"pointOfView"];
+    [json setObject:delay forKey:@"delay"];
+    NSURL *movieURL = [_captureManager getVideoFile];
+    AVURLAsset *sourceAsset = [AVURLAsset URLAssetWithURL:movieURL options:nil];
+    CMTime duration = sourceAsset.duration;
+    NSNumber *dur = [NSNumber numberWithFloat:CMTimeGetSeconds(duration)];
+    [json setObject:dur forKey:@"duration"];
+    NSString *jsonStr = [VVUtility convertNSDictToJSONString:json];
+    [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:VIDEO_COMING :jsonStr]];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSString *path = [movieURL path];
+        NSData *bytes = [[NSData alloc] initWithContentsOfFile:path];
+        [socketHandler sendCommand:[[CommandWithValue alloc] init:VIDEODATA :bytes]];
+    });
 }
 
 - (void)setPosition:(Command *)command{
@@ -230,119 +257,5 @@
     [self.captureManager setCameraSettings];
 }
 
-
-// =============================================================================
-#pragma mark - Private
-
-
-- (void)saveRecordedFile:(NSURL *)recordedFile {
-    
-    
-    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    dispatch_async(queue, ^{
-        
-        ALAssetsLibrary *assetLibrary = [[ALAssetsLibrary alloc] init];
-        [assetLibrary writeVideoAtPathToSavedPhotosAlbum:recordedFile
-                                         completionBlock:
-         ^(NSURL *assetURL, NSError *error) {
-             
-             dispatch_async(dispatch_get_main_queue(), ^{
-                 
-                 
-                 NSString *title;
-                 NSString *message;
-                 
-                 if (error != nil) {
-                     
-                     title = @"Failed to save video";
-                     message = [error localizedDescription];
-                 }
-                 else {
-                     title = @"Saved!";
-                     message = nil;
-                 }
-                 
-                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title
-                                                                 message:message
-                                                                delegate:nil
-                                                       cancelButtonTitle:@"OK"
-                                                       otherButtonTitles:nil];
-                 [alert show];
-             });
-         }];
-    });
-}
-
-
-
-// =============================================================================
-#pragma mark - Timer Handler
-
-- (void)timerHandler:(NSTimer *)timer {
-    
-//    NSTimeInterval current = [[NSDate date] timeIntervalSince1970];
-//    NSTimeInterval recorded = current - startTime;
-}
-
-
-
-// =============================================================================
-#pragma mark - AVCaptureManagerDeleagte
-
-- (void)didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL error:(NSError *)error {
-    
-    if (error) {
-        NSLog(@"error:%@", error);
-        return;
-    }
-    
-    if (!isNeededToSave) {
-        return;
-    }
-    
-    // TODO: Get bytes and send video to server
-    [self saveRecordedFile:outputFileURL];
-}
-
-
-// =============================================================================
-#pragma mark - IBAction
-
-- (IBAction)recButtonTapped:(id)sender {
-    
-    // REC START
-    if (!self.captureManager.isRecording) {
-        
-        // timer start
-        startTime = [[NSDate date] timeIntervalSince1970];
-        self.timer = [NSTimer scheduledTimerWithTimeInterval:0.01
-                                                      target:self
-                                                    selector:@selector(timerHandler:)
-                                                    userInfo:nil
-                                                     repeats:YES];
-
-        [self.captureManager startRecording];
-    }
-    // REC STOP
-    else {
-
-        isNeededToSave = YES;
-        [self.captureManager stopRecording];
-        
-        [self.timer invalidate];
-        self.timer = nil;
-    }
-}
-
-//- (IBAction)retakeButtonTapped:(id)sender {
-//    
-//    isNeededToSave = NO;
-//    [self.captureManager stopRecording];
-//
-//    [self.timer invalidate];
-//    self.timer = nil;
-//    
-//    self.statusLabel.text = nil;
-//}
 
 @end

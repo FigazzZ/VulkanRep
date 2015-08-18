@@ -90,6 +90,7 @@
 
         
         self.fileOutput = [[AVCaptureMovieFileOutput alloc] init];
+        [self.fileOutput setMaxRecordedDuration:CMTimeMake(15, 1)];
         AVCaptureConnection *connection = [[AVCaptureConnection alloc] initWithInputPorts:[videoIn ports] output:self.fileOutput];
         if ([connection isVideoOrientationSupported])
         {
@@ -204,7 +205,7 @@
                     NSString *end = [[NSString alloc] initWithFormat:@"%@%@%@",
                                      @"\r\n--", BOUNDARY, @"\r\n"];
                     [socket writeData:[content dataUsingEncoding:NSUTF8StringEncoding] withTimeout:-1 tag:0];
-                    [socket writeData:UIImageJPEGRepresentation(image, 0.2) withTimeout:-1 tag:1];
+                    [socket writeData:UIImageJPEGRepresentation(image, 0.1) withTimeout:-1 tag:1];
                     [socket writeData:[end dataUsingEncoding:NSUTF8StringEncoding] withTimeout:-1 tag:2];
                     
                 }
@@ -344,23 +345,22 @@
 // =============================================================================
 #pragma mark - AVCaptureFileOutputRecordingDelegate
 
-- (void)                 captureOutput:(AVCaptureFileOutput *)captureOutput
+- (void)captureOutput:(AVCaptureFileOutput *)captureOutput
     didStartRecordingToOutputFileAtURL:(NSURL *)fileURL
                        fromConnections:(NSArray *)connections
 {
     _isRecording = YES;
 }
 
-- (void)                 captureOutput:(AVCaptureFileOutput *)captureOutput
+- (void)captureOutput:(AVCaptureFileOutput *)captureOutput
    didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
                        fromConnections:(NSArray *)connections error:(NSError *)error
 {
-//    [self saveRecordedFile:outputFileURL];
     _isRecording = NO;
-    
-    if ([self.delegate respondsToSelector:@selector(didFinishRecordingToOutputFileAtURL:error:)]) {
-        [self.delegate didFinishRecordingToOutputFileAtURL:outputFileURL error:error];
-    }
+    [[NSNotificationCenter defaultCenter]
+     postNotificationName:@"StopNotification"
+     object:self
+     userInfo:nil];
 }
 
 @end

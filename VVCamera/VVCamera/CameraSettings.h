@@ -40,6 +40,7 @@
 @property (nonatomic) BOOL smoothFocusEnabled;
 
 - (NSDictionary *)getPositionJson;
+- (void)saveSettings;
 
 @end
 
