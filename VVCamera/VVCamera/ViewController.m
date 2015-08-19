@@ -20,26 +20,25 @@
 
 
 @interface ViewController ()
+
 @property (nonatomic, strong) AVCaptureManager *captureManager;
 @property (nonatomic, strong) StreamServer *streamServer;
-@property (nonatomic, assign) NSTimer *timer;
 
 @end
 
 
 @implementation ViewController{
     VVNetworkSocketHandler *socketHandler;
-    NSTimer *autoStopper;
     NSTimeInterval startTime;
+    NSString *currentVersionNumber;
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     [UIApplication sharedApplication].idleTimerDisabled = YES;
-//    CGRect frame = self.view.frame;
-//    frame.size.width = frame.size.width-_controlsView.frame.size.width;
-//    _previewView.frame = frame;
+    currentVersionNumber = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+    
     // TODO: Close camera and stuff when view disappears
     self.captureManager = [[AVCaptureManager alloc] initWithPreviewView:self.view];
     
@@ -54,16 +53,21 @@
     tapGesture.numberOfTapsRequired = 2;
     [self.view addGestureRecognizer:tapGesture];
     socketHandler = [[VVNetworkSocketHandler alloc] init:1111 protocol:[[CameraProtocol alloc] init]];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(receiveProtocolNotification:)
-                                                 name:@"ProtocolNotification"
-                                               object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(sendJsonAndVideo)
-                                                 name:@"StopNotification"
-                                               object:nil];
+    [self registerToNotifications];
     [self hideStatusBar];
+    
+    [self setUpWifiAnimation];
+    [_wifiImage startAnimating];
+}
 
+- (void)setUpWifiAnimation{
+    NSArray *imageNames = @[@"wifi_1.png", @"wifi_2.png", @"wifi_3.png", @"wifi_4.png"];
+    NSMutableArray *images = [[NSMutableArray alloc] init];
+    for (int i = 0; i < imageNames.count; i++) {
+        [images addObject:[UIImage imageNamed:[imageNames objectAtIndex:i]]];
+    }
+    _wifiImage.animationImages = images;
+    _wifiImage.animationDuration = 1;
 }
 
 - (void)registerToNotifications{
@@ -77,6 +81,10 @@
                    name:@"StopNotification"
                  object:nil];
     [center addObserver:self
+               selector:@selector(connectedNotification:)
+                   name:@"NetworkingNotification"
+                 object:nil];
+    [center addObserver:self
                selector:@selector(wentToBackground)
                    name:@"Background"
                  object:nil];
@@ -86,13 +94,27 @@
                  object:nil];
 }
 
+- (void)connectedNotification:(NSNotification *) notification{
+    NSDictionary *dict = [notification userInfo];
+    BOOL connected = [[dict objectForKey:@"isConnected"] boolValue];
+    if (connected) {
+        [_wifiImage stopAnimating];
+        [_wifiImage setImage:[UIImage imageNamed:@"wifi_connected"]];
+    }
+    else{
+        [_wifiImage startAnimating];
+    }
+}
+
 - (void)wentToBackground{
     // TODO: close socket, stream stuff, camera?
     [socketHandler sendCommand:[[Command alloc] init:QUIT]];
+    [self.streamServer stopAcceptingConnections];
 }
 
 - (void)cameToForeground{
     // TODO: restore what was closed when went to background
+    [self.streamServer startAcceptingConnections];
 }
 
 - (void)hideStatusBar
@@ -258,4 +280,9 @@
 }
 
 
+- (IBAction)switchToAimMode:(id)sender {
+}
+
+- (IBAction)switchToCameraMode:(id)sender {
+}
 @end

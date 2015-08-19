@@ -67,14 +67,6 @@
         defaultVideoMaxFrameDuration = videoDevice.activeVideoMaxFrameDuration;
         
         CameraSettings *sharedVars = [CameraSettings sharedVariables];
-//        AVCaptureDevice *audioDevice= [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
-//        AVCaptureDeviceInput *audioIn = [AVCaptureDeviceInput deviceInputWithDevice:audioDevice error:&error];
-//        [self.captureSession addInput:audioIn];
-        
-        
-        // If you wish to cap the frame rate to a known value, such as 15 fps, set
-        // minFrameDuration.
-        // TODO: replace with non-deprecated function
         // http://stackoverflow.com/questions/8058891/avcapturesession-with-multiple-outputs/22037685#22037685
         
         
@@ -209,8 +201,6 @@
                     [socket writeData:[end dataUsingEncoding:NSUTF8StringEncoding] withTimeout:-1 tag:2];
                     
                 }
-//                UIImage *image = [[UIImage alloc] initWithData:imageData];
-//                [[[ALAssetsLibrary alloc] init] writeImageToSavedPhotosAlbum:[image CGImage] orientation:(ALAssetOrientation)[image imageOrientation] completionBlock:nil];
             }
         }];
     });
