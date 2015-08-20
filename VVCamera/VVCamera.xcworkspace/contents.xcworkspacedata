@@ -2,7 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:VVCamera.xcodeproj">
+      location = "group:/Volumes/NO NAME/ios-camera/VVCamera/Vulcan Vision Camera.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">

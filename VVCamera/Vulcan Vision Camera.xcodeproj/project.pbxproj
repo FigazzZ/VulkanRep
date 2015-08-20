@@ -46,7 +46,7 @@
 		32571A951B8495D6000B49CB /* VVVersionCompabilityChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VVVersionCompabilityChecker.h; path = Common/VVVersionCompabilityChecker.h; sourceTree = "<group>"; };
 		32571A961B8495D6000B49CB /* VVVersionCompabilityChecker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VVVersionCompabilityChecker.m; path = Common/VVVersionCompabilityChecker.m; sourceTree = "<group>"; };
 		7DAC3C4795C23FB43DCE1907 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
-		902A01161B7A27FE00488808 /* VVCamera.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VVCamera.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		902A01161B7A27FE00488808 /* Vulcan Vision Camera.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Vulcan Vision Camera.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		902A011A1B7A27FE00488808 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		902A011B1B7A27FE00488808 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		902A011D1B7A27FE00488808 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -54,7 +54,7 @@
 		902A01201B7A27FE00488808 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		902A01211B7A27FE00488808 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		902A01261B7A27FE00488808 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		902A012F1B7A27FE00488808 /* VVCameraTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VVCameraTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		902A012F1B7A27FE00488808 /* Vulcan Vision CameraTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Vulcan Vision CameraTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		902A01341B7A27FE00488808 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		902A01351B7A27FE00488808 /* VVCameraTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VVCameraTests.m; sourceTree = "<group>"; };
 		902A01441B7A2E2400488808 /* AVCaptureManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVCaptureManager.h; sourceTree = "<group>"; };
@@ -137,8 +137,8 @@
 		902A01171B7A27FE00488808 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				902A01161B7A27FE00488808 /* VVCamera.app */,
-				902A012F1B7A27FE00488808 /* VVCameraTests.xctest */,
+				902A01161B7A27FE00488808 /* Vulcan Vision Camera.app */,
+				902A012F1B7A27FE00488808 /* Vulcan Vision CameraTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -231,9 +231,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		902A01151B7A27FE00488808 /* VVCamera */ = {
+		902A01151B7A27FE00488808 /* Vulcan Vision Camera */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 902A01391B7A27FE00488808 /* Build configuration list for PBXNativeTarget "VVCamera" */;
+			buildConfigurationList = 902A01391B7A27FE00488808 /* Build configuration list for PBXNativeTarget "Vulcan Vision Camera" */;
 			buildPhases = (
 				46F29A77E307269FFD3103C7 /* Check Pods Manifest.lock */,
 				902A01121B7A27FE00488808 /* Sources */,
@@ -245,14 +245,14 @@
 			);
 			dependencies = (
 			);
-			name = VVCamera;
+			name = "Vulcan Vision Camera";
 			productName = VVCamera;
-			productReference = 902A01161B7A27FE00488808 /* VVCamera.app */;
+			productReference = 902A01161B7A27FE00488808 /* Vulcan Vision Camera.app */;
 			productType = "com.apple.product-type.application";
 		};
-		902A012E1B7A27FE00488808 /* VVCameraTests */ = {
+		902A012E1B7A27FE00488808 /* Vulcan Vision CameraTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 902A013C1B7A27FE00488808 /* Build configuration list for PBXNativeTarget "VVCameraTests" */;
+			buildConfigurationList = 902A013C1B7A27FE00488808 /* Build configuration list for PBXNativeTarget "Vulcan Vision CameraTests" */;
 			buildPhases = (
 				902A012B1B7A27FE00488808 /* Sources */,
 				902A012C1B7A27FE00488808 /* Frameworks */,
@@ -263,9 +263,9 @@
 			dependencies = (
 				902A01311B7A27FE00488808 /* PBXTargetDependency */,
 			);
-			name = VVCameraTests;
+			name = "Vulcan Vision CameraTests";
 			productName = VVCameraTests;
-			productReference = 902A012F1B7A27FE00488808 /* VVCameraTests.xctest */;
+			productReference = 902A012F1B7A27FE00488808 /* Vulcan Vision CameraTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -287,7 +287,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 902A01111B7A27FE00488808 /* Build configuration list for PBXProject "VVCamera" */;
+			buildConfigurationList = 902A01111B7A27FE00488808 /* Build configuration list for PBXProject "Vulcan Vision Camera" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -300,8 +300,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				902A01151B7A27FE00488808 /* VVCamera */,
-				902A012E1B7A27FE00488808 /* VVCameraTests */,
+				902A01151B7A27FE00488808 /* Vulcan Vision Camera */,
+				902A012E1B7A27FE00488808 /* Vulcan Vision CameraTests */,
 			);
 		};
 /* End PBXProject section */
@@ -396,7 +396,7 @@
 /* Begin PBXTargetDependency section */
 		902A01311B7A27FE00488808 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 902A01151B7A27FE00488808 /* VVCamera */;
+			target = 902A01151B7A27FE00488808 /* Vulcan Vision Camera */;
 			targetProxy = 902A01301B7A27FE00488808 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -494,7 +494,7 @@
 				INFOPLIST_FILE = VVCamera/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Vulcan Vision Camera";
 				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
@@ -509,7 +509,7 @@
 				INFOPLIST_FILE = VVCamera/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Vulcan Vision Camera";
 				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
@@ -528,7 +528,7 @@
 				);
 				INFOPLIST_FILE = VVCameraTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Vulcan Vision CameraTests";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VVCamera.app/VVCamera";
 			};
 			name = Debug;
@@ -543,7 +543,7 @@
 				);
 				INFOPLIST_FILE = VVCameraTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Vulcan Vision CameraTests";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VVCamera.app/VVCamera";
 			};
 			name = Release;
@@ -551,7 +551,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		902A01111B7A27FE00488808 /* Build configuration list for PBXProject "VVCamera" */ = {
+		902A01111B7A27FE00488808 /* Build configuration list for PBXProject "Vulcan Vision Camera" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				902A01371B7A27FE00488808 /* Debug */,
@@ -560,7 +560,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		902A01391B7A27FE00488808 /* Build configuration list for PBXNativeTarget "VVCamera" */ = {
+		902A01391B7A27FE00488808 /* Build configuration list for PBXNativeTarget "Vulcan Vision Camera" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				902A013A1B7A27FE00488808 /* Debug */,
@@ -569,7 +569,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		902A013C1B7A27FE00488808 /* Build configuration list for PBXNativeTarget "VVCameraTests" */ = {
+		902A013C1B7A27FE00488808 /* Build configuration list for PBXNativeTarget "Vulcan Vision CameraTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				902A013D1B7A27FE00488808 /* Debug */,
