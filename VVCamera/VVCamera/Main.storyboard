@@ -22,7 +22,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="509" height="600"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Wcf-ne-Agx" userLabel="Logo">
+                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Wcf-ne-Agx" userLabel="Logo">
                                 <rect key="frame" x="0.0" y="0.0" width="509" height="600"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="vulcan_logo" translatesAutoresizingMaskIntoConstraints="NO" id="kMS-CX-KVx">
@@ -93,17 +93,17 @@
                         </subviews>
                         <color key="backgroundColor" red="0.12152777777777779" green="0.12152777777777779" blue="0.12152777777777779" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
-                            <constraint firstItem="ULR-Ea-F6y" firstAttribute="bottom" secondItem="m6L-Bq-Nd9" secondAttribute="top" id="4fs-b0-Vun"/>
                             <constraint firstItem="Wcf-ne-Agx" firstAttribute="leading" secondItem="ALk-c9-gXC" secondAttribute="leading" id="5k6-fv-YiS"/>
-                            <constraint firstItem="ULR-Ea-F6y" firstAttribute="leading" secondItem="Wcf-ne-Agx" secondAttribute="leading" id="8gg-XS-PnA"/>
                             <constraint firstItem="9Lu-eY-n3Y" firstAttribute="top" secondItem="Wcf-ne-Agx" secondAttribute="top" id="Cq1-XX-73f"/>
+                            <constraint firstItem="9Lu-eY-n3Y" firstAttribute="leading" secondItem="ULR-Ea-F6y" secondAttribute="trailing" id="IJy-0c-oRt"/>
                             <constraint firstAttribute="bottom" secondItem="Wcf-ne-Agx" secondAttribute="bottom" id="P4m-ct-xnv"/>
                             <constraint firstItem="Wcf-ne-Agx" firstAttribute="top" secondItem="ALk-c9-gXC" secondAttribute="top" id="Pfq-vH-eXn"/>
                             <constraint firstItem="9Lu-eY-n3Y" firstAttribute="bottom" secondItem="m6L-Bq-Nd9" secondAttribute="top" id="UBi-bN-EUG"/>
+                            <constraint firstItem="ULR-Ea-F6y" firstAttribute="leading" secondItem="ALk-c9-gXC" secondAttribute="leading" id="ZkT-2M-WGv"/>
                             <constraint firstItem="9Lu-eY-n3Y" firstAttribute="leading" secondItem="Wcf-ne-Agx" secondAttribute="trailing" id="aYb-Yi-D01"/>
                             <constraint firstAttribute="trailing" secondItem="9Lu-eY-n3Y" secondAttribute="trailing" id="ezD-lx-wH9"/>
-                            <constraint firstItem="ULR-Ea-F6y" firstAttribute="top" secondItem="Wcf-ne-Agx" secondAttribute="top" id="hV7-PL-TnM"/>
-                            <constraint firstItem="ULR-Ea-F6y" firstAttribute="trailing" secondItem="Wcf-ne-Agx" secondAttribute="trailing" id="wqn-12-nWP"/>
+                            <constraint firstItem="ULR-Ea-F6y" firstAttribute="top" secondItem="ALk-c9-gXC" secondAttribute="top" id="p4T-mc-5b1"/>
+                            <constraint firstAttribute="bottom" secondItem="ULR-Ea-F6y" secondAttribute="bottom" id="xWQ-r1-1gu"/>
                         </constraints>
                     </view>
                     <nil key="simulatedStatusBarMetrics"/>
@@ -113,7 +113,9 @@
                     <connections>
                         <outlet property="aimMode" destination="Rzr-FH-Ton" id="tYa-LI-w0F"/>
                         <outlet property="cameraMode" destination="Phr-Hb-GEM" id="bdP-Wg-j3p"/>
+                        <outlet property="controls" destination="9Lu-eY-n3Y" id="2M5-Xp-kU4"/>
                         <outlet property="gridView" destination="ULR-Ea-F6y" id="Vnn-XR-Zcs"/>
+                        <outlet property="logoView" destination="Wcf-ne-Agx" id="8gM-ce-EdW"/>
                         <outlet property="wifiImage" destination="I1J-FG-PzV" id="3rw-Yb-7hD"/>
                     </connections>
                 </viewController>

@@ -31,11 +31,14 @@
     VVNetworkSocketHandler *socketHandler;
     NSTimeInterval startTime;
     NSString *currentVersionNumber;
+    CameraState mode;
+    
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    mode = AIM_MODE;
     [UIApplication sharedApplication].idleTimerDisabled = YES;
     currentVersionNumber = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
     
@@ -44,6 +47,7 @@
     
     [self setCameraFramerate];
     
+    [self drawGrid];
     self.streamServer = [[StreamServer alloc] init];
     [self.captureManager setStreamServer:self.streamServer];
     [self.streamServer startAcceptingConnections];
@@ -58,6 +62,41 @@
     
     [self setUpWifiAnimation];
     [_wifiImage startAnimating];
+}
+
+- (void)drawGrid{
+    CGRect frame = self.view.frame;
+    frame.size.width = frame.size.width-_controls.frame.size.width;
+    CGFloat width = frame.size.width;
+    CGFloat height = frame.size.height;
+    float yDiv = height / 4.0F;
+    float xDiv = width / 4.0F;
+    UIBezierPath *path = [UIBezierPath bezierPath];
+    [path moveToPoint:CGPointMake(0, yDiv)];
+    [path addLineToPoint:CGPointMake(width, yDiv)];
+    [path moveToPoint:CGPointMake(0, yDiv*2)];
+    [path addLineToPoint:CGPointMake(width, yDiv*2)];
+    [path moveToPoint:CGPointMake(0, yDiv*3)];
+    [path addLineToPoint:CGPointMake(width, yDiv*3)];
+    [path moveToPoint:CGPointMake(xDiv, 0)];
+    [path addLineToPoint:CGPointMake(xDiv, height)];
+    [path moveToPoint:CGPointMake(xDiv*2, 0)];
+    [path addLineToPoint:CGPointMake(xDiv*2, height)];
+    [path moveToPoint:CGPointMake(xDiv*3, 0)];
+    [path addLineToPoint:CGPointMake(xDiv*3, height)];
+    
+    CAShapeLayer *blackLayer = [CAShapeLayer layer];
+    blackLayer.path = [path CGPath];
+    blackLayer.strokeColor = [[UIColor blackColor] CGColor];
+    blackLayer.lineWidth = 1.5;
+    blackLayer.fillColor = [[UIColor clearColor] CGColor];
+    CAShapeLayer *whiteLayer = [CAShapeLayer layer];
+    whiteLayer.path = [path CGPath];
+    whiteLayer.strokeColor = [[UIColor whiteColor] CGColor];
+    whiteLayer.lineWidth = 2.0;
+    whiteLayer.fillColor = [[UIColor clearColor] CGColor];
+    [_gridView.layer addSublayer:whiteLayer];
+    [_gridView.layer addSublayer:blackLayer];
 }
 
 - (void)setUpWifiAnimation{
@@ -173,12 +212,16 @@
             [self getPosition];
             break;
         case VERSION:
-            // check version
+            // TODO: check version
             break;
         case WRONG_VERSION:
+            // TODO: handle wrong version
             break;
         case CAMERA_SETTINGS:
             // Camera settings stuff
+            break;
+        case PONG:
+            // TODO: pong stuff
             break;
         case DELETE:
             [self deleteVideo];
@@ -281,8 +324,22 @@
 
 
 - (IBAction)switchToAimMode:(id)sender {
+    if(mode != AIM_MODE){
+        mode = AIM_MODE;
+        [_logoView setHidden:YES];
+        [_gridView setHidden:NO];
+        [_aimMode setImage:[UIImage imageNamed:@"aim_mode_selected"] forState:UIControlStateNormal];
+        [_cameraMode setImage:[UIImage imageNamed:@"camera_mode_off"] forState:UIControlStateNormal];
+    }
 }
 
 - (IBAction)switchToCameraMode:(id)sender {
+    if(mode != CAMERA_MODE && [socketHandler isConnectedToTCP]){
+        mode = CAMERA_MODE;
+        [_logoView setHidden:NO];
+        [_gridView setHidden:YES];
+        [_aimMode setImage:[UIImage imageNamed:@"aim_mode_off"] forState:UIControlStateNormal];
+        [_cameraMode setImage:[UIImage imageNamed:@"camera_mode_selected"] forState:UIControlStateNormal];
+    }
 }
 @end

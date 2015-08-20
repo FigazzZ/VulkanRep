@@ -14,6 +14,11 @@
 #import <AVFoundation/AVFoundation.h>
 #import <UIKit/UIKit.h>
 
+typedef enum {
+    AIM_MODE,
+    CAMERA_MODE
+} CameraState;
+
 
 @interface AVCaptureManager : NSObject
 

@@ -13,6 +13,8 @@
 
 @property (weak, nonatomic) IBOutlet UIImageView *wifiImage;
 @property (weak, nonatomic) IBOutlet UIView *gridView;
+@property (weak, nonatomic) IBOutlet UIView *controls;
+@property (weak, nonatomic) IBOutlet UIView *logoView;
 @property (weak, nonatomic) IBOutlet UIButton *aimMode;
 @property (weak, nonatomic) IBOutlet UIButton *cameraMode;
 - (IBAction)switchToAimMode:(id)sender;
