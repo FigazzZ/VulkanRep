@@ -115,6 +115,7 @@
                         <outlet property="cameraMode" destination="Phr-Hb-GEM" id="bdP-Wg-j3p"/>
                         <outlet property="controls" destination="9Lu-eY-n3Y" id="2M5-Xp-kU4"/>
                         <outlet property="gridView" destination="ULR-Ea-F6y" id="Vnn-XR-Zcs"/>
+                        <outlet property="logo" destination="kMS-CX-KVx" id="Cm2-ZQ-qtM"/>
                         <outlet property="logoView" destination="Wcf-ne-Agx" id="8gM-ce-EdW"/>
                         <outlet property="wifiImage" destination="I1J-FG-PzV" id="3rw-Yb-7hD"/>
                     </connections>

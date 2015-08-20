@@ -16,7 +16,7 @@
 #import "CameraSettings.h"
 #import "StreamServer.h"
 #import "VVUtility.h"
-#import <AssetsLibrary/AssetsLibrary.h>
+#import <QuartzCore/QuartzCore.h>
 
 
 @interface ViewController ()
@@ -66,6 +66,10 @@
 
 - (void)drawGrid{
     CGRect frame = self.view.frame;
+    if(frame.size.width < frame.size.height){
+        CGPoint origin = _gridView.frame.origin;
+        frame = CGRectMake(origin.x, origin.y, frame.size.height, frame.size.width);
+    }
     frame.size.width = frame.size.width-_controls.frame.size.width;
     CGFloat width = frame.size.width;
     CGFloat height = frame.size.height;
@@ -330,6 +334,7 @@
         [_gridView setHidden:NO];
         [_aimMode setImage:[UIImage imageNamed:@"aim_mode_selected"] forState:UIControlStateNormal];
         [_cameraMode setImage:[UIImage imageNamed:@"camera_mode_off"] forState:UIControlStateNormal];
+        [_logo.layer removeAllAnimations];
     }
 }
 
@@ -337,6 +342,10 @@
     if(mode != CAMERA_MODE && [socketHandler isConnectedToTCP]){
         mode = CAMERA_MODE;
         [_logoView setHidden:NO];
+        _logo.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1.0];
+        [UIView animateWithDuration:4.0  delay:0 options:(UIViewAnimationOptionAutoreverse | UIViewAnimationOptionRepeat) animations:^{
+            _logo.backgroundColor = [UIColor colorWithRed:1.0 green:0.0 blue:0.0 alpha:1.0];
+        } completion:nil];
         [_gridView setHidden:YES];
         [_aimMode setImage:[UIImage imageNamed:@"aim_mode_off"] forState:UIControlStateNormal];
         [_cameraMode setImage:[UIImage imageNamed:@"camera_mode_selected"] forState:UIControlStateNormal];
