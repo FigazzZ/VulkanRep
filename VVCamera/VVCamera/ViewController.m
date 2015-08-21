@@ -65,12 +65,22 @@
 }
 
 - (void)drawGrid{
-    CGRect frame = self.view.frame;
+    CGRect frame = _gridView.frame;
     if(frame.size.width < frame.size.height){
         CGPoint origin = _gridView.frame.origin;
         frame = CGRectMake(origin.x, origin.y, frame.size.height, frame.size.width);
     }
+    if(self.view.frame.size.width < self.view.frame.size.height){
+        frame.size.height = self.view.frame.size.width;
+    }
+    else{
+        frame.size.height = self.view.frame.size.height;
+    }
+    NSLog(@"%f x %f", _gridView.frame.size.width, _gridView.frame.size.height);
+    NSLog(@"%f x %f", _controls.frame.size.width, _controls.frame.size.height);
+    NSLog(@"%f x %f", frame.size.width, frame.size.height);
     frame.size.width = frame.size.width-_controls.frame.size.width;
+    NSLog(@"%f x %f", _gridView.frame.size.width, _gridView.frame.size.height);
     CGFloat width = frame.size.width;
     CGFloat height = frame.size.height;
     float yDiv = height / 4.0F;
@@ -299,9 +309,9 @@
         CameraSettings *sharedVars = [CameraSettings sharedVariables];
         NSString *JSONString = [[NSString alloc] initWithData:[command getData] encoding:NSUTF8StringEncoding];
         NSDictionary *json = [VVUtility getNSDictFromJSONString:JSONString];
-        [sharedVars setDist:(int)[json valueForKey:@"dist"]];
-        [sharedVars setYaw:(int)[json valueForKey:@"yaw"]];
-        [sharedVars setPitch:(int)[json valueForKey:@"pitch"]];
+        [sharedVars setDist:[[json valueForKey:@"dist"] intValue]];
+        [sharedVars setYaw:[[json valueForKey:@"yaw"] intValue]];
+        [sharedVars setPitch:[[json valueForKey:@"pitch"] intValue]];
     }
 }
 
@@ -310,8 +320,8 @@
     NSNumber *dst = [NSNumber numberWithInt: [sharedVars dist]];
     NSNumber *yw = [NSNumber numberWithInt: [sharedVars yaw]];
     NSNumber *ptch = [NSNumber numberWithInt: [sharedVars pitch]];
-    NSArray *positions = [[NSArray alloc] initWithObjects:dst, yw, ptch, nil];
-    NSArray *keys = [[NSArray alloc] initWithObjects:@"dist", @"yaw", @"pitch", nil];
+    NSArray *positions = @[dst, yw, ptch];
+    NSArray *keys = @[@"dist", @"yaw", @"pitch"];
     NSDictionary *pov = [[NSDictionary alloc] initWithObjects:positions forKeys:keys];
     NSString *jsonStr = [VVUtility convertNSDictToJSONString:pov];
     [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:POSITION :jsonStr]];

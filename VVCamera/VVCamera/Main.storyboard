@@ -15,40 +15,36 @@
                         <viewControllerLayoutGuide type="bottom" id="m6L-Bq-Nd9"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="ALk-c9-gXC" userLabel="TopView">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="736" height="414"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ULR-Ea-F6y" userLabel="GridView">
-                                <rect key="frame" x="0.0" y="0.0" width="509" height="600"/>
+                            <view contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="ULR-Ea-F6y" userLabel="GridView">
+                                <rect key="frame" x="0.0" y="0.0" width="613" height="414"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             </view>
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Wcf-ne-Agx" userLabel="Logo">
-                                <rect key="frame" x="0.0" y="0.0" width="509" height="600"/>
+                                <rect key="frame" x="0.0" y="0.0" width="613" height="414"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="vulcan_logo" translatesAutoresizingMaskIntoConstraints="NO" id="kMS-CX-KVx">
-                                        <rect key="frame" x="129" y="215" width="250" height="170"/>
+                                        <rect key="frame" x="99" y="66" width="414" height="282"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" secondItem="kMS-CX-KVx" secondAttribute="height" multiplier="25:17" id="M1E-1U-9Ed"/>
-                                        </constraints>
                                     </imageView>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="centerX" secondItem="kMS-CX-KVx" secondAttribute="centerX" constant="0.5" id="Mj7-T5-I0b"/>
-                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="kMS-CX-KVx" secondAttribute="trailing" constant="130" id="f3l-N2-RNe"/>
-                                    <constraint firstItem="kMS-CX-KVx" firstAttribute="top" secondItem="Wcf-ne-Agx" secondAttribute="top" constant="215" id="i9N-Sn-QRR"/>
-                                    <constraint firstItem="kMS-CX-KVx" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Wcf-ne-Agx" secondAttribute="leading" constant="129" id="kl7-xp-qQ6"/>
-                                    <constraint firstAttribute="bottom" relation="lessThanOrEqual" secondItem="kMS-CX-KVx" secondAttribute="bottom" constant="215" id="xQV-bC-viB"/>
+                                    <constraint firstAttribute="bottom" secondItem="kMS-CX-KVx" secondAttribute="bottom" constant="66" id="Y8B-dg-P60"/>
+                                    <constraint firstAttribute="trailing" secondItem="kMS-CX-KVx" secondAttribute="trailing" constant="100" id="aLi-ba-3MJ"/>
+                                    <constraint firstItem="kMS-CX-KVx" firstAttribute="leading" secondItem="Wcf-ne-Agx" secondAttribute="leading" constant="99" id="mbc-eK-f7F"/>
+                                    <constraint firstItem="kMS-CX-KVx" firstAttribute="top" secondItem="Wcf-ne-Agx" secondAttribute="top" constant="66" id="tHS-74-ijH"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9Lu-eY-n3Y" userLabel="Controls">
-                                <rect key="frame" x="509" y="0.0" width="91" height="600"/>
+                                <rect key="frame" x="613" y="0.0" width="123" height="414"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Phr-Hb-GEM" userLabel="CameraMode">
-                                        <rect key="frame" x="8" y="325" width="74" height="37"/>
+                                    <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="749" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Phr-Hb-GEM" userLabel="CameraMode">
+                                        <rect key="frame" x="11" y="221" width="100" height="50"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" secondItem="Phr-Hb-GEM" secondAttribute="height" multiplier="2:1" id="lqo-NT-268"/>
+                                            <constraint firstAttribute="width" secondItem="Phr-Hb-GEM" secondAttribute="height" multiplier="2:1" id="m2Q-Cx-V8g"/>
                                         </constraints>
                                         <state key="normal" image="camera_mode_off">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -58,15 +54,15 @@
                                         </connections>
                                     </button>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="I1J-FG-PzV" userLabel="connectionInfo">
-                                        <rect key="frame" x="8" y="41" width="74" height="50"/>
+                                        <rect key="frame" x="11" y="35" width="100" height="67"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" secondItem="I1J-FG-PzV" secondAttribute="height" multiplier="37:25" id="8eO-sr-dnQ"/>
+                                            <constraint firstAttribute="width" secondItem="I1J-FG-PzV" secondAttribute="height" multiplier="100:67" id="I2Z-1f-aCs"/>
                                         </constraints>
                                     </imageView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Rzr-FH-Ton" userLabel="AimMode">
-                                        <rect key="frame" x="8" y="237" width="74" height="37"/>
+                                        <rect key="frame" x="11" y="139" width="100" height="50"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" secondItem="Rzr-FH-Ton" secondAttribute="height" multiplier="2:1" id="QMa-ms-HBJ"/>
+                                            <constraint firstAttribute="width" secondItem="Rzr-FH-Ton" secondAttribute="height" multiplier="2:1" id="DLb-3p-hJV"/>
                                         </constraints>
                                         <state key="normal" image="aim_mode_selected">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -78,38 +74,39 @@
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstItem="Rzr-FH-Ton" firstAttribute="leading" secondItem="9Lu-eY-n3Y" secondAttribute="leading" constant="8" id="21I-fV-ipu"/>
-                                    <constraint firstItem="I1J-FG-PzV" firstAttribute="top" secondItem="9Lu-eY-n3Y" secondAttribute="top" constant="41" id="3zS-Wp-FHY"/>
-                                    <constraint firstItem="Rzr-FH-Ton" firstAttribute="top" secondItem="I1J-FG-PzV" secondAttribute="bottom" constant="146" id="DGN-qJ-MKm"/>
-                                    <constraint firstItem="Phr-Hb-GEM" firstAttribute="top" secondItem="Rzr-FH-Ton" secondAttribute="bottom" constant="51" id="DR3-uX-umI"/>
-                                    <constraint firstAttribute="trailing" secondItem="Phr-Hb-GEM" secondAttribute="trailing" constant="9" id="IVv-o4-l5c"/>
-                                    <constraint firstAttribute="trailing" secondItem="I1J-FG-PzV" secondAttribute="trailing" constant="9" id="KCp-iD-oLu"/>
-                                    <constraint firstItem="I1J-FG-PzV" firstAttribute="leading" secondItem="9Lu-eY-n3Y" secondAttribute="leading" constant="8" id="Vae-YR-SLV"/>
-                                    <constraint firstItem="Phr-Hb-GEM" firstAttribute="leading" secondItem="9Lu-eY-n3Y" secondAttribute="leading" constant="8" id="X7c-pE-DDr"/>
-                                    <constraint firstAttribute="width" secondItem="9Lu-eY-n3Y" secondAttribute="height" multiplier="91:600" id="aJ6-Kz-hRz"/>
-                                    <constraint firstAttribute="trailing" secondItem="Rzr-FH-Ton" secondAttribute="trailing" constant="9" id="zJc-8g-BB8"/>
+                                    <constraint firstItem="Rzr-FH-Ton" firstAttribute="top" secondItem="I1J-FG-PzV" secondAttribute="bottom" constant="37" id="1LE-mh-ObW"/>
+                                    <constraint firstAttribute="trailing" secondItem="Phr-Hb-GEM" secondAttribute="trailing" constant="12" id="1em-E3-ydt"/>
+                                    <constraint firstAttribute="trailing" secondItem="Rzr-FH-Ton" secondAttribute="trailing" constant="12" id="7Md-Xt-xTn"/>
+                                    <constraint firstAttribute="trailing" secondItem="I1J-FG-PzV" secondAttribute="trailing" constant="12" id="CGg-jw-aZ3"/>
+                                    <constraint firstItem="Phr-Hb-GEM" firstAttribute="top" secondItem="Rzr-FH-Ton" secondAttribute="bottom" constant="32" id="HLC-yp-NXv"/>
+                                    <constraint firstItem="I1J-FG-PzV" firstAttribute="leading" secondItem="9Lu-eY-n3Y" secondAttribute="leading" constant="11" id="O66-je-G26"/>
+                                    <constraint firstAttribute="width" secondItem="9Lu-eY-n3Y" secondAttribute="height" multiplier="41:138" id="jtt-l8-k8R"/>
+                                    <constraint firstItem="Rzr-FH-Ton" firstAttribute="leading" secondItem="9Lu-eY-n3Y" secondAttribute="leading" constant="11" id="plZ-xi-fTl"/>
+                                    <constraint firstItem="Phr-Hb-GEM" firstAttribute="leading" secondItem="9Lu-eY-n3Y" secondAttribute="leading" constant="11" id="qPx-vM-Ifb"/>
+                                    <constraint firstItem="I1J-FG-PzV" firstAttribute="top" secondItem="9Lu-eY-n3Y" secondAttribute="top" constant="35" id="y6Y-wM-SHy"/>
                                 </constraints>
                             </view>
                         </subviews>
                         <color key="backgroundColor" red="0.12152777777777779" green="0.12152777777777779" blue="0.12152777777777779" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
-                            <constraint firstItem="Wcf-ne-Agx" firstAttribute="leading" secondItem="ALk-c9-gXC" secondAttribute="leading" id="5k6-fv-YiS"/>
-                            <constraint firstItem="9Lu-eY-n3Y" firstAttribute="top" secondItem="Wcf-ne-Agx" secondAttribute="top" id="Cq1-XX-73f"/>
-                            <constraint firstItem="9Lu-eY-n3Y" firstAttribute="leading" secondItem="ULR-Ea-F6y" secondAttribute="trailing" id="IJy-0c-oRt"/>
-                            <constraint firstAttribute="bottom" secondItem="Wcf-ne-Agx" secondAttribute="bottom" id="P4m-ct-xnv"/>
-                            <constraint firstItem="Wcf-ne-Agx" firstAttribute="top" secondItem="ALk-c9-gXC" secondAttribute="top" id="Pfq-vH-eXn"/>
-                            <constraint firstItem="9Lu-eY-n3Y" firstAttribute="bottom" secondItem="m6L-Bq-Nd9" secondAttribute="top" id="UBi-bN-EUG"/>
-                            <constraint firstItem="ULR-Ea-F6y" firstAttribute="leading" secondItem="ALk-c9-gXC" secondAttribute="leading" id="ZkT-2M-WGv"/>
-                            <constraint firstItem="9Lu-eY-n3Y" firstAttribute="leading" secondItem="Wcf-ne-Agx" secondAttribute="trailing" id="aYb-Yi-D01"/>
-                            <constraint firstAttribute="trailing" secondItem="9Lu-eY-n3Y" secondAttribute="trailing" id="ezD-lx-wH9"/>
-                            <constraint firstItem="ULR-Ea-F6y" firstAttribute="top" secondItem="ALk-c9-gXC" secondAttribute="top" id="p4T-mc-5b1"/>
-                            <constraint firstAttribute="bottom" secondItem="ULR-Ea-F6y" secondAttribute="bottom" id="xWQ-r1-1gu"/>
+                            <constraint firstItem="ULR-Ea-F6y" firstAttribute="top" secondItem="ALk-c9-gXC" secondAttribute="top" id="NY0-Mv-gYU"/>
+                            <constraint firstItem="Wcf-ne-Agx" firstAttribute="top" secondItem="ALk-c9-gXC" secondAttribute="top" id="Njw-GQ-VfU"/>
+                            <constraint firstItem="9Lu-eY-n3Y" firstAttribute="leading" secondItem="ULR-Ea-F6y" secondAttribute="trailing" id="Pqz-HK-jhE"/>
+                            <constraint firstAttribute="bottom" secondItem="Wcf-ne-Agx" secondAttribute="bottom" id="QkG-zC-ywY"/>
+                            <constraint firstItem="ULR-Ea-F6y" firstAttribute="leading" secondItem="ALk-c9-gXC" secondAttribute="leading" id="Xok-WZ-Feg"/>
+                            <constraint firstItem="9Lu-eY-n3Y" firstAttribute="leading" secondItem="Wcf-ne-Agx" secondAttribute="trailing" id="dOs-3i-zan"/>
+                            <constraint firstItem="9Lu-eY-n3Y" firstAttribute="top" secondItem="ALk-c9-gXC" secondAttribute="top" id="dTc-sj-jJ6"/>
+                            <constraint firstAttribute="trailing" secondItem="9Lu-eY-n3Y" secondAttribute="trailing" id="f8k-yl-YHk"/>
+                            <constraint firstItem="Wcf-ne-Agx" firstAttribute="leading" secondItem="ALk-c9-gXC" secondAttribute="leading" id="fDo-Jw-VQy"/>
+                            <constraint firstAttribute="bottom" secondItem="9Lu-eY-n3Y" secondAttribute="bottom" id="ho4-1T-I68"/>
+                            <constraint firstAttribute="bottom" secondItem="ULR-Ea-F6y" secondAttribute="bottom" id="skt-yK-ado"/>
                         </constraints>
                     </view>
                     <nil key="simulatedStatusBarMetrics"/>
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
+                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina55"/>
                     <connections>
                         <outlet property="aimMode" destination="Rzr-FH-Ton" id="tYa-LI-w0F"/>
                         <outlet property="cameraMode" destination="Phr-Hb-GEM" id="bdP-Wg-j3p"/>
@@ -127,7 +124,7 @@
     </scenes>
     <resources>
         <image name="aim_mode_selected" width="500" height="250"/>
-        <image name="camera_mode_off" width="500" height="250"/>
-        <image name="vulcan_logo" width="1174" height="796"/>
+        <image name="camera_mode_off" width="166" height="83"/>
+        <image name="vulcan_logo" width="391" height="265"/>
     </resources>
 </document>

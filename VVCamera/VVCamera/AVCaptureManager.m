@@ -72,6 +72,7 @@
         
         self.streamOutput = [[AVCaptureStillImageOutput alloc] init];
         [self.streamOutput setHighResolutionStillImageOutputEnabled:NO];
+        
         self.videoDataQueue = dispatch_queue_create("streamQueue", DISPATCH_QUEUE_SERIAL);
         
         if ([self.captureSession canAddOutput:self.streamOutput])
