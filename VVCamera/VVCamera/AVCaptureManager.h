@@ -1,10 +1,9 @@
 //
 //  AVCaptureManager.h
-//  SlowMotionVideoRecorder
-//  https://github.com/shu223/SlowMotionVideoRecorder
+//  VVCamera
 //
-//  Created by shuichi on 12/17/13.
-//  Copyright (c) 2013 Shuichi Tsutsumi. All rights reserved.
+//  Created by Juuso Kaitila on 23.8.2015.
+//  Copyright (c) 2015 Bitwise. All rights reserved.
 //
 
 #ifndef VVCamera_AVCaptureManager_h
@@ -27,7 +26,6 @@ typedef enum {
 
 - (id)initWithPreviewView:(UIView *)previewView;
 - (void)setCameraSettings;
-- (void)setPreviewFrame:(CGRect)frame;
 - (void)resetFormat;
 - (void)captureImage;
 - (NSURL *)getVideoFile;

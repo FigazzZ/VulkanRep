@@ -29,10 +29,10 @@
 
 @implementation ViewController{
     VVNetworkSocketHandler *socketHandler;
-    NSTimeInterval startTime;
+    NSNumber *delay;
     NSString *currentVersionNumber;
     CameraState mode;
-    
+    NSURL *file;
 }
 
 - (void)viewDidLoad
@@ -130,7 +130,7 @@
                    name:@"ProtocolNotification"
                  object:nil];
     [center addObserver:self
-               selector:@selector(sendJsonAndVideo)
+               selector:@selector(sendJsonAndVideo:)
                    name:@"StopNotification"
                  object:nil];
     [center addObserver:self
@@ -252,12 +252,11 @@
 
 - (void)deleteVideo{
     NSLog(@"Deleting video");
-    NSURL *movieURL = [_captureManager getVideoFile];
     NSFileManager *manager = [NSFileManager defaultManager];
     
     NSError *error = nil;
     
-    NSString *path = [movieURL path];
+    NSString *path = [file path];
     [manager removeItemAtPath:path error:&error];
 }
 
@@ -268,9 +267,14 @@
 
 - (void)startRecording{
     if(!_captureManager.isRecording){
-        startTime = [[NSDate date] timeIntervalSince1970];
+        NSLog(@"Started recording");
+        NSTimeInterval startTime = [[NSDate date] timeIntervalSince1970];
         [_captureManager startRecording];
+        delay = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]-startTime];
         [socketHandler sendCommand:[[Command alloc] init:OK]];
+    }
+    else{
+        NSLog(@"was already recording");
     }
 }
 
@@ -280,9 +284,8 @@
     }
 }
 
-- (void)sendJsonAndVideo{
-    NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
-    NSNumber *delay = [NSNumber numberWithDouble:now-startTime];
+- (void)sendJsonAndVideo:(NSNotification *) notification{
+    NSDictionary *dict = [notification userInfo];
     NSMutableDictionary *json = [[NSMutableDictionary alloc] init];
     CameraSettings *sharedVars = [CameraSettings sharedVariables];
     NSDictionary *pov = [sharedVars getPositionJson];
@@ -290,16 +293,17 @@
     [json setObject:fps forKey:@"fps"];
     [json setObject:pov forKey:@"pointOfView"];
     [json setObject:delay forKey:@"delay"];
-    NSURL *movieURL = [_captureManager getVideoFile];
-    AVURLAsset *sourceAsset = [AVURLAsset URLAssetWithURL:movieURL options:nil];
+    file = [dict objectForKey:@"file"];
+    AVURLAsset *sourceAsset = [AVURLAsset URLAssetWithURL:file options:nil];
     CMTime duration = sourceAsset.duration;
     NSNumber *dur = [NSNumber numberWithFloat:CMTimeGetSeconds(duration)];
     [json setObject:dur forKey:@"duration"];
     NSString *jsonStr = [VVUtility convertNSDictToJSONString:json];
     [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:VIDEO_COMING :jsonStr]];
     dispatch_async(dispatch_get_main_queue(), ^{
-        NSString *path = [movieURL path];
+        NSString *path = [file path];
         NSData *bytes = [[NSData alloc] initWithContentsOfFile:path];
+        NSLog(@"Sending video");
         [socketHandler sendCommand:[[CommandWithValue alloc] init:VIDEODATA :bytes]];
     });
 }
