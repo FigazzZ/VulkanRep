@@ -42,7 +42,6 @@
     int64_t streamFrame;
     int32_t fps;
     int32_t streamfps;
-    BOOL isStreaming;
     BOOL finishRecording;
 }
 
@@ -51,7 +50,7 @@
     self = [super init];
     
     if (self) {
-        isStreaming = NO;
+        _isStreaming = NO;
         finishRecording = NO;
         _isRecording = NO;
         size = CGSizeMake(320, 180);
@@ -112,9 +111,17 @@
     self.previewLayer.frame = frame;
     self.previewLayer.contentsGravity = kCAGravityResizeAspect;
     self.previewLayer.videoGravity = AVLayerVideoGravityResizeAspect;
-    [previewView.layer insertSublayer:self.previewLayer atIndex:0];
+    [self addPreview:previewView];
     AVCaptureConnection *connection = [self.previewLayer connection];
     [self configureConnection:connection];
+}
+
+- (void)addPreview:(UIView *)previewView{
+    [previewView.layer insertSublayer:self.previewLayer atIndex:0];
+}
+
+- (void)removePreview{
+    [self.previewLayer removeFromSuperlayer];
 }
 
 - (AVCaptureConnection *)createVideoConnectionForOutput:(AVCaptureOutput *)output andInput:(AVCaptureDeviceInput *)videoIn {
@@ -159,6 +166,7 @@
     self.videoDataOutput = [AVCaptureVideoDataOutput new];
     self.videoDataOutput.videoSettings = @{(NSString *)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA)};
     [self.videoDataOutput setSampleBufferDelegate:self queue:self.videoDataQueue];
+    [self.videoDataOutput setAlwaysDiscardsLateVideoFrames:YES];
     AVCaptureConnection *connection = [self createVideoConnectionForOutput:self.videoDataOutput andInput:input];
     if([self.captureSession canAddOutput:self.videoDataOutput]){
         [self.captureSession addOutputWithNoConnections:self.videoDataOutput];
@@ -202,7 +210,7 @@
 }
 
 - (void)startStreaming{
-    isStreaming = YES;
+    _isStreaming = YES;
     streamFrame = 0;
 //    timer = [NSTimer scheduledTimerWithTimeInterval:0.07
 //                                             target:self
@@ -212,7 +220,7 @@
 }
 
 - (void)stopStreaming{
-    isStreaming = NO;
+    _isStreaming = NO;
 //    [timer invalidate];
 }
 
@@ -445,7 +453,7 @@
         [self finishRecording];
     }
     
-    if(isStreaming && streamFrame == streamfps){
+    if(_isStreaming && streamFrame == streamfps){
         CVImageBufferRef buf = (CVImageBufferRef)CFRetain(imageBuffer);
         dispatch_async(self.streamQueue, ^(void){
             UIImage *image = [self imageFromSampleBuffer:buf];

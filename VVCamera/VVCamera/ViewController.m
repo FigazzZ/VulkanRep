@@ -33,6 +33,7 @@
     NSString *currentVersionNumber;
     CameraState mode;
     NSURL *file;
+    BOOL logoIsWhite;
 }
 
 - (void)viewDidLoad
@@ -145,6 +146,25 @@
                selector:@selector(cameToForeground)
                    name:@"Foreground"
                  object:nil];
+    [center addObserver:self
+               selector:@selector(receiveStreamNotification:)
+                   name:@"StreamNotification"
+                 object:nil];
+}
+
+- (void)receiveStreamNotification:(NSNotification *) notification{
+    NSDictionary *cmdDict = [notification userInfo];
+    NSString *msg = [cmdDict objectForKey:@"message"];
+    if ([msg isEqualToString:@"start"]){
+        if(mode == CAMERA_MODE){
+            [self stopLogoAnimation];
+        }
+    }
+    else if([msg isEqualToString:@"stop"]){
+        if(mode == CAMERA_MODE){
+            [self startLogoAnimation];
+        }
+    }
 }
 
 - (void)connectedNotification:(NSNotification *) notification{
@@ -266,7 +286,7 @@
 }
 
 - (void)startRecording{
-    if(!_captureManager.isRecording){
+    if(mode == CAMERA_MODE && !_captureManager.isRecording){
         NSLog(@"Started recording");
         NSTimeInterval startTime = [[NSDate date] timeIntervalSince1970];
         [_captureManager startRecording];
@@ -275,12 +295,16 @@
     }
     else{
         NSLog(@"was already recording");
+        [socketHandler sendCommand:[[Command alloc] init:NOT_OK]];
     }
 }
 
 - (void)stopRecording{
     if(_captureManager.isRecording){
         [_captureManager stopRecording];
+    }
+    else{
+        [socketHandler sendCommand:[[Command alloc] init:NOT_OK]];
     }
 }
 
@@ -336,7 +360,6 @@
 #pragma mark - Gesture Handler
 
 - (void)handleDoubleTap:(UITapGestureRecognizer *)sender {
-
     [self.captureManager setCameraSettings];
 }
 
@@ -344,11 +367,12 @@
 - (IBAction)switchToAimMode:(id)sender {
     if(mode != AIM_MODE){
         mode = AIM_MODE;
+        [_captureManager addPreview:self.view];
         [_logoView setHidden:YES];
         [_gridView setHidden:NO];
         [_aimMode setImage:[UIImage imageNamed:@"aim_mode_selected"] forState:UIControlStateNormal];
         [_cameraMode setImage:[UIImage imageNamed:@"camera_mode_off"] forState:UIControlStateNormal];
-        [_logo.layer removeAllAnimations];
+        [self stopLogoAnimation];
     }
 }
 
@@ -356,13 +380,37 @@
     if(mode != CAMERA_MODE && [socketHandler isConnectedToTCP]){
         mode = CAMERA_MODE;
         [_logoView setHidden:NO];
-        _logo.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1.0];
-        [UIView animateWithDuration:4.0  delay:0 options:(UIViewAnimationOptionAutoreverse | UIViewAnimationOptionRepeat) animations:^{
-            _logo.backgroundColor = [UIColor colorWithRed:1.0 green:0.0 blue:0.0 alpha:1.0];
-        } completion:nil];
+        [_captureManager removePreview];
+        if(![_captureManager isStreaming]){
+            _logo.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1.0];
+            logoIsWhite = YES;
+            [self startLogoAnimation];
+        }
         [_gridView setHidden:YES];
         [_aimMode setImage:[UIImage imageNamed:@"aim_mode_off"] forState:UIControlStateNormal];
         [_cameraMode setImage:[UIImage imageNamed:@"camera_mode_selected"] forState:UIControlStateNormal];
     }
 }
+
+- (void)startLogoAnimation{
+    if(logoIsWhite){
+        [UIView animateWithDuration:4.0  delay:0 options:(UIViewAnimationOptionAutoreverse | UIViewAnimationOptionRepeat) animations:^{
+            _logo.backgroundColor = [UIColor colorWithRed:1.0 green:0.0 blue:0.0 alpha:1.0];
+        } completion:^(BOOL res){
+            logoIsWhite = NO;
+        }];
+    }
+    else{
+        [UIView animateWithDuration:4.0  delay:0 options:(UIViewAnimationOptionAutoreverse | UIViewAnimationOptionRepeat) animations:^{
+            _logo.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1.0];
+        } completion:^(BOOL res){
+            logoIsWhite = YES;
+        }];
+    }
+}
+
+- (void)stopLogoAnimation{
+    [_logo.layer removeAllAnimations];
+}
+
 @end

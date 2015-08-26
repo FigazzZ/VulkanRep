@@ -22,6 +22,7 @@ typedef enum {
 @interface AVCaptureManager : NSObject
 
 @property (nonatomic, readonly) BOOL isRecording;
+@property (nonatomic, readonly) BOOL isStreaming;
 @property (nonatomic, weak) StreamServer *streamServer;
 
 - (id)initWithPreviewView:(UIView *)previewView;
@@ -29,6 +30,8 @@ typedef enum {
 - (void)resetFormat;
 - (void)captureImage;
 - (NSURL *)getVideoFile;
+- (void)addPreview:(UIView *)previewView;
+- (void)removePreview;
 - (BOOL)switchFormatWithDesiredFPS:(CGFloat)desiredFPS;
 - (void)startRecording;
 - (void)stopRecording;
