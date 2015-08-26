@@ -33,8 +33,11 @@ typedef enum {
 - (void)addPreview:(UIView *)previewView;
 - (void)removePreview;
 - (BOOL)switchFormatWithDesiredFPS:(CGFloat)desiredFPS;
+- (void)setupAssetWriter;
+- (void)closeAssetWriter;
 - (void)startRecording;
 - (void)stopRecording;
++ (void)deleteVideo:(NSURL *)file;
 
 @end
 

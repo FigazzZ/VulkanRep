@@ -155,8 +155,8 @@
 				90A5C8321B7CAB1B001AF28D /* CameraMessageHandler.h */,
 				904E8A3F1B7B77120054CD3E /* CameraMessageHandler.m */,
 				90A5C8331B7CAB8C001AF28D /* CameraProtocol.h */,
-				904E8A411B7B85C60054CD3E /* CameraProtocol.m */,
 				90A5C8371B7CDC93001AF28D /* CameraSettings.h */,
+				904E8A411B7B85C60054CD3E /* CameraProtocol.m */,
 				90A5C8381B7CDC93001AF28D /* CameraSettings.m */,
 				E2F952241B8307DD003A0854 /* StreamServer.h */,
 				E2F952251B8307DD003A0854 /* StreamServer.m */,
@@ -216,11 +216,11 @@
 				904E8A491B7B8D360054CD3E /* MessageHandler.m */,
 				904E8A4A1B7B8D360054CD3E /* Packet.h */,
 				904E8A4B1B7B8D360054CD3E /* Packet.m */,
-				E28238011B7C7B7C00D47A41 /* ProtocolUtility.m */,
 				904E8A4C1B7B8D360054CD3E /* ProtocolUtility.h */,
 				904E8A4D1B7B8D360054CD3E /* VVNetworkSocketHandler.h */,
 				904E8A4E1B7B8D360054CD3E /* VVNetworkSocketHandler.m */,
 				904E8A4F1B7B8D360054CD3E /* VVProtocol.h */,
+				E28238011B7C7B7C00D47A41 /* ProtocolUtility.m */,
 				904E8A501B7B8D360054CD3E /* VVProtocol.m */,
 				90A5C8341B7CDBC2001AF28D /* VVUtility.h */,
 				90A5C8351B7CDBC2001AF28D /* VVUtility.m */,
@@ -504,8 +504,8 @@
 			baseConfigurationReference = 15136BEB621B2E5DF8C989EF /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				INFOPLIST_FILE = VVCamera/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

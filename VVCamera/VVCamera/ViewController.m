@@ -183,11 +183,13 @@
     // TODO: close socket, stream stuff, camera?
     [socketHandler sendCommand:[[Command alloc] init:QUIT]];
     [self.streamServer stopAcceptingConnections];
+    [_captureManager closeAssetWriter];
 }
 
 - (void)cameToForeground{
     // TODO: restore what was closed when went to background
     [self.streamServer startAcceptingConnections];
+    [_captureManager setupAssetWriter];
 }
 
 - (void)hideStatusBar
@@ -258,7 +260,7 @@
             // TODO: pong stuff
             break;
         case DELETE:
-            [self deleteVideo];
+            [AVCaptureManager deleteVideo:file];
             break;
         case SLEEP:
             // sleep if possible
@@ -268,16 +270,6 @@
         default:
             break;
     }
-}
-
-- (void)deleteVideo{
-    NSLog(@"Deleting video");
-    NSFileManager *manager = [NSFileManager defaultManager];
-    
-    NSError *error = nil;
-    
-    NSString *path = [file path];
-    [manager removeItemAtPath:path error:&error];
 }
 
 - (void)didReceiveMemoryWarning

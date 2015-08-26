@@ -194,6 +194,12 @@
     [writer startWriting];
 }
 
+- (void)closeAssetWriter{
+    [writer finishWritingWithCompletionHandler:^{
+        [AVCaptureManager deleteVideo:fileURL];
+    }];
+}
+
 // ====================================================
 #pragma mark Streaming
 
@@ -438,6 +444,17 @@
 
 - (NSURL *)getVideoFile{
     return fileURL;
+}
+
++ (void)deleteVideo:(NSURL *)file{
+    NSLog(@"Deleting video");
+    NSFileManager *manager = [NSFileManager defaultManager];
+    
+    NSError *error = nil;
+    
+    NSString *path = [file path];
+    [manager removeItemAtPath:path error:&error];
+    // TODO: check error
 }
 
 #pragma mark delegate
