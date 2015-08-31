@@ -1,11 +1,13 @@
 //
-//  CameraVariables.h
+//  CameraSettings.h
 //  VVCamera
 //
 //  Created by Juuso Kaitila on 13.8.2015.
 //  Copyright (c) 2015 Bitwise. All rights reserved.
 //
 
+#ifndef VVCamera_CameraSettings_h
+#define VVCamera_CameraSettings_h
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 
@@ -38,5 +40,8 @@
 @property (nonatomic) BOOL smoothFocusEnabled;
 
 - (NSDictionary *)getPositionJson;
+- (void)saveSettings;
 
 @end
+
+#endif

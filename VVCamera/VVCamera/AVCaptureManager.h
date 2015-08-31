@@ -1,36 +1,44 @@
 //
 //  AVCaptureManager.h
-//  SlowMotionVideoRecorder
-//  https://github.com/shu223/SlowMotionVideoRecorder
+//  VVCamera
 //
-//  Created by shuichi on 12/17/13.
-//  Copyright (c) 2013 Shuichi Tsutsumi. All rights reserved.
+//  Created by Juuso Kaitila on 23.8.2015.
+//  Copyright (c) 2015 Bitwise. All rights reserved.
 //
 
-#import "StreamDelegate.h"
+#ifndef VVCamera_AVCaptureManager_h
+#define VVCamera_AVCaptureManager_h
+#import "StreamServer.h"
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 #import <UIKit/UIKit.h>
 
+typedef enum {
+    AIM_MODE,
+    CAMERA_MODE
+} CameraState;
 
-@protocol AVCaptureManagerDelegate <NSObject>
-- (void)didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
-                                      error:(NSError *)error;
-@end
 
 @interface AVCaptureManager : NSObject
 
-@property (nonatomic, assign) id<AVCaptureManagerDelegate> delegate;
-@property (nonatomic) StreamDelegate *streamDelegate;
 @property (nonatomic, readonly) BOOL isRecording;
+@property (nonatomic, readonly) BOOL isStreaming;
+@property (nonatomic, weak) StreamServer *streamServer;
 
 - (id)initWithPreviewView:(UIView *)previewView;
 - (void)setCameraSettings;
-- (void)setPreviewFrame:(CGRect)frame;
 - (void)resetFormat;
+- (void)captureImage;
 - (NSURL *)getVideoFile;
+- (void)addPreview:(UIView *)previewView;
+- (void)removePreview;
 - (BOOL)switchFormatWithDesiredFPS:(CGFloat)desiredFPS;
+- (void)setupAssetWriter;
+- (void)closeAssetWriter;
 - (void)startRecording;
 - (void)stopRecording;
++ (void)deleteVideo:(NSURL *)file;
 
 @end
+
+#endif

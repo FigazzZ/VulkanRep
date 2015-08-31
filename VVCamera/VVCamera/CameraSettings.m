@@ -1,5 +1,5 @@
 //
-//  CameraVariables.m
+//  CameraSettings.m
 //  VVCamera
 //
 //  Created by Juuso Kaitila on 13.8.2015.
@@ -42,6 +42,7 @@
         pitch = (int)[defaults integerForKey:@"pitch"];
         dist = (int)[defaults integerForKey:@"dist"];
         roll = 0;
+        NSLog(@"fps: %f", framerate);
         exposureMode = AVCaptureExposureModeAutoExpose;
         focusMode = AVCaptureFocusModeAutoFocus;
         smoothFocusEnabled = YES;
@@ -73,6 +74,14 @@
     NSArray *keys = [[NSArray alloc] initWithObjects:@"dist", @"yaw", @"pitch", @"roll", nil];
     NSDictionary *pov = [[NSDictionary alloc] initWithObjects:positions forKeys:keys];
     return pov;
+}
+
+- (void)saveSettings{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setValue:[NSNumber numberWithFloat:framerate] forKey:@"framerate"];
+    [defaults setValue:[NSNumber numberWithInt: dist] forKey:@"dist"];
+    [defaults setValue:[NSNumber numberWithInt: yaw] forKey:@"yaw"];
+    [defaults setValue:[NSNumber numberWithInt: pitch] forKey:@"pitch"];
 }
 
 @end

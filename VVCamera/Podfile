@@ -2,7 +2,7 @@ platform :ios, "7.0"
 
 source 'https://github.com/CocoaPods/Specs.git'
 
-xcodeproj 'VVCamera.xcodeproj'
+xcodeproj 'Vulcan Vision Camera.xcodeproj'
 
 pod 'CocoaAsyncSocket', '~> 7.3'
 
