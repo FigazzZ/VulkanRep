@@ -254,10 +254,10 @@
             // TODO: handle wrong version
             break;
         case CAMERA_SETTINGS:
-            // Camera settings stuff
+            [self.captureManager setCameraSettings];
             break;
         case PONG:
-            // TODO: pong stuff
+            [socketHandler setLastResponse:[[NSDate date] timeIntervalSince1970]];
             break;
         case DELETE:
             [AVCaptureManager deleteVideo:file];
