@@ -15,7 +15,7 @@
 #import "CommandWithValue.h"
 #import "CameraSettings.h"
 #import "StreamServer.h"
-#import "VVUtility.h"
+#import "VVJSONUtility.h"
 #import <QuartzCore/QuartzCore.h>
 
 
@@ -314,7 +314,7 @@
     CMTime duration = sourceAsset.duration;
     NSNumber *dur = [NSNumber numberWithFloat:CMTimeGetSeconds(duration)];
     [json setObject:dur forKey:@"duration"];
-    NSString *jsonStr = [VVUtility convertNSDictToJSONString:json];
+    NSString *jsonStr = [VVJSONUtility convertNSDictToJSONString:json];
     [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:VIDEO_COMING :jsonStr]];
     dispatch_async(dispatch_get_main_queue(), ^{
         NSString *path = [file path];
@@ -328,7 +328,7 @@
     if ([command isKindOfClass:[CommandWithValue class]]) {
         CameraSettings *sharedVars = [CameraSettings sharedVariables];
         NSString *JSONString = [[NSString alloc] initWithData:[command getData] encoding:NSUTF8StringEncoding];
-        NSDictionary *json = [VVUtility getNSDictFromJSONString:JSONString];
+        NSDictionary *json = [VVJSONUtility getNSDictFromJSONString:JSONString];
         [sharedVars setDist:[[json valueForKey:@"dist"] intValue]];
         [sharedVars setYaw:[[json valueForKey:@"yaw"] intValue]];
         [sharedVars setPitch:[[json valueForKey:@"pitch"] intValue]];
@@ -343,7 +343,7 @@
     NSArray *positions = @[dst, yw, ptch];
     NSArray *keys = @[@"dist", @"yaw", @"pitch"];
     NSDictionary *pov = [[NSDictionary alloc] initWithObjects:positions forKeys:keys];
-    NSString *jsonStr = [VVUtility convertNSDictToJSONString:pov];
+    NSString *jsonStr = [VVJSONUtility convertNSDictToJSONString:pov];
     [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:POSITION :jsonStr]];
 }
 
