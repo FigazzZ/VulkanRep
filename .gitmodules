@@ -1,3 +1,3 @@
-[submodule "VVCamera/VVCamera/Common"]
-	path = VVCamera/VVCamera/Common
+[submodule "ubiQVue Cam/ubiQVue Cam/Common"]
+	path = ubiQVue Cam/ubiQVue Cam/Common
 	url = git@git.intra.bitwise.fi:vv011/ios-common.git

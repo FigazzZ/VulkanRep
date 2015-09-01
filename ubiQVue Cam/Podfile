@@ -2,15 +2,14 @@ platform :ios, "7.0"
 
 source 'https://github.com/CocoaPods/Specs.git'
 
-xcodeproj 'Vulcan Vision Camera.xcodeproj'
+xcodeproj 'ubiQVue Cam.xcodeproj'
 
 pod 'CocoaAsyncSocket', '~> 7.3'
 
-#target "VVCamera" do
+#target "ubiQVue Cam" do
 #
 #end
 #
-#target "VVCameraTests" do
+#target "ubiQVue CamTests" do
 #
 #end
-

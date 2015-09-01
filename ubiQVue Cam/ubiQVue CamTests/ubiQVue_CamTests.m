@@ -1,19 +1,19 @@
 //
-//  VVCameraTests.m
-//  VVCameraTests
+//  ubiQVue_CamTests.m
+//  ubiQVue CamTests
 //
-//  Created by Käyttäjä on 11.8.2015.
-//  Copyright (c) 2015 Bitwise. All rights reserved.
+//  Created by Juuso Kaitila on 01/09/15.
+//  Copyright (c) 2015 Bitwise Oy. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
 
-@interface VVCameraTests : XCTestCase
+@interface ubiQVue_CamTests : XCTestCase
 
 @end
 
-@implementation VVCameraTests
+@implementation ubiQVue_CamTests
 
 - (void)setUp {
     [super setUp];
