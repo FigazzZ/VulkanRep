@@ -26,6 +26,9 @@
     NSDictionary *appDefaults = [NSDictionary
                                  dictionaryWithObjects:objects forKeys:keys];
     [[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];
+    if(getenv("NSZombieEnabled") || getenv("NSAutoreleaseFreedObjectCheckEnabled")){
+        NSLog(@"NSZombieEnabled/NSAutoreleaseFreedObjectCheckEnabled enabled!");
+    }
     
     return YES;
 }

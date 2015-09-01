@@ -1,5 +1,5 @@
-VVCamera/._*
-VVCamera/**/._*
+._*
+*/**/._*
 
 #####
 # OS X temporary files that should never be committed
@@ -110,5 +110,5 @@ xcuserdata
 # and should therefore not be checked into the VCS.
  
 *.xccheckout
-VVCamera/Pods/
+Pods/
 */Podfile.lock
