@@ -230,8 +230,10 @@
 				F2DD8C832C38BBDCF43E6B37 /* Check Pods Manifest.lock */,
 				32DF0F2F1B95C4E000467255 /* Sources */,
 				32DF0F301B95C4E000467255 /* Frameworks */,
+				32855AF51B95D569003CC551 /* ShellScript */,
 				32DF0F311B95C4E000467255 /* Resources */,
 				F2C353BC0A7737013211D891 /* Copy Pods Resources */,
+				32855AF41B95D4DA003CC551 /* Set Build Number */,
 			);
 			buildRules = (
 			);
@@ -271,6 +273,7 @@
 				TargetAttributes = {
 					32DF0F321B95C4E000467255 = {
 						CreatedOnToolsVersion = 6.4;
+						DevelopmentTeam = S4BRM66XJA;
 					};
 					32DF0F4B1B95C4E000467255 = {
 						CreatedOnToolsVersion = 6.4;
@@ -317,6 +320,33 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		32855AF41B95D4DA003CC551 /* Set Build Number */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Set Build Number";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "#\n# Set the build number to the current git commit count.\n# If we're using the Dev scheme, then we'll suffix the build\n# number with the current branch name, to make collisions\n# far less likely across feature branches.\n# Based on: http://w3facility.info/question/how-do-i-force-xcode-to-rebuild-the-info-plist-file-in-my-project-every-time-i-build-the-project/\n# From: http://blog.jaredsinclair.com/post/97193356620/the-best-of-all-possible-xcode-automated-build?utm_campaign=iOS_Dev_Weekly_Issue_163&utm_medium=email&utm_source=iOS%2BDev%2BWeekly\n\ngit=`sh /etc/profile; which git`\nappBuild=`\"$git\" rev-list head |wc -l`\n# Add an offset to make new builds with higher build number than 1.0.0\nappBuild=$((appBuild + 25))\necho \"Using $CONFIGURATION configuration\"\nif [ $CONFIGURATION = \"Debug\" ]; then\nbranchName=`\"$git\" rev-parse --abbrev-ref HEAD`\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $appBuild-$branchName\" \"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\nelse\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $appBuild\" \"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\nfi\necho \"Updated ${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"";
+		};
+		32855AF51B95D569003CC551 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "buildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"$INFOPLIST_FILE\")\nbuildNumber=$(($buildNumber + 1))\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"$INFOPLIST_FILE\"\n";
+		};
 		F2C353BC0A7737013211D891 /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -481,6 +511,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "LaunchImage-2";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = "ubiQVue Cam/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -494,6 +525,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "LaunchImage-2";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = "ubiQVue Cam/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
