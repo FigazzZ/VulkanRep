@@ -216,8 +216,9 @@
 }
 
 - (void)startStreaming{
-    _isStreaming = YES;
     streamFrame = 0;
+    NSLog(@"Streaming started");
+    _isStreaming = YES;
 //    timer = [NSTimer scheduledTimerWithTimeInterval:0.07
 //                                             target:self
 //                                           selector:@selector(captureImage)
@@ -227,6 +228,7 @@
 
 - (void)stopStreaming{
     _isStreaming = NO;
+    NSLog(@"Streaming stopped");
 //    [timer invalidate];
 }
 
@@ -263,9 +265,12 @@
                              @"\r\n\r\n"];
         NSString *end = [[NSString alloc] initWithFormat:@"%@%@%@",
                          @"\r\n--", BOUNDARY, @"\r\n"];
-        [socket writeData:[content dataUsingEncoding:NSUTF8StringEncoding] withTimeout:-1 tag:0];
-        [socket writeData:imgAsJPEG withTimeout:-1 tag:1];
-        [socket writeData:[end dataUsingEncoding:NSUTF8StringEncoding] withTimeout:-1 tag:2];
+        [socket writeData:[content dataUsingEncoding:NSUTF8StringEncoding] withTimeout:-1 tag:1];
+        [socket writeData:imgAsJPEG withTimeout:-1 tag:2];
+        [socket writeData:[end dataUsingEncoding:NSUTF8StringEncoding] withTimeout:-3 tag:3];
+    }
+    else{
+        NSLog(@"socket was nil");
     }
 }
 

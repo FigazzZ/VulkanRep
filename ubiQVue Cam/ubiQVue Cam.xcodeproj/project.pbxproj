@@ -126,13 +126,14 @@
 		32855AD21B95C6F0003CC551 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				32855AD91B95C6F0003CC551 /* Command.h */,
 				32855AD31B95C6F0003CC551 /* Command.m */,
 				32855AD41B95C6F0003CC551 /* CommandType.h */,
 				32855AD51B95C6F0003CC551 /* CommandWithValue.h */,
+				32855AE21B95C6F0003CC551 /* CommandWithValue.m */,
 				32855AD61B95C6F0003CC551 /* MessageHandler.h */,
+				32855AE31B95C6F0003CC551 /* MessageHandler.m */,
 				32855AD71B95C6F0003CC551 /* Packet.h */,
-				32855AD81B95C6F0003CC551 /* VVNetworkSocketHandler.h */,
-				32855AD91B95C6F0003CC551 /* Command.h */,
 				32855ADA1B95C6F0003CC551 /* Packet.m */,
 				32855ADB1B95C6F0003CC551 /* VVProtocol.m */,
 				32855ADC1B95C6F0003CC551 /* VVProtocol.h */,
@@ -140,9 +141,8 @@
 				32855ADE1B95C6F0003CC551 /* ProtocolUtility.m */,
 				32855ADF1B95C6F0003CC551 /* VVVersionCompabilityChecker.h */,
 				32855AE01B95C6F0003CC551 /* VVVersionCompabilityChecker.m */,
+				32855AD81B95C6F0003CC551 /* VVNetworkSocketHandler.h */,
 				32855AE11B95C6F0003CC551 /* VVNetworkSocketHandler.m */,
-				32855AE21B95C6F0003CC551 /* CommandWithValue.m */,
-				32855AE31B95C6F0003CC551 /* MessageHandler.m */,
 				32855AE41B95C6F0003CC551 /* VVJSONUtility.h */,
 				32855AE51B95C6F0003CC551 /* VVJSONUtility.m */,
 			);

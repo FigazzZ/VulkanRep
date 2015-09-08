@@ -16,6 +16,7 @@
 #import "CameraSettings.h"
 #import "StreamServer.h"
 #import "VVJSONUtility.h"
+#import "VVVersionCompabilityChecker.h"
 #import <QuartzCore/QuartzCore.h>
 
 
@@ -34,6 +35,7 @@
     CameraState mode;
     NSURL *file;
     BOOL logoIsWhite;
+    BOOL versionAlertIsShowing;
 }
 
 - (void)viewDidLoad
@@ -43,6 +45,7 @@
     [UIApplication sharedApplication].idleTimerDisabled = YES;
     currentVersionNumber = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
     
+    versionAlertIsShowing = NO;
     // TODO: Close camera and stuff when view disappears
     self.captureManager = [[AVCaptureManager alloc] initWithPreviewView:self.view];
     
@@ -87,31 +90,31 @@
     float yDiv = height / 4.0F;
     float xDiv = width / 4.0F;
     UIBezierPath *path = [UIBezierPath bezierPath];
-    [path moveToPoint:CGPointMake(0, yDiv)];
-    [path addLineToPoint:CGPointMake(width, yDiv)];
-    [path moveToPoint:CGPointMake(0, yDiv*2)];
-    [path addLineToPoint:CGPointMake(width, yDiv*2)];
-    [path moveToPoint:CGPointMake(0, yDiv*3)];
-    [path addLineToPoint:CGPointMake(width, yDiv*3)];
-    [path moveToPoint:CGPointMake(xDiv, 0)];
-    [path addLineToPoint:CGPointMake(xDiv, height)];
-    [path moveToPoint:CGPointMake(xDiv*2, 0)];
-    [path addLineToPoint:CGPointMake(xDiv*2, height)];
-    [path moveToPoint:CGPointMake(xDiv*3, 0)];
-    [path addLineToPoint:CGPointMake(xDiv*3, height)];
+    [self drawLineOnPath:path start:CGPointMake(0, yDiv) end:CGPointMake(width, yDiv)];
+    [self drawLineOnPath:path start:CGPointMake(0, yDiv*2) end:CGPointMake(width, yDiv*2)];
+    [self drawLineOnPath:path start:CGPointMake(0, yDiv*3) end:CGPointMake(width, yDiv*3)];
+    [self drawLineOnPath:path start:CGPointMake(xDiv, 0) end:CGPointMake(xDiv, height)];
+    [self drawLineOnPath:path start:CGPointMake(xDiv*2, 0) end:CGPointMake(xDiv*2, height)];
+    [self drawLineOnPath:path start:CGPointMake(xDiv*3, 0) end:CGPointMake(xDiv*3, height)];
     
-    CAShapeLayer *blackLayer = [CAShapeLayer layer];
-    blackLayer.path = [path CGPath];
-    blackLayer.strokeColor = [[UIColor blackColor] CGColor];
-    blackLayer.lineWidth = 1.5;
-    blackLayer.fillColor = [[UIColor clearColor] CGColor];
-    CAShapeLayer *whiteLayer = [CAShapeLayer layer];
-    whiteLayer.path = [path CGPath];
-    whiteLayer.strokeColor = [[UIColor whiteColor] CGColor];
-    whiteLayer.lineWidth = 2.0;
-    whiteLayer.fillColor = [[UIColor clearColor] CGColor];
+    CAShapeLayer *blackLayer = [self drawPathOnLayer:path withColor:[UIColor blackColor] andLineWidth:1.5];
+    CAShapeLayer *whiteLayer = [self drawPathOnLayer:path withColor:[UIColor whiteColor] andLineWidth:2.0];
     [_gridView.layer addSublayer:whiteLayer];
     [_gridView.layer addSublayer:blackLayer];
+}
+
+- (void)drawLineOnPath:(UIBezierPath *)path start:(CGPoint)start end:(CGPoint)end {
+    [path moveToPoint:start];
+    [path addLineToPoint:end];
+}
+
+- (CAShapeLayer *)drawPathOnLayer:(UIBezierPath *)path withColor:(UIColor *)color andLineWidth:(CGFloat)width {
+    CAShapeLayer *layer = [CAShapeLayer layer];
+    layer.path = [path CGPath];
+    layer.strokeColor = [color CGColor];
+    layer.lineWidth = width;
+    layer.fillColor = [[UIColor clearColor] CGColor];
+    return layer;
 }
 
 - (void)setUpWifiAnimation{
@@ -248,10 +251,10 @@
             [self getPosition];
             break;
         case VERSION:
-            // TODO: check version
+            [self handleVersionCommand:command];
             break;
         case WRONG_VERSION:
-            // TODO: handle wrong version
+            [self handleWrongVersion];
             break;
         case CAMERA_SETTINGS:
             [self.captureManager setCameraSettings];
@@ -329,7 +332,7 @@
         CameraSettings *sharedVars = [CameraSettings sharedVariables];
         NSString *JSONString = [[NSString alloc] initWithData:[command getData] encoding:NSUTF8StringEncoding];
         NSDictionary *json = [VVJSONUtility getNSDictFromJSONString:JSONString];
-        [sharedVars setDist:[[json valueForKey:@"dist"] intValue]];
+        [sharedVars setDist:[[json valueForKey:@"dist"] doubleValue]];
         [sharedVars setYaw:[[json valueForKey:@"yaw"] intValue]];
         [sharedVars setPitch:[[json valueForKey:@"pitch"] intValue]];
     }
@@ -337,14 +340,42 @@
 
 - (void)getPosition{
     CameraSettings *sharedVars = [CameraSettings sharedVariables];
-    NSNumber *dst = [NSNumber numberWithInt: [sharedVars dist]];
-    NSNumber *yw = [NSNumber numberWithInt: [sharedVars yaw]];
-    NSNumber *ptch = [NSNumber numberWithInt: [sharedVars pitch]];
+    NSNumber *dst = [NSNumber numberWithDouble:[sharedVars dist]];
+    NSNumber *yw = [NSNumber numberWithInt:[sharedVars yaw]];
+    NSNumber *ptch = [NSNumber numberWithInt:[sharedVars pitch]];
     NSArray *positions = @[dst, yw, ptch];
     NSArray *keys = @[@"dist", @"yaw", @"pitch"];
     NSDictionary *pov = [[NSDictionary alloc] initWithObjects:positions forKeys:keys];
     NSString *jsonStr = [VVJSONUtility convertNSDictToJSONString:pov];
     [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:POSITION :jsonStr]];
+}
+
+- (void)handleVersionCommand:(Command *)command {
+    if([command isKindOfClass:[CommandWithValue class]]){
+        CommandWithValue *cmd = (CommandWithValue *)command;
+        NSString *serverVersion = [cmd getDataAsString];
+        if([VVVersionCompabilityChecker isCompatibleVersionWith:MIN_SERVER_VERSION serverVersion:serverVersion]){
+            // TODO: Enable after implementing different versions for android and ios versions on the server
+//            [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:VERSION :currentVersionNumber]];
+        }
+        else {
+            [socketHandler sendCommand:[[Command alloc] init:WRONG_VERSION]];
+            [socketHandler quitTCPSocketConnection];
+        }
+    }
+}
+
+- (void)handleWrongVersion{
+    if(!versionAlertIsShowing){
+        NSLog(@"Wrong version");
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"ERROR"
+                                                        message:@"Camera software is outdated and not compatible with the server software.\n\nPlease update the camera software."
+                                                       delegate:self
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        [alert show];
+        versionAlertIsShowing = YES;
+    }
 }
 
 
