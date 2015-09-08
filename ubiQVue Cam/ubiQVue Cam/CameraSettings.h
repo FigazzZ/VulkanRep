@@ -14,7 +14,7 @@
 @interface CameraSettings : NSObject{
     float framerate;
     int yaw;
-    int dist;
+    double dist;
     int pitch;
     int roll;
     AVCaptureExposureMode exposureMode;
@@ -30,7 +30,7 @@
 @property (nonatomic) float framerate;
 @property (nonatomic) int yaw;
 @property (nonatomic) int pitch;
-@property (nonatomic) int dist;
+@property (nonatomic) double dist;
 @property (nonatomic) int roll;
 @property (nonatomic) AVCaptureExposureMode exposureMode;
 @property (nonatomic) AVCaptureFocusMode focusMode;

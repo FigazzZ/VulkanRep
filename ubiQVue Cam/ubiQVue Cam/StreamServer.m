@@ -57,40 +57,31 @@
     [self closeSocket];
 }
 
-- (void)socket:(GCDAsyncSocket *)sock didAcceptNewSocket:(GCDAsyncSocket *)newSocket{
-    [self closeSocket];
-    _connectedSocket = newSocket;
-    [_connectedSocket setDelegate:self];
-    [newSocket writeData:[msg dataUsingEncoding:NSUTF8StringEncoding] withTimeout:-1 tag:456];
-    [self sendStreamNotification:@"start"];
+- (void)socket:(GCDAsyncSocket *)sock didAcceptNewSocket:(GCDAsyncSocket *)newSocket {
+    if (![_connectedSocket.connectedHost isEqualToString:newSocket.connectedHost]) {
+        [self closeSocket];
+        _connectedSocket = newSocket;
+        [_connectedSocket setDelegate:self];
+    }
+    [_connectedSocket writeData:[msg dataUsingEncoding:NSUTF8StringEncoding] withTimeout:-1 tag:0];
 }
 
-- (void)sendStreamNotification:(NSString *)message{
+- (void)sendStreamNotification:(NSString *)message {
     [[NSNotificationCenter defaultCenter]
      postNotificationName:@"StreamNotification"
      object:self
      userInfo:[[NSDictionary alloc] initWithObjects:@[message] forKeys:@[@"message"]]];
 }
 
-- (void)socket:(GCDAsyncSocket *)sock didWriteDataWithTag:(long)tag
-{
+- (void)socket:(GCDAsyncSocket *)sock didWriteDataWithTag:(long)tag {
     // This method is executed on the socketQueue (not the main thread)
-    
-//    if(tag == 0){
-//        NSLog(@"successfully wrote beginning");
-//    }
-//    else if(tag == 1){
-//        NSLog(@"Successfully wrote imagedata");
-//    }
-//    else if(tag == 2){
-//        NSLog(@"Successfully wrote end");
-//    }
+    if (tag == 0) {
+        [self sendStreamNotification:@"start"];
+    }
 }
 
-- (void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(NSError *)err
-{
-    if (sock != _serverSocket)
-    {
+- (void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(NSError *)err {
+    if (sock != _serverSocket){
         [self sendStreamNotification:@"stop"];
     }
 }
