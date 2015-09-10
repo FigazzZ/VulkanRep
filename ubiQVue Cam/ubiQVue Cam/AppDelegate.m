@@ -21,8 +21,9 @@
     NSArray *objects = @[[NSNumber numberWithFloat:120.0],
                          [NSNumber numberWithInt:0],
                          [NSNumber numberWithInt:0],
-                         [NSNumber numberWithInt:10]];
-    NSArray *keys = @[@"framerate", @"yaw", @"pitch", @"dist"];
+                         [NSNumber numberWithInt:10],
+                         [[NSUUID UUID] UUIDString]];
+    NSArray *keys = @[@"framerate", @"yaw", @"pitch", @"dist", @"uuid"];
     NSDictionary *appDefaults = [NSDictionary
                                  dictionaryWithObjects:objects forKeys:keys];
     [[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];
