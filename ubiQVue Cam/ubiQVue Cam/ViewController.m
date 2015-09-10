@@ -192,7 +192,7 @@
 - (void)cameToForeground{
     // TODO: restore what was closed when went to background
     [self.streamServer startAcceptingConnections];
-    [_captureManager setupAssetWriter];
+    [_captureManager prepareAssetWriter];
 }
 
 - (void)hideStatusBar

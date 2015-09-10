@@ -10,32 +10,32 @@
 #import "CameraSettings.h"
 #import <AssetsLibrary/AssetsLibrary.h>
 
+#ifndef USE_AUDIO
+//#define USE_AUDIO
+#endif
+
 @interface AVCaptureManager ()
-//<AVCaptureFileOutputRecordingDelegate>
-//{
-//    CMTime defaultVideoMaxFrameDuration;
-//}
-<AVCaptureVideoDataOutputSampleBufferDelegate>{
+<AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudioDataOutputSampleBufferDelegate>{
     CMTime defaultVideoMaxFrameDuration;
 }
+
+
 @property (nonatomic, strong) AVCaptureSession *captureSession;
-@property (nonatomic, strong) AVCaptureMovieFileOutput *fileOutput;
-@property (nonatomic, strong) AVCaptureStillImageOutput *streamOutput;
-@property (nonatomic, strong) AVCaptureVideoDataOutput *videoDataOutput;
 @property (nonatomic, strong) AVCaptureDeviceFormat *defaultFormat;
 @property (nonatomic, strong) AVCaptureVideoPreviewLayer *previewLayer;
+@property (nonatomic, strong) dispatch_queue_t audioDataQueue;
 @property (nonatomic, strong) dispatch_queue_t videoDataQueue;
 @property (nonatomic, strong) dispatch_queue_t streamQueue;
+@property (nonatomic, strong) dispatch_queue_t writingQueue;
 
 @end
-
 
 @implementation AVCaptureManager{
     NSTimer *timer;
     CGSize size;
-    SystemSoundID soundID;
     AVAssetWriter *writer;
-    AVAssetWriterInput *writerInput;
+    AVAssetWriterInput *videoInput;
+    AVAssetWriterInput *audioInput;
     AVAssetWriterInputPixelBufferAdaptor *pixelBufferAdaptor;
     NSURL *fileURL;
     int64_t frameNumber;
@@ -54,51 +54,64 @@
         finishRecording = NO;
         _isRecording = NO;
         size = CGSizeMake(320, 180);
-        NSError *error;
-        
-        self.captureSession = [[AVCaptureSession alloc] init];
-        self.captureSession.sessionPreset = AVCaptureSessionPresetInputPriority;
-        
-        AVCaptureDevice *videoDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-        AVCaptureDeviceInput *videoIn = [AVCaptureDeviceInput deviceInputWithDevice:videoDevice error:&error];
-        
-        if (error) {
-            NSLog(@"Video input creation failed");
-            return nil;
-        }
-        
-        if (![self.captureSession canAddInput:videoIn]) {
-            NSLog(@"Video input add-to-session failed");
-            return nil;
-        }
-        [self.captureSession addInputWithNoConnections:videoIn];
         
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(receiveStreamNotification:)
                                                      name:@"StreamNotification"
                                                    object:nil];
-        
         self.videoDataQueue = dispatch_queue_create("videoDataQueue", DISPATCH_QUEUE_SERIAL);
+        self.audioDataQueue = dispatch_queue_create("audioDataQueue", DISPATCH_QUEUE_SERIAL);
+        self.writingQueue = dispatch_queue_create("writingQueue", DISPATCH_QUEUE_SERIAL);
         self.streamQueue = dispatch_queue_create("streamQueue", DISPATCH_QUEUE_SERIAL);
-        // save the default format
-        self.defaultFormat = videoDevice.activeFormat;
-        defaultVideoMaxFrameDuration = videoDevice.activeVideoMaxFrameDuration;
-
-        [self setupVideoDataOutput:videoIn];
-        
-//        [self setupFileOutput:videoIn];
-//        [self setupStillImageStream];
-        
-        
+        if(![self setupCaptureSession]){
+            return nil;
+        }
         [self setupPreview:previewView];
-        [self.captureSession startRunning];
-        
-        
-//        NSString *path = [[NSBundle mainBundle] pathForResource:@"photoShutter2" ofType:@"caf"];
-//        NSURL *filePath = [NSURL fileURLWithPath:path isDirectory:NO];
-//        AudioServicesCreateSystemSoundID((__bridge CFURLRef)filePath, &soundID);
     }
     return self;
+}
+
+- (BOOL)setupCaptureSession {
+    
+    NSError *error;
+    self.captureSession = [[AVCaptureSession alloc] init];
+    self.captureSession.sessionPreset = AVCaptureSessionPresetInputPriority;
+    
+    AVCaptureDevice *videoDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    AVCaptureDeviceInput *videoIn = [AVCaptureDeviceInput deviceInputWithDevice:videoDevice error:&error];
+    
+    if (error) {
+        NSLog(@"Video input creation failed");
+        return NO;
+    }
+    
+    if (![self.captureSession canAddInput:videoIn]) {
+        NSLog(@"Video input add-to-session failed");
+        return NO;
+    }
+    [self.captureSession addInputWithNoConnections:videoIn];
+    
+    // save the default format
+    self.defaultFormat = videoDevice.activeFormat;
+    defaultVideoMaxFrameDuration = videoDevice.activeVideoMaxFrameDuration;
+    
+    [self setupVideoDataOutput:videoIn];
+    
+#ifdef USE_AUDIO
+    AVCaptureDevice *audioDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
+    AVCaptureDeviceInput *audioIn = [AVCaptureDeviceInput deviceInputWithDevice:audioDevice error:&error];
+    if (![self.captureSession canAddInput:audioIn]) {
+        NSLog(@"Audio input add-to-session failed");
+        return NO;
+    }
+    [self.captureSession addInput:audioIn];
+    
+    [self setupAudioDataOutput:audioIn];
+#endif
+    [self prepareAssetWriter];
+    
+    [self.captureSession startRunning];
+    return YES;
 }
 
 - (void)setupPreview:(UIView *)previewView{
@@ -141,56 +154,75 @@
     }
 }
 
-- (void)setupFileOutput:(AVCaptureDeviceInput *)videoIn{
-    self.fileOutput = [[AVCaptureMovieFileOutput alloc] init];
-    [self.fileOutput setMaxRecordedDuration:CMTimeMake(15, 1)];
-    AVCaptureConnection *connection = [self createVideoConnectionForOutput:self.fileOutput andInput:videoIn];
-    if([self.captureSession canAddOutput:self.fileOutput]){
-        [self.captureSession addOutputWithNoConnections:self.fileOutput];
-        [self.captureSession addConnection:connection];
-    }
-}
-
-- (void)setupStillImageStream{
-    self.streamOutput = [[AVCaptureStillImageOutput alloc] init];
-    [self.streamOutput setHighResolutionStillImageOutputEnabled:NO];
-    
-    if ([self.captureSession canAddOutput:self.streamOutput])
-    {
-        [self.streamOutput setOutputSettings:@{AVVideoCodecKey : AVVideoCodecJPEG}];
-        [self.captureSession addOutput:self.streamOutput];
-    }
-}
-
 - (void)setupVideoDataOutput:(AVCaptureDeviceInput *)input{
-    self.videoDataOutput = [AVCaptureVideoDataOutput new];
-    self.videoDataOutput.videoSettings = @{(NSString *)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA)};
-    [self.videoDataOutput setSampleBufferDelegate:self queue:self.videoDataQueue];
-    [self.videoDataOutput setAlwaysDiscardsLateVideoFrames:YES];
-    AVCaptureConnection *connection = [self createVideoConnectionForOutput:self.videoDataOutput andInput:input];
-    if([self.captureSession canAddOutput:self.videoDataOutput]){
-        [self.captureSession addOutputWithNoConnections:self.videoDataOutput];
+    AVCaptureVideoDataOutput *videoDataOutput = [[AVCaptureVideoDataOutput alloc] init];
+    videoDataOutput.videoSettings = @{(NSString *)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA)};
+    [videoDataOutput setSampleBufferDelegate:self queue:self.videoDataQueue];
+    [videoDataOutput setAlwaysDiscardsLateVideoFrames:YES];
+    AVCaptureConnection *connection = [self createVideoConnectionForOutput:videoDataOutput andInput:input];
+    if([self.captureSession canAddOutput:videoDataOutput]){
+        [self.captureSession addOutputWithNoConnections:videoDataOutput];
         [self.captureSession addConnection:connection];
     }
-    [self setupAssetWriter];
 }
 
-- (void)setupAssetWriter{
+- (void)setupAudioDataOutput:(AVCaptureDeviceInput *)input{
+    AVCaptureAudioDataOutput *audioDataOutput = [[AVCaptureAudioDataOutput alloc] init];
+    [audioDataOutput setSampleBufferDelegate:self queue:self.audioDataQueue];
+    if([self.captureSession canAddOutput:audioDataOutput]){
+        [self.captureSession addOutput:audioDataOutput];
+    }
+}
+
+- (void)setupVideoAssetWriterInput{
     NSDictionary *settings = @{AVVideoCodecKey : AVVideoCodecH264,
                                AVVideoHeightKey : [NSNumber numberWithInt:720],
                                AVVideoWidthKey : [NSNumber numberWithInt:1280]};
-    writerInput = [[AVAssetWriterInput alloc] initWithMediaType:AVMediaTypeVideo outputSettings:settings];
-    writerInput.expectsMediaDataInRealTime = YES;
+    videoInput = [[AVAssetWriterInput alloc] initWithMediaType:AVMediaTypeVideo outputSettings:settings];
+    videoInput.expectsMediaDataInRealTime = YES;
     NSDictionary *pxlBufAttrs = @{(NSString *)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA)};
-    pixelBufferAdaptor = [[AVAssetWriterInputPixelBufferAdaptor alloc] initWithAssetWriterInput:writerInput sourcePixelBufferAttributes:pxlBufAttrs];
-    [self prepareAssetWriter];
+    pixelBufferAdaptor = [[AVAssetWriterInputPixelBufferAdaptor alloc] initWithAssetWriterInput:videoInput sourcePixelBufferAttributes:pxlBufAttrs];
+}
+
+- (void)setupAudioAssetWriterInput{
+    AudioChannelLayout stereoChannelLayout = {
+        .mChannelLayoutTag = kAudioChannelLayoutTag_Stereo,
+        .mChannelBitmap = 0,
+        .mNumberChannelDescriptions = 0
+    };
+    
+    NSData *channelLayoutAsData = [NSData dataWithBytes:&stereoChannelLayout length:offsetof(AudioChannelLayout, mChannelDescriptions)];
+    
+    // Get the compression settings for 128 kbps AAC.
+    NSDictionary *compressionAudioSettings = @{
+                                               AVFormatIDKey         : [NSNumber numberWithUnsignedInt:kAudioFormatMPEG4AAC],
+                                               AVEncoderBitRateKey   : [NSNumber numberWithInteger:128000],
+                                               AVSampleRateKey       : [NSNumber numberWithInteger:44100],
+                                               AVChannelLayoutKey    : channelLayoutAsData,
+                                               AVNumberOfChannelsKey : [NSNumber numberWithUnsignedInteger:2]
+                                               };
+    
+    // Create the asset writer input with the compression settings and specify the media type as audio.
+    audioInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeAudio outputSettings:compressionAudioSettings];
+    audioInput.expectsMediaDataInRealTime = YES;
 }
 
 - (void)prepareAssetWriter{
+    
     fileURL = [self generateFilePath];
     NSError *err;
-    writer = [[AVAssetWriter alloc] initWithURL:fileURL fileType:AVFileTypeMPEG4 error:&err];
-    [writer addInput:writerInput];
+    writer = [[AVAssetWriter alloc ] initWithURL:fileURL fileType:AVFileTypeMPEG4 error:&err];
+    [self setupVideoAssetWriterInput];
+    if ([writer canAddInput:videoInput]){
+        [writer addInput:videoInput];
+    }
+    
+#ifdef USE_AUDIO
+    [self setupAudioAssetWriterInput];
+    if ([writer canAddInput:audioInput]){
+        [writer addInput:audioInput];
+    }
+#endif
     [writer startWriting];
 }
 
@@ -230,25 +262,6 @@
     _isStreaming = NO;
     NSLog(@"Streaming stopped");
 //    [timer invalidate];
-}
-
-- (void)captureImage{
-    dispatch_async([self videoDataQueue], ^{
-        // Update the orientation on the still image output video connection before capturing.
-        [[[self streamOutput] connectionWithMediaType:AVMediaTypeVideo] setVideoOrientation:[[self.previewLayer connection] videoOrientation]];
-        //        AudioServicesPlaySystemSound(soundID);
-        
-        // Capture a still image.
-        [[self streamOutput] captureStillImageAsynchronouslyFromConnection:[[self streamOutput] connectionWithMediaType:AVMediaTypeVideo] completionHandler:^(CMSampleBufferRef imageDataSampleBuffer, NSError *error) {
-            NSTimeInterval timestamp = [[NSDate date] timeIntervalSince1970];
-            if (imageDataSampleBuffer)
-            {
-                NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageDataSampleBuffer];
-                UIImage *image = [self imageWithImage:[[UIImage alloc] initWithData:imageData] scaledToSize:size];
-                [self writeImageToSocket:image withTimestamp:timestamp];
-            }
-        }];
-    });
 }
 
 - (void)writeImageToSocket:(UIImage *)image withTimestamp:(NSTimeInterval)timestamp{
@@ -436,14 +449,13 @@
 }
 
 - (void)finishRecording{
-    
     finishRecording = NO;
     [writer finishWritingWithCompletionHandler:^(void){
         [[NSNotificationCenter defaultCenter]
          postNotificationName:@"StopNotification"
          object:self
          userInfo:[[NSDictionary alloc] initWithObjects:@[fileURL] forKeys:@[@"file"]]];
-        [self setupAssetWriter];
+        [self prepareAssetWriter];
     }];
 }
 
@@ -464,30 +476,46 @@
 
 #pragma mark delegate
 
-- (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection
-{
-    CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
-    if (_isRecording && writerInput.readyForMoreMediaData){
-        [pixelBufferAdaptor appendPixelBuffer:imageBuffer withPresentationTime:CMTimeMake(frameNumber, fps)];
-        frameNumber++;
-    }
-    else if(!_isRecording && finishRecording){
-        [self finishRecording];
-    }
-    
-    if(_isStreaming && streamFrame == streamfps){
-        CVImageBufferRef buf = (CVImageBufferRef)CFRetain(imageBuffer);
-        dispatch_async(self.streamQueue, ^(void){
-            UIImage *image = [self imageFromSampleBuffer:buf];
-            
-            NSTimeInterval timestamp = [[NSDate date] timeIntervalSince1970];
-            image = [self imageWithImage:image scaledToSize:size];
-            [self writeImageToSocket:image withTimestamp:timestamp];
-            CFRelease(buf);
-        });
-        streamFrame = 0;
-    }
-    streamFrame++;
+- (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection {
+//    if([captureOutput isKindOfClass:[AVCaptureVideoDataOutput class]]){
+        CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
+        if (_isRecording && videoInput.readyForMoreMediaData){
+            if(![pixelBufferAdaptor appendPixelBuffer:imageBuffer withPresentationTime:CMTimeMake(frameNumber, fps)]){
+                NSLog(@"writing video failed");
+            }
+            else {
+                frameNumber++;
+            }
+        }
+        else if(!_isRecording && finishRecording){
+            [self finishRecording];
+        }
+        
+        if(_isStreaming && streamFrame == streamfps){
+            CVImageBufferRef buf = (CVImageBufferRef)CFRetain(imageBuffer);
+            dispatch_async(self.streamQueue, ^(void){
+                UIImage *image = [self imageFromSampleBuffer:buf];
+                
+                NSTimeInterval timestamp = [[NSDate date] timeIntervalSince1970];
+                image = [self imageWithImage:image scaledToSize:size];
+                [self writeImageToSocket:image withTimestamp:timestamp];
+                CFRelease(buf);
+            });
+            streamFrame = 0;
+        }
+        streamFrame++;
+//    }
+//    else {
+//        if (_isRecording && audioInput.readyForMoreMediaData) {
+//            CMSampleBufferRef buf = (CMSampleBufferRef)CFRetain(sampleBuffer);
+//            dispatch_async(self.writingQueue, ^(void){
+//            if (![audioInput appendSampleBuffer:buf]) {
+//                NSLog(@"writing audio failed");
+//            }
+//                CFRelease(buf);
+//            });
+//        }
+//    }
 }
 
 // From https://developer.apple.com/library/ios/documentation/AudioVideo/Conceptual/AVFoundationPG/Articles/06_MediaRepresentations.html#//apple_ref/doc/uid/TP40010188-CH2-SW4
@@ -530,26 +558,6 @@
 
     return (image);
 }
-                       
-// =============================================================================
-#pragma mark - AVCaptureFileOutputRecordingDelegate
 
-- (void)captureOutput:(AVCaptureFileOutput *)captureOutput
-    didStartRecordingToOutputFileAtURL:(NSURL *)fileURL
-                       fromConnections:(NSArray *)connections
-{
-    _isRecording = YES;
-}
-
-- (void)captureOutput:(AVCaptureFileOutput *)captureOutput
-   didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
-                       fromConnections:(NSArray *)connections error:(NSError *)error
-{
-    _isRecording = NO;
-    [[NSNotificationCenter defaultCenter]
-     postNotificationName:@"StopNotification"
-     object:self
-     userInfo:nil];
-}
 
 @end
