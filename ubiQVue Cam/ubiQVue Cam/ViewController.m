@@ -176,7 +176,10 @@
     if (connected) {
         [_wifiImage stopAnimating];
         [_wifiImage setImage:[UIImage imageNamed:@"wifi_connected"]];
-        [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:UUID :[[NSUserDefaults standardUserDefaults] stringForKey:@"uuid"]]];
+        NSString *ID = [[NSUserDefaults standardUserDefaults] stringForKey:@"uuid"];
+        [[NSUserDefaults standardUserDefaults] setValue:ID forKey:@"uuid"];
+        
+        [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:UUID :ID]];
     }
     else{
         [_wifiImage startAnimating];
