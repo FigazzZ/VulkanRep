@@ -43,7 +43,7 @@
     [super viewDidLoad];
     mode = AIM_MODE;
     [UIApplication sharedApplication].idleTimerDisabled = YES;
-    currentVersionNumber = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+    currentVersionNumber = [@"I" stringByAppendingString:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]];
     
     versionAlertIsShowing = NO;
     // TODO: Close camera and stuff when view disappears
