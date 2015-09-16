@@ -44,7 +44,7 @@
     mode = AIM_MODE;
     [UIApplication sharedApplication].idleTimerDisabled = YES;
     currentVersionNumber = [@"I" stringByAppendingString:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]];
-    
+    [UIScreen mainScreen].brightness = 1;
     versionAlertIsShowing = NO;
     // TODO: Close camera and stuff when view disappears
     self.captureManager = [[AVCaptureManager alloc] initWithPreviewView:self.view];
@@ -188,7 +188,6 @@
 
 - (void)wentToBackground{
     // TODO: close socket, stream stuff, camera?
-    [UIScreen mainScreen].brightness = 0.5;
     [socketHandler sendCommand:[[Command alloc] init:QUIT]];
     [self.streamServer stopAcceptingConnections];
     [_captureManager closeAssetWriter];
@@ -197,6 +196,9 @@
 - (void)cameToForeground{
     if (mode == CAMERA_MODE) {
         [UIScreen mainScreen].brightness = 0;
+    }
+    else {
+        [UIScreen mainScreen].brightness = 1;
     }
     // TODO: restore what was closed when went to background
     [self.streamServer startAcceptingConnections];
@@ -398,7 +400,7 @@
 - (IBAction)switchToAimMode:(id)sender {
     if(mode != AIM_MODE){
         mode = AIM_MODE;
-        [UIScreen mainScreen].brightness = 0.5;
+        [UIScreen mainScreen].brightness = 1;
         [_captureManager addPreview:self.view];
         [_logoView setHidden:YES];
         [_gridView setHidden:NO];
