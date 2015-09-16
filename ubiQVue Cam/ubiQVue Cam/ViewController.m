@@ -188,12 +188,16 @@
 
 - (void)wentToBackground{
     // TODO: close socket, stream stuff, camera?
+    [UIScreen mainScreen].brightness = 0.5;
     [socketHandler sendCommand:[[Command alloc] init:QUIT]];
     [self.streamServer stopAcceptingConnections];
     [_captureManager closeAssetWriter];
 }
 
 - (void)cameToForeground{
+    if (mode == CAMERA_MODE) {
+        [UIScreen mainScreen].brightness = 0;
+    }
     // TODO: restore what was closed when went to background
     [self.streamServer startAcceptingConnections];
     [_captureManager prepareAssetWriter];
@@ -394,6 +398,7 @@
 - (IBAction)switchToAimMode:(id)sender {
     if(mode != AIM_MODE){
         mode = AIM_MODE;
+        [UIScreen mainScreen].brightness = 0.5;
         [_captureManager addPreview:self.view];
         [_logoView setHidden:YES];
         [_gridView setHidden:NO];
@@ -406,6 +411,7 @@
 - (IBAction)switchToCameraMode:(id)sender {
     if(mode != CAMERA_MODE && [socketHandler isConnectedToTCP]){
         mode = CAMERA_MODE;
+        [UIScreen mainScreen].brightness = 0;
         [_logoView setHidden:NO];
         [_captureManager removePreview];
         if(![_captureManager isStreaming]){
