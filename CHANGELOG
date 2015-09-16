@@ -1,0 +1,26 @@
+=============
+* 0.2.0.2
+    - Stream stability improvements
+    - Distance changed to double for more accuracy as the positions are normalised
+        on the tablet
+    - Version checking implemented
+
+=============
+* 0.2.0.1
+    - Name changed to ubiQVue Cam
+    - Refactoring
+
+=============
+* 0.2
+    - Streaming added
+    - Video recording changed to use AVVideoDataCaptureOutput
+    - Grid view added
+    - UI changes
+    - iOS-common repo added as a submodule
+    - Bug fixes
+    - Camera position saving added
+
+=============
+* 0.1
+    - Initial version with video recording
+    
