@@ -21,8 +21,9 @@
     NSArray *objects = @[[NSNumber numberWithFloat:120.0],
                          [NSNumber numberWithInt:0],
                          [NSNumber numberWithInt:0],
-                         [NSNumber numberWithInt:10]];
-    NSArray *keys = @[@"framerate", @"yaw", @"pitch", @"dist"];
+                         [NSNumber numberWithInt:10],
+                         [[NSUUID UUID] UUIDString]];
+    NSArray *keys = @[@"framerate", @"yaw", @"pitch", @"dist", @"uuid"];
     NSDictionary *appDefaults = [NSDictionary
                                  dictionaryWithObjects:objects forKeys:keys];
     [[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];
@@ -36,6 +37,7 @@
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
+    [UIScreen mainScreen].brightness = 0.5;
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {

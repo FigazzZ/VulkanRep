@@ -43,8 +43,8 @@
     [super viewDidLoad];
     mode = AIM_MODE;
     [UIApplication sharedApplication].idleTimerDisabled = YES;
-    currentVersionNumber = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
-    
+    currentVersionNumber = [@"I" stringByAppendingString:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]];
+    [UIScreen mainScreen].brightness = 1;
     versionAlertIsShowing = NO;
     // TODO: Close camera and stuff when view disappears
     self.captureManager = [[AVCaptureManager alloc] initWithPreviewView:self.view];
@@ -176,6 +176,10 @@
     if (connected) {
         [_wifiImage stopAnimating];
         [_wifiImage setImage:[UIImage imageNamed:@"wifi_connected"]];
+        NSString *ID = [[NSUserDefaults standardUserDefaults] stringForKey:@"uuid"];
+        [[NSUserDefaults standardUserDefaults] setValue:ID forKey:@"uuid"];
+        
+        [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:UUID :ID]];
     }
     else{
         [_wifiImage startAnimating];
@@ -190,9 +194,15 @@
 }
 
 - (void)cameToForeground{
+    if (mode == CAMERA_MODE) {
+        [UIScreen mainScreen].brightness = 0;
+    }
+    else {
+        [UIScreen mainScreen].brightness = 1;
+    }
     // TODO: restore what was closed when went to background
     [self.streamServer startAcceptingConnections];
-    [_captureManager setupAssetWriter];
+    [_captureManager prepareAssetWriter];
 }
 
 - (void)hideStatusBar
@@ -390,6 +400,7 @@
 - (IBAction)switchToAimMode:(id)sender {
     if(mode != AIM_MODE){
         mode = AIM_MODE;
+        [UIScreen mainScreen].brightness = 1;
         [_captureManager addPreview:self.view];
         [_logoView setHidden:YES];
         [_gridView setHidden:NO];
@@ -402,6 +413,7 @@
 - (IBAction)switchToCameraMode:(id)sender {
     if(mode != CAMERA_MODE && [socketHandler isConnectedToTCP]){
         mode = CAMERA_MODE;
+        [UIScreen mainScreen].brightness = 0;
         [_logoView setHidden:NO];
         [_captureManager removePreview];
         if(![_captureManager isStreaming]){

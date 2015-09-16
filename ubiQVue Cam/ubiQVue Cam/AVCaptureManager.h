@@ -28,12 +28,11 @@ typedef enum {
 - (id)initWithPreviewView:(UIView *)previewView;
 - (void)setCameraSettings;
 - (void)resetFormat;
-- (void)captureImage;
 - (NSURL *)getVideoFile;
 - (void)addPreview:(UIView *)previewView;
 - (void)removePreview;
 - (BOOL)switchFormatWithDesiredFPS:(CGFloat)desiredFPS;
-- (void)setupAssetWriter;
+- (void)prepareAssetWriter;
 - (void)closeAssetWriter;
 - (void)startRecording;
 - (void)stopRecording;
