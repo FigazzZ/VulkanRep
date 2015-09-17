@@ -12,9 +12,8 @@
 
 @implementation CameraMessageHandler
 
-- (void)handleMessage:(Command *)command
-{
-    NSDictionary *cmd = [NSDictionary dictionaryWithObject:command forKey:@"command"];
+- (void)handleMessage:(Command *)command {
+    NSDictionary *cmd = @{@"command" : command};
     // TODO: Handle properly
     dispatch_async(dispatch_get_main_queue(), ^{
         [self sendNotificationWithCommand:cmd name:@"ProtocolNotification"];

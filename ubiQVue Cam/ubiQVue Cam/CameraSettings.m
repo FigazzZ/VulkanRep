@@ -23,7 +23,7 @@
 @synthesize smoothFocusEnabled;
 @synthesize wbMode;
 
-+ (id) sharedVariables{
++ (id)sharedVariables {
     static CameraSettings *sharedVariables = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -32,15 +32,15 @@
     return sharedVariables;
 }
 
-- (id) init{
+- (id)init {
     self = [super init];
-    if(self){
+    if (self) {
         // TODO: load values from stored settings if they exist
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         framerate = [defaults floatForKey:@"framerate"];
-        yaw = (int)[defaults integerForKey:@"yaw"];
-        pitch = (int)[defaults integerForKey:@"pitch"];
-        dist = (int)[defaults integerForKey:@"dist"];
+        yaw = (int) [defaults integerForKey:@"yaw"];
+        pitch = (int) [defaults integerForKey:@"pitch"];
+        dist = (int) [defaults integerForKey:@"dist"];
         roll = 0;
         NSLog(@"fps: %f", framerate);
         exposureMode = AVCaptureExposureModeAutoExpose;
@@ -53,35 +53,35 @@
     return self;
 }
 
-- (NSDictionary *)getPositionJson{
-    NSNumber *dst = [NSNumber numberWithInt: dist];
-    NSNumber *yw = [NSNumber numberWithInt: yaw];
-    NSNumber *ptch = [NSNumber numberWithInt: pitch];
+- (NSDictionary *)getPositionJson {
+    NSNumber *dst = @(dist);
+    NSNumber *yw = @(yaw);
+    NSNumber *ptch = @(pitch);
     UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
     NSNumber *rll;
-    if(UIDeviceOrientationIsPortrait(orientation)){
-        if(orientation == UIDeviceOrientationPortrait){
-            rll = [NSNumber numberWithInt:-90];
+    if (UIDeviceOrientationIsPortrait(orientation)) {
+        if (orientation == UIDeviceOrientationPortrait) {
+            rll = @(-90);
         }
-        else{
-            rll = [NSNumber numberWithInt:90];
+        else {
+            rll = @90;
         }
     }
-    else{
-        rll = [NSNumber numberWithInt:0];
+    else {
+        rll = @0;
     }
-    NSArray *positions = [[NSArray alloc] initWithObjects:dst, yw, ptch, rll, nil];
-    NSArray *keys = [[NSArray alloc] initWithObjects:@"dist", @"yaw", @"pitch", @"roll", nil];
-    NSDictionary *pov = [[NSDictionary alloc] initWithObjects:positions forKeys:keys];
+    NSArray *positions = @[dst, yw, ptch, rll];
+    NSArray *keys = @[@"dist", @"yaw", @"pitch", @"roll"];
+    NSDictionary *pov = @{keys : positions};
     return pov;
 }
 
-- (void)saveSettings{
+- (void)saveSettings {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setValue:[NSNumber numberWithFloat:framerate] forKey:@"framerate"];
-    [defaults setValue:[NSNumber numberWithInt: dist] forKey:@"dist"];
-    [defaults setValue:[NSNumber numberWithInt: yaw] forKey:@"yaw"];
-    [defaults setValue:[NSNumber numberWithInt: pitch] forKey:@"pitch"];
+    [defaults setValue:@(framerate) forKey:@"framerate"];
+    [defaults setValue:@(dist) forKey:@"dist"];
+    [defaults setValue:@(yaw) forKey:@"yaw"];
+    [defaults setValue:@(pitch) forKey:@"pitch"];
 }
 
 @end

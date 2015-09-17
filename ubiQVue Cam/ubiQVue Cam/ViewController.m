@@ -10,25 +10,22 @@
 #import "AVCaptureManager.h"
 #import "VVNetworkSocketHandler.h"
 #import "CameraProtocol.h"
-#import "CommandType.h"
-#import "Command.h"
 #import "CommandWithValue.h"
 #import "CameraSettings.h"
-#import "StreamServer.h"
-#import "VVJSONUtility.h"
+#import "VVUtility.h"
 #import "VVVersionCompabilityChecker.h"
-#import <QuartzCore/QuartzCore.h>
 
+NSString *const kMinServerVersion = @"0.3.0.0";
 
 @interface ViewController ()
 
-@property (nonatomic, strong) AVCaptureManager *captureManager;
-@property (nonatomic, strong) StreamServer *streamServer;
+@property(nonatomic, strong) AVCaptureManager *captureManager;
+@property(nonatomic, strong) StreamServer *streamServer;
 
 @end
 
 
-@implementation ViewController{
+@implementation ViewController {
     VVNetworkSocketHandler *socketHandler;
     NSNumber *delay;
     NSString *currentVersionNumber;
@@ -38,8 +35,7 @@
     BOOL versionAlertIsShowing;
 }
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
     mode = AIM_MODE;
     [UIApplication sharedApplication].idleTimerDisabled = YES;
@@ -48,14 +44,14 @@
     versionAlertIsShowing = NO;
     // TODO: Close camera and stuff when view disappears
     self.captureManager = [[AVCaptureManager alloc] initWithPreviewView:self.view];
-    
+
     [self setCameraFramerate];
-    
+
     [self drawGrid];
     self.streamServer = [[StreamServer alloc] init];
     [self.captureManager setStreamServer:self.streamServer];
     [self.streamServer startAcceptingConnections];
-    
+
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self
                                                                                  action:@selector(handleDoubleTap:)];
     tapGesture.numberOfTapsRequired = 2;
@@ -63,27 +59,27 @@
     socketHandler = [[VVNetworkSocketHandler alloc] init:1111 protocol:[[CameraProtocol alloc] init]];
     [self registerToNotifications];
     [self hideStatusBar];
-    
+
     [self setUpWifiAnimation];
     [_wifiImage startAnimating];
 }
 
-- (void)drawGrid{
+- (void)drawGrid {
     CGRect frame = _gridView.frame;
-    if(frame.size.width < frame.size.height){
+    if (frame.size.width < frame.size.height) {
         CGPoint origin = _gridView.frame.origin;
         frame = CGRectMake(origin.x, origin.y, frame.size.height, frame.size.width);
     }
-    if(self.view.frame.size.width < self.view.frame.size.height){
+    if (self.view.frame.size.width < self.view.frame.size.height) {
         frame.size.height = self.view.frame.size.width;
     }
-    else{
+    else {
         frame.size.height = self.view.frame.size.height;
     }
     NSLog(@"%f x %f", _gridView.frame.size.width, _gridView.frame.size.height);
     NSLog(@"%f x %f", _controls.frame.size.width, _controls.frame.size.height);
     NSLog(@"%f x %f", frame.size.width, frame.size.height);
-    frame.size.width = frame.size.width-_controls.frame.size.width;
+    frame.size.width = frame.size.width - _controls.frame.size.width;
     NSLog(@"%f x %f", _gridView.frame.size.width, _gridView.frame.size.height);
     CGFloat width = frame.size.width;
     CGFloat height = frame.size.height;
@@ -91,12 +87,12 @@
     float xDiv = width / 4.0F;
     UIBezierPath *path = [UIBezierPath bezierPath];
     [self drawLineOnPath:path start:CGPointMake(0, yDiv) end:CGPointMake(width, yDiv)];
-    [self drawLineOnPath:path start:CGPointMake(0, yDiv*2) end:CGPointMake(width, yDiv*2)];
-    [self drawLineOnPath:path start:CGPointMake(0, yDiv*3) end:CGPointMake(width, yDiv*3)];
+    [self drawLineOnPath:path start:CGPointMake(0, yDiv * 2) end:CGPointMake(width, yDiv * 2)];
+    [self drawLineOnPath:path start:CGPointMake(0, yDiv * 3) end:CGPointMake(width, yDiv * 3)];
     [self drawLineOnPath:path start:CGPointMake(xDiv, 0) end:CGPointMake(xDiv, height)];
-    [self drawLineOnPath:path start:CGPointMake(xDiv*2, 0) end:CGPointMake(xDiv*2, height)];
-    [self drawLineOnPath:path start:CGPointMake(xDiv*3, 0) end:CGPointMake(xDiv*3, height)];
-    
+    [self drawLineOnPath:path start:CGPointMake(xDiv * 2, 0) end:CGPointMake(xDiv * 2, height)];
+    [self drawLineOnPath:path start:CGPointMake(xDiv * 3, 0) end:CGPointMake(xDiv * 3, height)];
+
     CAShapeLayer *blackLayer = [self drawPathOnLayer:path withColor:[UIColor blackColor] andLineWidth:1.5];
     CAShapeLayer *whiteLayer = [self drawPathOnLayer:path withColor:[UIColor whiteColor] andLineWidth:2.0];
     [_gridView.layer addSublayer:whiteLayer];
@@ -117,17 +113,17 @@
     return layer;
 }
 
-- (void)setUpWifiAnimation{
+- (void)setUpWifiAnimation {
     NSArray *imageNames = @[@"wifi_1.png", @"wifi_2.png", @"wifi_3.png", @"wifi_4.png"];
     NSMutableArray *images = [[NSMutableArray alloc] init];
     for (int i = 0; i < imageNames.count; i++) {
-        [images addObject:[UIImage imageNamed:[imageNames objectAtIndex:i]]];
+        [images addObject:[UIImage imageNamed:imageNames[i]]];
     }
     _wifiImage.animationImages = images;
     _wifiImage.animationDuration = 1;
 }
 
-- (void)registerToNotifications{
+- (void)registerToNotifications {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center addObserver:self
                selector:@selector(receiveProtocolNotification:)
@@ -155,45 +151,45 @@
                  object:nil];
 }
 
-- (void)receiveStreamNotification:(NSNotification *) notification{
+- (void)receiveStreamNotification:(NSNotification *)notification {
     NSDictionary *cmdDict = [notification userInfo];
-    NSString *msg = [cmdDict objectForKey:@"message"];
-    if ([msg isEqualToString:@"start"]){
-        if(mode == CAMERA_MODE){
+    NSString *msg = cmdDict[@"message"];
+    if ([msg isEqualToString:@"start"]) {
+        if (mode == CAMERA_MODE) {
             [self stopLogoAnimation];
         }
     }
-    else if([msg isEqualToString:@"stop"]){
-        if(mode == CAMERA_MODE){
+    else if ([msg isEqualToString:@"stop"]) {
+        if (mode == CAMERA_MODE) {
             [self startLogoAnimation];
         }
     }
 }
 
-- (void)connectedNotification:(NSNotification *) notification{
+- (void)connectedNotification:(NSNotification *)notification {
     NSDictionary *dict = [notification userInfo];
-    BOOL connected = [[dict objectForKey:@"isConnected"] boolValue];
+    BOOL connected = [dict[@"isConnected"] boolValue];
     if (connected) {
         [_wifiImage stopAnimating];
         [_wifiImage setImage:[UIImage imageNamed:@"wifi_connected"]];
         NSString *ID = [[NSUserDefaults standardUserDefaults] stringForKey:@"uuid"];
         [[NSUserDefaults standardUserDefaults] setValue:ID forKey:@"uuid"];
-        
+
         [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:UUID :ID]];
     }
-    else{
+    else {
         [_wifiImage startAnimating];
     }
 }
 
-- (void)wentToBackground{
+- (void)wentToBackground {
     // TODO: close socket, stream stuff, camera?
     [socketHandler sendCommand:[[Command alloc] init:QUIT]];
     [self.streamServer stopAcceptingConnections];
     [_captureManager closeAssetWriter];
 }
 
-- (void)cameToForeground{
+- (void)cameToForeground {
     if (mode == CAMERA_MODE) {
         [UIScreen mainScreen].brightness = 0;
     }
@@ -205,8 +201,7 @@
     [_captureManager prepareAssetWriter];
 }
 
-- (void)hideStatusBar
-{
+- (void)hideStatusBar {
     if ([self respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)]) {
         // iOS 7
         [self prefersStatusBarHidden];
@@ -217,22 +212,21 @@
     }
 }
 
--(BOOL)prefersStatusBarHidden{
+- (BOOL)prefersStatusBarHidden {
     return YES;
 }
 
-- (NSUInteger)supportedInterfaceOrientations
-{
+- (NSUInteger)supportedInterfaceOrientations {
     return UIInterfaceOrientationMaskLandscapeRight;
 }
 
-- (void)setCameraFramerate{
+- (void)setCameraFramerate {
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(queue, ^{
         if ([self.captureManager switchFormatWithDesiredFPS:120.0]) {
             // TODO: something
         }
-        else if ([self.captureManager switchFormatWithDesiredFPS:60.0]){
+        else if ([self.captureManager switchFormatWithDesiredFPS:60.0]) {
             // TODO: something
         }
         else {
@@ -242,11 +236,11 @@
 
 }
 
-- (void)receiveProtocolNotification:(NSNotification *) notification{
+- (void)receiveProtocolNotification:(NSNotification *)notification {
     NSDictionary *cmdDict = [notification userInfo];
-    Command *command = [cmdDict objectForKey:@"command"];
+    Command *command = cmdDict[@"command"];
     CommandType cType = [command getCommandType];
-    
+
     switch (cType) {
         case START:
             [self startRecording];
@@ -285,49 +279,48 @@
     }
 }
 
-- (void)didReceiveMemoryWarning
-{
+- (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 }
 
-- (void)startRecording{
-    if(mode == CAMERA_MODE && !_captureManager.isRecording){
+- (void)startRecording {
+    if (mode == CAMERA_MODE && !_captureManager.isRecording) {
         NSLog(@"Started recording");
         NSTimeInterval startTime = [[NSDate date] timeIntervalSince1970];
         [_captureManager startRecording];
-        delay = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]-startTime];
+        delay = @([[NSDate date] timeIntervalSince1970] - startTime);
         [socketHandler sendCommand:[[Command alloc] init:OK]];
     }
-    else{
+    else {
         NSLog(@"was already recording");
         [socketHandler sendCommand:[[Command alloc] init:NOT_OK]];
     }
 }
 
-- (void)stopRecording{
-    if(_captureManager.isRecording){
+- (void)stopRecording {
+    if (_captureManager.isRecording) {
         [_captureManager stopRecording];
     }
-    else{
+    else {
         [socketHandler sendCommand:[[Command alloc] init:NOT_OK]];
     }
 }
 
-- (void)sendJsonAndVideo:(NSNotification *) notification{
+- (void)sendJsonAndVideo:(NSNotification *)notification {
     NSDictionary *dict = [notification userInfo];
     NSMutableDictionary *json = [[NSMutableDictionary alloc] init];
     CameraSettings *sharedVars = [CameraSettings sharedVariables];
     NSDictionary *pov = [sharedVars getPositionJson];
-    NSNumber *fps = [NSNumber numberWithFloat:[sharedVars framerate]];
-    [json setObject:fps forKey:@"fps"];
-    [json setObject:pov forKey:@"pointOfView"];
-    [json setObject:delay forKey:@"delay"];
-    file = [dict objectForKey:@"file"];
+    NSNumber *fps = @([sharedVars framerate]);
+    json[@"fps"] = fps;
+    json[@"pointOfView"] = pov;
+    json[@"delay"] = delay;
+    file = dict[@"file"];
     AVURLAsset *sourceAsset = [AVURLAsset URLAssetWithURL:file options:nil];
     CMTime duration = sourceAsset.duration;
-    NSNumber *dur = [NSNumber numberWithFloat:CMTimeGetSeconds(duration)];
-    [json setObject:dur forKey:@"duration"];
-    NSString *jsonStr = [VVJSONUtility convertNSDictToJSONString:json];
+    NSNumber *dur = @(CMTimeGetSeconds(duration));
+    json[@"duration"] = dur;
+    NSString *jsonStr = [VVUtility convertNSDictToJSONString:json];
     [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:VIDEO_COMING :jsonStr]];
     dispatch_async(dispatch_get_main_queue(), ^{
         NSString *path = [file path];
@@ -337,34 +330,34 @@
     });
 }
 
-- (void)setPosition:(Command *)command{
+- (void)setPosition:(Command *)command {
     if ([command isKindOfClass:[CommandWithValue class]]) {
         CameraSettings *sharedVars = [CameraSettings sharedVariables];
         NSString *JSONString = [[NSString alloc] initWithData:[command getData] encoding:NSUTF8StringEncoding];
-        NSDictionary *json = [VVJSONUtility getNSDictFromJSONString:JSONString];
-        [sharedVars setDist:[[json valueForKey:@"dist"] doubleValue]];
-        [sharedVars setYaw:[[json valueForKey:@"yaw"] intValue]];
-        [sharedVars setPitch:[[json valueForKey:@"pitch"] intValue]];
+        NSDictionary *json = [VVUtility getNSDictFromJSONString:JSONString];
+        [sharedVars setDist:[json[@"dist"] doubleValue]];
+        [sharedVars setYaw:[json[@"yaw"] intValue]];
+        [sharedVars setPitch:[json[@"pitch"] intValue]];
     }
 }
 
-- (void)getPosition{
+- (void)getPosition {
     CameraSettings *sharedVars = [CameraSettings sharedVariables];
-    NSNumber *dst = [NSNumber numberWithDouble:[sharedVars dist]];
-    NSNumber *yw = [NSNumber numberWithInt:[sharedVars yaw]];
-    NSNumber *ptch = [NSNumber numberWithInt:[sharedVars pitch]];
+    NSNumber *dst = @([sharedVars dist]);
+    NSNumber *yw = @([sharedVars yaw]);
+    NSNumber *ptch = @([sharedVars pitch]);
     NSArray *positions = @[dst, yw, ptch];
     NSArray *keys = @[@"dist", @"yaw", @"pitch"];
-    NSDictionary *pov = [[NSDictionary alloc] initWithObjects:positions forKeys:keys];
-    NSString *jsonStr = [VVJSONUtility convertNSDictToJSONString:pov];
+    NSDictionary *pov = @{keys : positions};
+    NSString *jsonStr = [VVUtility convertNSDictToJSONString:pov];
     [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:POSITION :jsonStr]];
 }
 
 - (void)handleVersionCommand:(Command *)command {
-    if([command isKindOfClass:[CommandWithValue class]]){
-        CommandWithValue *cmd = (CommandWithValue *)command;
+    if ([command isKindOfClass:[CommandWithValue class]]) {
+        CommandWithValue *cmd = (CommandWithValue *) command;
         NSString *serverVersion = [cmd getDataAsString];
-        if([VVVersionCompabilityChecker isCompatibleVersionWith:MIN_SERVER_VERSION serverVersion:serverVersion]){
+        if ([VVVersionCompabilityChecker isCompatibleVersionWith:kMinServerVersion serverVersion:serverVersion]) {
             // TODO: Enable after implementing different versions for android and ios versions on the server
 //            [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:VERSION :currentVersionNumber]];
         }
@@ -375,8 +368,8 @@
     }
 }
 
-- (void)handleWrongVersion{
-    if(!versionAlertIsShowing){
+- (void)handleWrongVersion {
+    if (!versionAlertIsShowing) {
         NSLog(@"Wrong version");
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"ERROR"
                                                         message:@"Camera software is outdated and not compatible with the server software.\n\nPlease update the camera software."
@@ -398,7 +391,7 @@
 
 
 - (IBAction)switchToAimMode:(id)sender {
-    if(mode != AIM_MODE){
+    if (mode != AIM_MODE) {
         mode = AIM_MODE;
         [UIScreen mainScreen].brightness = 1;
         [_captureManager addPreview:self.view];
@@ -411,12 +404,12 @@
 }
 
 - (IBAction)switchToCameraMode:(id)sender {
-    if(mode != CAMERA_MODE && [socketHandler isConnectedToTCP]){
+    if (mode != CAMERA_MODE && [socketHandler isConnectedToTCP]) {
         mode = CAMERA_MODE;
         [UIScreen mainScreen].brightness = 0;
         [_logoView setHidden:NO];
         [_captureManager removePreview];
-        if(![_captureManager isStreaming]){
+        if (![_captureManager isStreaming]) {
             _logo.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1.0];
             logoIsWhite = YES;
             [self startLogoAnimation];
@@ -427,24 +420,24 @@
     }
 }
 
-- (void)startLogoAnimation{
-    if(logoIsWhite){
-        [UIView animateWithDuration:4.0  delay:0 options:(UIViewAnimationOptionAutoreverse | UIViewAnimationOptionRepeat) animations:^{
+- (void)startLogoAnimation {
+    if (logoIsWhite) {
+        [UIView animateWithDuration:4.0 delay:0 options:(UIViewAnimationOptionAutoreverse | UIViewAnimationOptionRepeat) animations:^{
             _logo.backgroundColor = [UIColor colorWithRed:1.0 green:0.0 blue:0.0 alpha:1.0];
-        } completion:^(BOOL res){
+        }                completion:^(BOOL res) {
             logoIsWhite = NO;
         }];
     }
-    else{
-        [UIView animateWithDuration:4.0  delay:0 options:(UIViewAnimationOptionAutoreverse | UIViewAnimationOptionRepeat) animations:^{
+    else {
+        [UIView animateWithDuration:4.0 delay:0 options:(UIViewAnimationOptionAutoreverse | UIViewAnimationOptionRepeat) animations:^{
             _logo.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1.0];
-        } completion:^(BOOL res){
+        }                completion:^(BOOL res) {
             logoIsWhite = YES;
         }];
     }
 }
 
-- (void)stopLogoAnimation{
+- (void)stopLogoAnimation {
     [_logo.layer removeAllAnimations];
 }
 

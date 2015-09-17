@@ -6,8 +6,6 @@
 //  Copyright (c) 2015 Bitwise. All rights reserved.
 //
 
-#ifndef VVCamera_AVCaptureManager_h
-#define VVCamera_AVCaptureManager_h
 #import "StreamServer.h"
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
@@ -21,23 +19,32 @@ typedef enum {
 
 @interface AVCaptureManager : NSObject
 
-@property (nonatomic, readonly) BOOL isRecording;
-@property (nonatomic, readonly) BOOL isStreaming;
-@property (nonatomic, weak) StreamServer *streamServer;
+@property(nonatomic, readonly) BOOL isRecording;
+@property(nonatomic, readonly) BOOL isStreaming;
+@property(nonatomic, weak) StreamServer *streamServer;
 
 - (id)initWithPreviewView:(UIView *)previewView;
+
 - (void)setCameraSettings;
+
 - (void)resetFormat;
+
 - (NSURL *)getVideoFile;
+
 - (void)addPreview:(UIView *)previewView;
+
 - (void)removePreview;
+
 - (BOOL)switchFormatWithDesiredFPS:(CGFloat)desiredFPS;
+
 - (void)prepareAssetWriter;
+
 - (void)closeAssetWriter;
+
 - (void)startRecording;
+
 - (void)stopRecording;
+
 + (void)deleteVideo:(NSURL *)file;
 
 @end
-
-#endif

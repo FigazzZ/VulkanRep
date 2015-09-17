@@ -9,20 +9,19 @@
 #import <Foundation/Foundation.h>
 #import "CameraProtocol.h"
 #import "CameraMessageHandler.h"
-#import "CommandType.h"
 
 @implementation CameraProtocol
 
-- (id) init{
+- (id)init {
     self = [super init];
-    if(self){
+    if (self) {
         commandHandlerDelegate = self;
         messageHandler = [[CameraMessageHandler alloc] init];
     }
     return self;
 }
 
-- (BOOL) isValueCommand:(CommandType)cType{
+- (BOOL)isValueCommand:(CommandType)cType {
     switch (cType) {
         case VERSION:
             // Fall through

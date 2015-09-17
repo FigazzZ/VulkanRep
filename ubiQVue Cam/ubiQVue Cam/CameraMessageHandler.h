@@ -6,8 +6,6 @@
 //  Copyright (c) 2015 Bitwise. All rights reserved.
 //
 
-#ifndef VVCamera_CameraMessageHandler_h
-#define VVCamera_CameraMessageHandler_h
 #import "MessageHandler.h"
 
 
@@ -15,5 +13,3 @@
 
 @end
 
-
-#endif

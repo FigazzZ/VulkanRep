@@ -8,6 +8,7 @@
 
 #ifndef VVCamera_StreamServer_h
 #define VVCamera_StreamServer_h
+
 #import <Foundation/Foundation.h>
 #import <GCDAsyncSocket.h>
 
@@ -15,11 +16,12 @@
 
 @interface StreamServer : NSObject
 
-@property (strong) GCDAsyncSocket *connectedSocket;
-@property (nonatomic, strong) GCDAsyncSocket *serverSocket;
-@property (nonatomic) BOOL isRunning;
+@property(strong) GCDAsyncSocket *connectedSocket;
+@property(nonatomic, strong) GCDAsyncSocket *serverSocket;
+@property(nonatomic) BOOL isRunning;
 
 - (void)startAcceptingConnections;
+
 - (void)stopAcceptingConnections;
 
 @end

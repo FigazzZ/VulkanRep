@@ -18,19 +18,18 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    NSArray *objects = @[[NSNumber numberWithFloat:120.0],
-                         [NSNumber numberWithInt:0],
-                         [NSNumber numberWithInt:0],
-                         [NSNumber numberWithInt:10],
-                         [[NSUUID UUID] UUIDString]];
+    NSArray *objects = @[@120.0F,
+            @0,
+            @0,
+            @10,
+            [[NSUUID UUID] UUIDString]];
     NSArray *keys = @[@"framerate", @"yaw", @"pitch", @"dist", @"uuid"];
-    NSDictionary *appDefaults = [NSDictionary
-                                 dictionaryWithObjects:objects forKeys:keys];
+    NSDictionary *appDefaults = @{keys : objects};
     [[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];
-    if(getenv("NSZombieEnabled") || getenv("NSAutoreleaseFreedObjectCheckEnabled")){
+    if (getenv("NSZombieEnabled") || getenv("NSAutoreleaseFreedObjectCheckEnabled")) {
         NSLog(@"NSZombieEnabled/NSAutoreleaseFreedObjectCheckEnabled enabled!");
     }
-    
+
     return YES;
 }
 
@@ -45,9 +44,9 @@
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     [[CameraSettings sharedVariables] saveSettings];
     [[NSNotificationCenter defaultCenter]
-     postNotificationName:@"Background"
-     object:self
-     userInfo:nil];
+            postNotificationName:@"Background"
+                          object:self
+                        userInfo:nil];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
@@ -57,9 +56,9 @@
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     [[NSNotificationCenter defaultCenter]
-     postNotificationName:@"Foreground"
-     object:self
-     userInfo:nil];
+            postNotificationName:@"Foreground"
+                          object:self
+                        userInfo:nil];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {

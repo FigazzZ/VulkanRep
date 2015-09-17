@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		323CFABB1BAB0556003BFF22 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 323CFABA1BAB0556003BFF22 /* Foundation.framework */; };
+		323CFABD1BAB05BD003BFF22 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 323CFABC1BAB05BD003BFF22 /* UIKit.framework */; };
+		325E862F1BAB0A610051C4DA /* CommandType.m in Sources */ = {isa = PBXBuildFile; fileRef = 325E862C1BAB0A610051C4DA /* CommandType.m */; };
+		325E86301BAB0A610051C4DA /* VVUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 325E862E1BAB0A610051C4DA /* VVUtility.m */; };
 		32855ACC1B95C6BC003CC551 /* AVCaptureManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 32855AC21B95C6BC003CC551 /* AVCaptureManager.m */; };
 		32855ACD1B95C6BC003CC551 /* CameraMessageHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 32855AC41B95C6BC003CC551 /* CameraMessageHandler.m */; };
 		32855ACE1B95C6BC003CC551 /* CameraProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 32855AC61B95C6BC003CC551 /* CameraProtocol.m */; };
@@ -21,7 +25,6 @@
 		32855AEC1B95C6F0003CC551 /* VVNetworkSocketHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 32855AE11B95C6F0003CC551 /* VVNetworkSocketHandler.m */; };
 		32855AED1B95C6F0003CC551 /* CommandWithValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 32855AE21B95C6F0003CC551 /* CommandWithValue.m */; };
 		32855AEE1B95C6F0003CC551 /* MessageHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 32855AE31B95C6F0003CC551 /* MessageHandler.m */; };
-		32855AEF1B95C6F0003CC551 /* VVJSONUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 32855AE51B95C6F0003CC551 /* VVJSONUtility.m */; };
 		32DF0F391B95C4E000467255 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 32DF0F381B95C4E000467255 /* main.m */; };
 		32DF0F3C1B95C4E000467255 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 32DF0F3B1B95C4E000467255 /* AppDelegate.m */; };
 		32DF0F3F1B95C4E000467255 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 32DF0F3E1B95C4E000467255 /* ViewController.m */; };
@@ -42,6 +45,11 @@
 
 /* Begin PBXFileReference section */
 		0574276F78C5040100A8F126 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
+		323CFABA1BAB0556003BFF22 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		323CFABC1BAB05BD003BFF22 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		325E862C1BAB0A610051C4DA /* CommandType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommandType.m; sourceTree = "<group>"; };
+		325E862D1BAB0A610051C4DA /* VVUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVUtility.h; sourceTree = "<group>"; };
+		325E862E1BAB0A610051C4DA /* VVUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VVUtility.m; sourceTree = "<group>"; };
 		32855AC11B95C6BC003CC551 /* AVCaptureManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVCaptureManager.h; sourceTree = "<group>"; };
 		32855AC21B95C6BC003CC551 /* AVCaptureManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVCaptureManager.m; sourceTree = "<group>"; };
 		32855AC31B95C6BC003CC551 /* CameraMessageHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraMessageHandler.h; sourceTree = "<group>"; };
@@ -70,8 +78,6 @@
 		32855AE11B95C6F0003CC551 /* VVNetworkSocketHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VVNetworkSocketHandler.m; sourceTree = "<group>"; };
 		32855AE21B95C6F0003CC551 /* CommandWithValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommandWithValue.m; sourceTree = "<group>"; };
 		32855AE31B95C6F0003CC551 /* MessageHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageHandler.m; sourceTree = "<group>"; };
-		32855AE41B95C6F0003CC551 /* VVJSONUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVJSONUtility.h; sourceTree = "<group>"; };
-		32855AE51B95C6F0003CC551 /* VVJSONUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VVJSONUtility.m; sourceTree = "<group>"; };
 		32DF0F331B95C4E000467255 /* ubiQVue Cam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ubiQVue Cam.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		32DF0F371B95C4E000467255 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		32DF0F381B95C4E000467255 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -92,6 +98,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				323CFABD1BAB05BD003BFF22 /* UIKit.framework in Frameworks */,
+				323CFABB1BAB0556003BFF22 /* Foundation.framework in Frameworks */,
 				AA9FB3B8F54D115B5737BD14 /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -109,6 +117,8 @@
 		0D9B06C1738086AF76B66B05 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				323CFABC1BAB05BD003BFF22 /* UIKit.framework */,
+				323CFABA1BAB0556003BFF22 /* Foundation.framework */,
 				40D10F2B7CB5532A6B712E60 /* libPods.a */,
 			);
 			name = Frameworks;
@@ -129,6 +139,7 @@
 				32855AD91B95C6F0003CC551 /* Command.h */,
 				32855AD31B95C6F0003CC551 /* Command.m */,
 				32855AD41B95C6F0003CC551 /* CommandType.h */,
+				325E862C1BAB0A610051C4DA /* CommandType.m */,
 				32855AD51B95C6F0003CC551 /* CommandWithValue.h */,
 				32855AE21B95C6F0003CC551 /* CommandWithValue.m */,
 				32855AD61B95C6F0003CC551 /* MessageHandler.h */,
@@ -139,12 +150,12 @@
 				32855ADC1B95C6F0003CC551 /* VVProtocol.h */,
 				32855ADD1B95C6F0003CC551 /* ProtocolUtility.h */,
 				32855ADE1B95C6F0003CC551 /* ProtocolUtility.m */,
+				325E862D1BAB0A610051C4DA /* VVUtility.h */,
+				325E862E1BAB0A610051C4DA /* VVUtility.m */,
 				32855ADF1B95C6F0003CC551 /* VVVersionCompabilityChecker.h */,
 				32855AE01B95C6F0003CC551 /* VVVersionCompabilityChecker.m */,
 				32855AD81B95C6F0003CC551 /* VVNetworkSocketHandler.h */,
 				32855AE11B95C6F0003CC551 /* VVNetworkSocketHandler.m */,
-				32855AE41B95C6F0003CC551 /* VVJSONUtility.h */,
-				32855AE51B95C6F0003CC551 /* VVJSONUtility.m */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -393,12 +404,13 @@
 				32DF0F3C1B95C4E000467255 /* AppDelegate.m in Sources */,
 				32855AED1B95C6F0003CC551 /* CommandWithValue.m in Sources */,
 				32855AD11B95C6BC003CC551 /* StreamServer.m in Sources */,
+				325E862F1BAB0A610051C4DA /* CommandType.m in Sources */,
 				32855AE81B95C6F0003CC551 /* Packet.m in Sources */,
 				32DF0F391B95C4E000467255 /* main.m in Sources */,
+				325E86301BAB0A610051C4DA /* VVUtility.m in Sources */,
 				32855ACD1B95C6BC003CC551 /* CameraMessageHandler.m in Sources */,
 				32855AE71B95C6F0003CC551 /* Command.m in Sources */,
 				32855AEC1B95C6F0003CC551 /* VVNetworkSocketHandler.m in Sources */,
-				32855AEF1B95C6F0003CC551 /* VVJSONUtility.m in Sources */,
 				32855AEE1B95C6F0003CC551 /* MessageHandler.m in Sources */,
 				32855ACC1B95C6BC003CC551 /* AVCaptureManager.m in Sources */,
 			);
@@ -513,7 +525,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = "ubiQVue Cam/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -527,7 +539,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = "ubiQVue Cam/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
