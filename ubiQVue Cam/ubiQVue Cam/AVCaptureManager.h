@@ -29,7 +29,7 @@ typedef NS_ENUM(unsigned int, CameraState) {
 
 - (void)resetFormat;
 
-@property (NS_NONATOMIC_IOSONLY, getter=getVideoFile, readonly, copy) NSURL *videoFile;
+@property(NS_NONATOMIC_IOSONLY, getter=getVideoFile, readonly, copy) NSURL *videoFile;
 
 - (void)addPreview:(UIView *)previewView;
 

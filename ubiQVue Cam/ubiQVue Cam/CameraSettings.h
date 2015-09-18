@@ -40,7 +40,7 @@
 @property(nonatomic) AVCaptureAutoFocusRangeRestriction autoFocusRange;
 @property(nonatomic) BOOL smoothFocusEnabled;
 
-@property (NS_NONATOMIC_IOSONLY, getter=getPositionJson, readonly, copy) NSDictionary *positionJson;
+@property(NS_NONATOMIC_IOSONLY, getter=getPositionJson, readonly, copy) NSDictionary *positionJson;
 
 - (void)saveSettings;
 
