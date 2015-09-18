@@ -32,7 +32,7 @@
     return sharedVariables;
 }
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self) {
         // TODO: load values from stored settings if they exist
@@ -57,7 +57,7 @@
     NSNumber *dst = @(dist);
     NSNumber *yw = @(yaw);
     NSNumber *ptch = @(pitch);
-    UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
+    UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
     NSNumber *rll;
     if (UIDeviceOrientationIsPortrait(orientation)) {
         if (orientation == UIDeviceOrientationPortrait) {

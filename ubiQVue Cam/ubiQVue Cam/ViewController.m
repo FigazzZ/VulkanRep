@@ -39,7 +39,7 @@ NSString *const kMinServerVersion = @"0.3.0.0";
     [super viewDidLoad];
     mode = AIM_MODE;
     [UIApplication sharedApplication].idleTimerDisabled = YES;
-    currentVersionNumber = [@"I" stringByAppendingString:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]];
+    currentVersionNumber = [@"I" stringByAppendingString:[NSBundle mainBundle].infoDictionary[@"CFBundleShortVersionString"]];
     [UIScreen mainScreen].brightness = 1;
     versionAlertIsShowing = NO;
     // TODO: Close camera and stuff when view disappears
@@ -49,7 +49,7 @@ NSString *const kMinServerVersion = @"0.3.0.0";
 
     [self drawGrid];
     self.streamServer = [[StreamServer alloc] init];
-    [self.captureManager setStreamServer:self.streamServer];
+    (self.captureManager).streamServer = self.streamServer;
     [self.streamServer startAcceptingConnections];
 
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self
@@ -106,10 +106,10 @@ NSString *const kMinServerVersion = @"0.3.0.0";
 
 - (CAShapeLayer *)drawPathOnLayer:(UIBezierPath *)path withColor:(UIColor *)color andLineWidth:(CGFloat)width {
     CAShapeLayer *layer = [CAShapeLayer layer];
-    layer.path = [path CGPath];
-    layer.strokeColor = [color CGColor];
+    layer.path = path.CGPath;
+    layer.strokeColor = color.CGColor;
     layer.lineWidth = width;
-    layer.fillColor = [[UIColor clearColor] CGColor];
+    layer.fillColor = [UIColor clearColor].CGColor;
     return layer;
 }
 
@@ -152,7 +152,7 @@ NSString *const kMinServerVersion = @"0.3.0.0";
 }
 
 - (void)receiveStreamNotification:(NSNotification *)notification {
-    NSDictionary *cmdDict = [notification userInfo];
+    NSDictionary *cmdDict = notification.userInfo;
     NSString *msg = cmdDict[@"message"];
     if ([msg isEqualToString:@"start"]) {
         if (mode == CAMERA_MODE) {
@@ -167,11 +167,11 @@ NSString *const kMinServerVersion = @"0.3.0.0";
 }
 
 - (void)connectedNotification:(NSNotification *)notification {
-    NSDictionary *dict = [notification userInfo];
+    NSDictionary *dict = notification.userInfo;
     BOOL connected = [dict[@"isConnected"] boolValue];
     if (connected) {
         [_wifiImage stopAnimating];
-        [_wifiImage setImage:[UIImage imageNamed:@"wifi_connected"]];
+        _wifiImage.image = [UIImage imageNamed:@"wifi_connected"];
         NSString *ID = [[NSUserDefaults standardUserDefaults] stringForKey:@"uuid"];
         [[NSUserDefaults standardUserDefaults] setValue:ID forKey:@"uuid"];
 
@@ -216,7 +216,7 @@ NSString *const kMinServerVersion = @"0.3.0.0";
     return YES;
 }
 
-- (NSUInteger)supportedInterfaceOrientations {
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations {
     return UIInterfaceOrientationMaskLandscapeRight;
 }
 
@@ -237,7 +237,7 @@ NSString *const kMinServerVersion = @"0.3.0.0";
 }
 
 - (void)receiveProtocolNotification:(NSNotification *)notification {
-    NSDictionary *cmdDict = [notification userInfo];
+    NSDictionary *cmdDict = notification.userInfo;
     Command *command = cmdDict[@"command"];
     CommandType cType = [command getCommandType];
 
@@ -264,7 +264,7 @@ NSString *const kMinServerVersion = @"0.3.0.0";
             [self.captureManager setCameraSettings];
             break;
         case PONG:
-            [socketHandler setLastResponse:[[NSDate date] timeIntervalSince1970]];
+            socketHandler.lastResponse = [NSDate date].timeIntervalSince1970;
             break;
         case DELETE:
             [AVCaptureManager deleteVideo:file];
@@ -286,9 +286,9 @@ NSString *const kMinServerVersion = @"0.3.0.0";
 - (void)startRecording {
     if (mode == CAMERA_MODE && !_captureManager.isRecording) {
         NSLog(@"Started recording");
-        NSTimeInterval startTime = [[NSDate date] timeIntervalSince1970];
+        NSTimeInterval startTime = [NSDate date].timeIntervalSince1970;
         [_captureManager startRecording];
-        delay = @([[NSDate date] timeIntervalSince1970] - startTime);
+        delay = @([NSDate date].timeIntervalSince1970 - startTime);
         [socketHandler sendCommand:[[Command alloc] init:OK]];
     }
     else {
@@ -307,11 +307,11 @@ NSString *const kMinServerVersion = @"0.3.0.0";
 }
 
 - (void)sendJsonAndVideo:(NSNotification *)notification {
-    NSDictionary *dict = [notification userInfo];
+    NSDictionary *dict = notification.userInfo;
     NSMutableDictionary *json = [[NSMutableDictionary alloc] init];
     CameraSettings *sharedVars = [CameraSettings sharedVariables];
     NSDictionary *pov = [sharedVars getPositionJson];
-    NSNumber *fps = @([sharedVars framerate]);
+    NSNumber *fps = @(sharedVars.framerate);
     json[@"fps"] = fps;
     json[@"pointOfView"] = pov;
     json[@"delay"] = delay;
@@ -323,7 +323,7 @@ NSString *const kMinServerVersion = @"0.3.0.0";
     NSString *jsonStr = [VVUtility convertNSDictToJSONString:json];
     [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:VIDEO_COMING :jsonStr]];
     dispatch_async(dispatch_get_main_queue(), ^{
-        NSString *path = [file path];
+        NSString *path = file.path;
         NSData *bytes = [[NSData alloc] initWithContentsOfFile:path];
         NSLog(@"Sending video");
         [socketHandler sendCommand:[[CommandWithValue alloc] init:VIDEODATA :bytes]];
@@ -335,17 +335,17 @@ NSString *const kMinServerVersion = @"0.3.0.0";
         CameraSettings *sharedVars = [CameraSettings sharedVariables];
         NSString *JSONString = [[NSString alloc] initWithData:[command getData] encoding:NSUTF8StringEncoding];
         NSDictionary *json = [VVUtility getNSDictFromJSONString:JSONString];
-        [sharedVars setDist:[json[@"dist"] doubleValue]];
-        [sharedVars setYaw:[json[@"yaw"] intValue]];
-        [sharedVars setPitch:[json[@"pitch"] intValue]];
+        sharedVars.dist = [json[@"dist"] doubleValue];
+        sharedVars.yaw = [json[@"yaw"] intValue];
+        sharedVars.pitch = [json[@"pitch"] intValue];
     }
 }
 
 - (void)getPosition {
     CameraSettings *sharedVars = [CameraSettings sharedVariables];
-    NSNumber *dst = @([sharedVars dist]);
-    NSNumber *yw = @([sharedVars yaw]);
-    NSNumber *ptch = @([sharedVars pitch]);
+    NSNumber *dst = @(sharedVars.dist);
+    NSNumber *yw = @(sharedVars.yaw);
+    NSNumber *ptch = @(sharedVars.pitch);
     NSArray *positions = @[dst, yw, ptch];
     NSArray *keys = @[@"dist", @"yaw", @"pitch"];
     NSDictionary *pov = @{keys : positions};
@@ -409,7 +409,7 @@ NSString *const kMinServerVersion = @"0.3.0.0";
         [UIScreen mainScreen].brightness = 0;
         [_logoView setHidden:NO];
         [_captureManager removePreview];
-        if (![_captureManager isStreaming]) {
+        if (!_captureManager.isStreaming) {
             _logo.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1.0];
             logoIsWhite = YES;
             [self startLogoAnimation];

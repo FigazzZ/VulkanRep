@@ -6,15 +6,15 @@
 //  Copyright (c) 2015 Bitwise. All rights reserved.
 //
 
-#import "StreamServer.h"
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 #import <UIKit/UIKit.h>
+#import "StreamServer.h"
 
-typedef enum {
+typedef NS_ENUM(unsigned int, CameraState) {
     AIM_MODE,
     CAMERA_MODE
-} CameraState;
+};
 
 
 @interface AVCaptureManager : NSObject
@@ -23,13 +23,13 @@ typedef enum {
 @property(nonatomic, readonly) BOOL isStreaming;
 @property(nonatomic, weak) StreamServer *streamServer;
 
-- (id)initWithPreviewView:(UIView *)previewView;
+- (instancetype)initWithPreviewView:(UIView *)previewView NS_DESIGNATED_INITIALIZER;
 
 - (void)setCameraSettings;
 
 - (void)resetFormat;
 
-- (NSURL *)getVideoFile;
+@property (NS_NONATOMIC_IOSONLY, getter=getVideoFile, readonly, copy) NSURL *videoFile;
 
 - (void)addPreview:(UIView *)previewView;
 

@@ -13,7 +13,7 @@
     NSString *msg;
 }
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self) {
         socketQueue = dispatch_queue_create("socketQueue", NULL);
@@ -60,7 +60,7 @@
     if (![_connectedSocket.connectedHost isEqualToString:newSocket.connectedHost]) {
         [self closeSocket];
         _connectedSocket = newSocket;
-        [_connectedSocket setDelegate:self];
+        _connectedSocket.delegate = self;
     }
     [_connectedSocket writeData:[msg dataUsingEncoding:NSUTF8StringEncoding] withTimeout:-1 tag:0];
 }

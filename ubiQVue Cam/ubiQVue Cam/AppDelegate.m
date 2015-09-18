@@ -22,7 +22,7 @@
             @0,
             @0,
             @10,
-            [[NSUUID UUID] UUIDString]];
+            [NSUUID UUID].UUIDString];
     NSArray *keys = @[@"framerate", @"yaw", @"pitch", @"dist", @"uuid"];
     NSDictionary *appDefaults = @{keys : objects};
     [[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];

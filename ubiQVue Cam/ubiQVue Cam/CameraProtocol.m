@@ -12,7 +12,7 @@
 
 @implementation CameraProtocol
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self) {
         commandHandlerDelegate = self;

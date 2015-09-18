@@ -6,6 +6,7 @@
 //  Copyright (c) 2015 Bitwise. All rights reserved.
 //
 
+#import <Foundation/Foundation.h>
 #import "AVCaptureManager.h"
 #import "CameraSettings.h"
 
@@ -44,7 +45,11 @@
     BOOL finishRecording;
 }
 
-- (id)initWithPreviewView:(UIView *)previewView {
+- (instancetype)init {
+    return [self initWithPreviewView:nil];
+}
+
+- (instancetype)initWithPreviewView:(UIView *)previewView {
 
     self = [super init];
 
@@ -65,7 +70,9 @@
         if (![self setupCaptureSession]) {
             return nil;
         }
-        [self setupPreview:previewView];
+        if (previewView != nil) {
+            [self setupPreview:previewView];
+        }
     }
     return self;
 }
@@ -105,7 +112,7 @@
     }
     [self.captureSession addInput:audioIn];
     
-    [self setupAudioDataOutput:audioIn];
+    [self setupAudioDataOutput];
 #endif
     [self prepareAssetWriter];
 
@@ -124,7 +131,7 @@
     self.previewLayer.contentsGravity = kCAGravityResizeAspect;
     self.previewLayer.videoGravity = AVLayerVideoGravityResizeAspect;
     [self addPreview:previewView];
-    AVCaptureConnection *connection = [self.previewLayer connection];
+    AVCaptureConnection *connection = (self.previewLayer).connection;
     [self configureConnection:connection];
 }
 
@@ -137,17 +144,17 @@
 }
 
 - (AVCaptureConnection *)createVideoConnectionForOutput:(AVCaptureOutput *)output andInput:(AVCaptureDeviceInput *)videoIn {
-    AVCaptureConnection *connection = [[AVCaptureConnection alloc] initWithInputPorts:[videoIn ports] output:output];
+    AVCaptureConnection *connection = [[AVCaptureConnection alloc] initWithInputPorts:videoIn.ports output:output];
     [self configureConnection:connection];
     return connection;
 }
 
 - (void)configureConnection:(AVCaptureConnection *)connection {
-    if ([connection isVideoOrientationSupported]) {
+    if (connection.supportsVideoOrientation) {
         AVCaptureVideoOrientation orientation = AVCaptureVideoOrientationLandscapeRight;
-        [connection setVideoOrientation:orientation];
+        connection.videoOrientation = orientation;
     }
-    if ([connection isVideoStabilizationSupported]) {
+    if (connection.supportsVideoStabilization) {
         connection.preferredVideoStabilizationMode = [[CameraSettings sharedVariables] stabilizationMode];
     }
 }
@@ -164,7 +171,7 @@
     }
 }
 
-- (void)setupAudioDataOutput:(AVCaptureDeviceInput *)input {
+- (void)setupAudioDataOutput {
     AVCaptureAudioDataOutput *audioDataOutput = [[AVCaptureAudioDataOutput alloc] init];
     [audioDataOutput setSampleBufferDelegate:self queue:self.audioDataQueue];
     if ([self.captureSession canAddOutput:audioDataOutput]) {
@@ -235,7 +242,7 @@
 
 
 - (void)receiveStreamNotification:(NSNotification *)notification {
-    NSDictionary *cmdDict = [notification userInfo];
+    NSDictionary *cmdDict = notification.userInfo;
     NSString *msg = cmdDict[@"message"];
     if ([msg isEqualToString:@"start"]) {
         [self startStreaming];
@@ -263,13 +270,13 @@
 }
 
 - (void)writeImageToSocket:(UIImage *)image withTimestamp:(NSTimeInterval)timestamp {
-    GCDAsyncSocket *socket = [_streamServer connectedSocket];
+    GCDAsyncSocket *socket = _streamServer.connectedSocket;
     if (socket != nil) {
         NSData *imgAsJPEG = UIImageJPEGRepresentation(image, 0.1);
         NSString *content = [[NSString alloc] initWithFormat:@"%@%@%lu%@%@%lu%@",
                                                              @"Content-type: image/jpeg\r\n",
                                                              @"Content-Length: ",
-                                                             (unsigned long) [imgAsJPEG length],
+                                                             (unsigned long) imgAsJPEG.length,
                                                              @"\r\n",
                                                              @"X-Timestamp:",
                                                              (unsigned long) timestamp,
@@ -305,20 +312,20 @@
     [videoDevice lockForConfiguration:nil];
     CameraSettings *sharedVars = [CameraSettings sharedVariables];
 
-    if ([videoDevice isExposureModeSupported:[sharedVars exposureMode]]) {
-        videoDevice.exposureMode = [sharedVars exposureMode];
+    if ([videoDevice isExposureModeSupported:sharedVars.exposureMode]) {
+        videoDevice.exposureMode = sharedVars.exposureMode;
     }
-    if ([videoDevice isFocusModeSupported:[sharedVars focusMode]]) {
-        videoDevice.focusMode = [sharedVars focusMode];
+    if ([videoDevice isFocusModeSupported:sharedVars.focusMode]) {
+        videoDevice.focusMode = sharedVars.focusMode;
     }
-    if ([videoDevice isSmoothAutoFocusSupported]) {
-        videoDevice.smoothAutoFocusEnabled = [sharedVars smoothFocusEnabled];
+    if (videoDevice.smoothAutoFocusSupported) {
+        videoDevice.smoothAutoFocusEnabled = sharedVars.smoothFocusEnabled;
     }
-    if ([videoDevice isAutoFocusRangeRestrictionSupported]) {
-        videoDevice.autoFocusRangeRestriction = [sharedVars autoFocusRange];
+    if (videoDevice.autoFocusRangeRestrictionSupported) {
+        videoDevice.autoFocusRangeRestriction = sharedVars.autoFocusRange;
     }
-    if ([videoDevice isWhiteBalanceModeSupported:[sharedVars wbMode]]) {
-        videoDevice.whiteBalanceMode = [sharedVars wbMode];
+    if ([videoDevice isWhiteBalanceModeSupported:sharedVars.wbMode]) {
+        videoDevice.whiteBalanceMode = sharedVars.wbMode;
     }
     [videoDevice unlockForConfiguration];
 }
@@ -351,9 +358,8 @@
     AVCaptureDevice *videoDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
     AVCaptureDeviceFormat *selectedFormat = nil;
     int32_t maxWidth = 0;
-    AVFrameRateRange *frameRateRange = nil;
 
-    for (AVCaptureDeviceFormat *format in [videoDevice formats]) {
+    for (AVCaptureDeviceFormat *format in videoDevice.formats) {
 
         for (AVFrameRateRange *range in format.videoSupportedFrameRateRanges) {
 
@@ -364,7 +370,6 @@
             if (range.minFrameRate <= desiredFPS && desiredFPS <= range.maxFrameRate && width >= maxWidth) {
 
                 selectedFormat = format;
-                frameRateRange = range;
                 maxWidth = width;
                 [[CameraSettings sharedVariables] setFramerate:desiredFPS];
                 fps = (int32_t) desiredFPS;
@@ -382,20 +387,20 @@
             videoDevice.activeFormat = selectedFormat;
             videoDevice.activeVideoMinFrameDuration = CMTimeMake(1, (int32_t) desiredFPS);
             videoDevice.activeVideoMaxFrameDuration = CMTimeMake(1, (int32_t) desiredFPS);
-            if ([videoDevice isExposureModeSupported:[sharedVars exposureMode]]) {
-                videoDevice.exposureMode = [sharedVars exposureMode];
+            if ([videoDevice isExposureModeSupported:sharedVars.exposureMode]) {
+                videoDevice.exposureMode = sharedVars.exposureMode;
             }
-            if ([videoDevice isFocusModeSupported:[sharedVars focusMode]]) {
-                videoDevice.focusMode = [sharedVars focusMode];
+            if ([videoDevice isFocusModeSupported:sharedVars.focusMode]) {
+                videoDevice.focusMode = sharedVars.focusMode;
             }
-            if ([videoDevice isSmoothAutoFocusSupported]) {
-                videoDevice.smoothAutoFocusEnabled = [sharedVars smoothFocusEnabled];
+            if (videoDevice.smoothAutoFocusSupported) {
+                videoDevice.smoothAutoFocusEnabled = sharedVars.smoothFocusEnabled;
             }
-            if ([videoDevice isAutoFocusRangeRestrictionSupported]) {
-                videoDevice.autoFocusRangeRestriction = [sharedVars autoFocusRange];
+            if (videoDevice.autoFocusRangeRestrictionSupported) {
+                videoDevice.autoFocusRangeRestriction = sharedVars.autoFocusRange;
             }
-            if ([videoDevice isWhiteBalanceModeSupported:[sharedVars wbMode]]) {
-                videoDevice.whiteBalanceMode = [sharedVars wbMode];
+            if ([videoDevice isWhiteBalanceModeSupported:sharedVars.wbMode]) {
+                videoDevice.whiteBalanceMode = sharedVars.wbMode;
             }
             [videoDevice unlockForConfiguration];
         }
@@ -407,7 +412,7 @@
 
 - (NSURL *)generateFilePath {
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"yyyy-MM-dd-HH-mm-ss"];
+    formatter.dateFormat = @"yyyy-MM-dd-HH-mm-ss";
     NSString *dateTimePrefix = [formatter stringFromDate:[NSDate date]];
 
     int fileNamePostfix = 0;
@@ -466,7 +471,7 @@
 
     NSError *error = nil;
 
-    NSString *path = [file path];
+    NSString *path = file.path;
     [manager removeItemAtPath:path error:&error];
     // TODO: check error
 }
@@ -493,7 +498,7 @@
         dispatch_async(self.streamQueue, ^(void) {
             UIImage *image = [self imageFromSampleBuffer:buf];
 
-            NSTimeInterval timestamp = [[NSDate date] timeIntervalSince1970];
+            NSTimeInterval timestamp = [NSDate date].timeIntervalSince1970;
             image = [self imageWithImage:image scaledToSize:size];
             [self writeImageToSocket:image withTimestamp:timestamp];
             CFRelease(buf);
