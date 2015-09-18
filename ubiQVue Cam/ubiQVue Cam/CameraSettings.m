@@ -54,11 +54,8 @@
 }
 
 - (NSDictionary *)getPositionJson {
-    NSNumber *dst = @(dist);
-    NSNumber *yw = @(yaw);
-    NSNumber *ptch = @(pitch);
     UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
-    NSNumber *rll;
+    NSNumber * rll;
     if (UIDeviceOrientationIsPortrait(orientation)) {
         if (orientation == UIDeviceOrientationPortrait) {
             rll = @(-90);
@@ -70,9 +67,7 @@
     else {
         rll = @0;
     }
-    NSArray *positions = @[dst, yw, ptch, rll];
-    NSArray *keys = @[@"dist", @"yaw", @"pitch", @"roll"];
-    NSDictionary *pov = @{keys : positions};
+    NSDictionary * pov = @{@"dist" : @(dist), @"yaw" : @(yaw), @"pitch" : @(pitch), @"roll" : rll};
     return pov;
 }
 

@@ -114,7 +114,7 @@ NSString *const kMinServerVersion = @"0.3.0.0";
 }
 
 - (void)setUpWifiAnimation {
-    NSArray *imageNames = @[@"wifi_1.png", @"wifi_2.png", @"wifi_3.png", @"wifi_4.png"];
+    NSArray * imageNames = @[@"wifi_1.png", @"wifi_2.png", @"wifi_3.png", @"wifi_4.png"];
     NSMutableArray *images = [[NSMutableArray alloc] init];
     for (int i = 0; i < imageNames.count; i++) {
         [images addObject:[UIImage imageNamed:imageNames[i]]];
@@ -152,8 +152,8 @@ NSString *const kMinServerVersion = @"0.3.0.0";
 }
 
 - (void)receiveStreamNotification:(NSNotification *)notification {
-    NSDictionary *cmdDict = notification.userInfo;
-    NSString *msg = cmdDict[@"message"];
+    NSDictionary * cmdDict = notification.userInfo;
+    NSString * msg = cmdDict[@"message"];
     if ([msg isEqualToString:@"start"]) {
         if (mode == CAMERA_MODE) {
             [self stopLogoAnimation];
@@ -167,12 +167,12 @@ NSString *const kMinServerVersion = @"0.3.0.0";
 }
 
 - (void)connectedNotification:(NSNotification *)notification {
-    NSDictionary *dict = notification.userInfo;
+    NSDictionary * dict = notification.userInfo;
     BOOL connected = [dict[@"isConnected"] boolValue];
     if (connected) {
         [_wifiImage stopAnimating];
         _wifiImage.image = [UIImage imageNamed:@"wifi_connected"];
-        NSString *ID = [[NSUserDefaults standardUserDefaults] stringForKey:@"uuid"];
+        NSString * ID = [[NSUserDefaults standardUserDefaults] stringForKey:@"uuid"];
         [[NSUserDefaults standardUserDefaults] setValue:ID forKey:@"uuid"];
 
         [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:UUID :ID]];
@@ -237,7 +237,7 @@ NSString *const kMinServerVersion = @"0.3.0.0";
 }
 
 - (void)receiveProtocolNotification:(NSNotification *)notification {
-    NSDictionary *cmdDict = notification.userInfo;
+    NSDictionary * cmdDict = notification.userInfo;
     Command *command = cmdDict[@"command"];
     CommandType cType = [command getCommandType];
 
@@ -307,23 +307,23 @@ NSString *const kMinServerVersion = @"0.3.0.0";
 }
 
 - (void)sendJsonAndVideo:(NSNotification *)notification {
-    NSDictionary *dict = notification.userInfo;
+    NSDictionary * dict = notification.userInfo;
     NSMutableDictionary *json = [[NSMutableDictionary alloc] init];
     CameraSettings *sharedVars = [CameraSettings sharedVariables];
-    NSDictionary *pov = [sharedVars getPositionJson];
-    NSNumber *fps = @(sharedVars.framerate);
+    NSDictionary * pov = [sharedVars getPositionJson];
+    NSNumber * fps = @(sharedVars.framerate);
     json[@"fps"] = fps;
     json[@"pointOfView"] = pov;
     json[@"delay"] = delay;
     file = dict[@"file"];
     AVURLAsset *sourceAsset = [AVURLAsset URLAssetWithURL:file options:nil];
     CMTime duration = sourceAsset.duration;
-    NSNumber *dur = @(CMTimeGetSeconds(duration));
+    NSNumber * dur = @(CMTimeGetSeconds(duration));
     json[@"duration"] = dur;
-    NSString *jsonStr = [VVUtility convertNSDictToJSONString:json];
+    NSString * jsonStr = [VVUtility convertNSDictToJSONString:json];
     [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:VIDEO_COMING :jsonStr]];
     dispatch_async(dispatch_get_main_queue(), ^{
-        NSString *path = file.path;
+        NSString * path = file.path;
         NSData *bytes = [[NSData alloc] initWithContentsOfFile:path];
         NSLog(@"Sending video");
         [socketHandler sendCommand:[[CommandWithValue alloc] init:VIDEODATA :bytes]];
@@ -333,8 +333,8 @@ NSString *const kMinServerVersion = @"0.3.0.0";
 - (void)setPosition:(Command *)command {
     if ([command isKindOfClass:[CommandWithValue class]]) {
         CameraSettings *sharedVars = [CameraSettings sharedVariables];
-        NSString *JSONString = [[NSString alloc] initWithData:[command getData] encoding:NSUTF8StringEncoding];
-        NSDictionary *json = [VVUtility getNSDictFromJSONString:JSONString];
+        NSString * JSONString = [[NSString alloc] initWithData:[command getData] encoding:NSUTF8StringEncoding];
+        NSDictionary * json = [VVUtility getNSDictFromJSONString:JSONString];
         sharedVars.dist = [json[@"dist"] doubleValue];
         sharedVars.yaw = [json[@"yaw"] intValue];
         sharedVars.pitch = [json[@"pitch"] intValue];
@@ -343,20 +343,17 @@ NSString *const kMinServerVersion = @"0.3.0.0";
 
 - (void)getPosition {
     CameraSettings *sharedVars = [CameraSettings sharedVariables];
-    NSNumber *dst = @(sharedVars.dist);
-    NSNumber *yw = @(sharedVars.yaw);
-    NSNumber *ptch = @(sharedVars.pitch);
-    NSArray *positions = @[dst, yw, ptch];
-    NSArray *keys = @[@"dist", @"yaw", @"pitch"];
-    NSDictionary *pov = @{keys : positions};
-    NSString *jsonStr = [VVUtility convertNSDictToJSONString:pov];
+    NSDictionary * pov = @{@"dist" : @(sharedVars.dist),
+            @"yaw" : @(sharedVars.yaw),
+            @"pitch" : @(sharedVars.pitch)};
+    NSString * jsonStr = [VVUtility convertNSDictToJSONString:pov];
     [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:POSITION :jsonStr]];
 }
 
 - (void)handleVersionCommand:(Command *)command {
     if ([command isKindOfClass:[CommandWithValue class]]) {
         CommandWithValue *cmd = (CommandWithValue *) command;
-        NSString *serverVersion = [cmd getDataAsString];
+        NSString * serverVersion = [cmd getDataAsString];
         if ([VVVersionCompabilityChecker isCompatibleVersionWith:kMinServerVersion serverVersion:serverVersion]) {
             // TODO: Enable after implementing different versions for android and ios versions on the server
 //            [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:VERSION :currentVersionNumber]];
