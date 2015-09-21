@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import "CameraProtocol.h"
-#import "CameraMessageHandler.h"
 
 @implementation CameraProtocol
 
@@ -16,7 +15,7 @@
     self = [super init];
     if (self) {
         commandHandlerDelegate = self;
-        messageHandler = [[CameraMessageHandler alloc] init];
+        messageHandler = [[MessageHandler alloc] init];
     }
     return self;
 }

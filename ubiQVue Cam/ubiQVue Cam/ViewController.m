@@ -13,9 +13,18 @@
 #import "CommandWithValue.h"
 #import "CameraSettings.h"
 #import "VVUtility.h"
-#import "VVVersionCompabilityChecker.h"
 
-NSString *const kMinServerVersion = @"0.3.0.0";
+static NSString *const kMinServerVersion = @"0.3.0.0";
+
+// has selectors "handle<CommandType>Command:"
+static const CommandType observedCommands[] = {
+        START,
+        STOP,
+        POSITION,
+        GET_POSITION,
+        DELETE,
+        CAMERA_SETTINGS
+};
 
 @interface ViewController ()
 
@@ -28,18 +37,17 @@ NSString *const kMinServerVersion = @"0.3.0.0";
 @implementation ViewController {
     VVNetworkSocketHandler *socketHandler;
     NSNumber *delay;
-    NSString *currentVersionNumber;
     CameraState mode;
     NSURL *file;
     BOOL logoIsWhite;
     BOOL versionAlertIsShowing;
+    NSTimer *dimTimer;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     mode = AIM_MODE;
     [UIApplication sharedApplication].idleTimerDisabled = YES;
-    currentVersionNumber = [@"I" stringByAppendingString:[NSBundle mainBundle].infoDictionary[@"CFBundleShortVersionString"]];
     [UIScreen mainScreen].brightness = 1;
     versionAlertIsShowing = NO;
     // TODO: Close camera and stuff when view disappears
@@ -56,7 +64,7 @@ NSString *const kMinServerVersion = @"0.3.0.0";
                                                                                  action:@selector(handleDoubleTap:)];
     tapGesture.numberOfTapsRequired = 2;
     [self.view addGestureRecognizer:tapGesture];
-    socketHandler = [[VVNetworkSocketHandler alloc] init:1111 protocol:[[CameraProtocol alloc] init]];
+    socketHandler = [[VVNetworkSocketHandler alloc] init:1111 protocol:[[CameraProtocol alloc] init] minServerVer:kMinServerVersion];
     [self registerToNotifications];
     [self hideStatusBar];
 
@@ -125,10 +133,10 @@ NSString *const kMinServerVersion = @"0.3.0.0";
 
 - (void)registerToNotifications {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    [center addObserver:self
-               selector:@selector(receiveProtocolNotification:)
-                   name:@"ProtocolNotification"
-                 object:nil];
+    size_t length = sizeof(observedCommands) / sizeof(CommandType);
+    for (int i = 0; i < length; i++) {
+        [VVUtility addNotificationObserverForCommandType:self commandType:observedCommands[i]];
+    }
     [center addObserver:self
                selector:@selector(sendJsonAndVideo:)
                    name:@"StopNotification"
@@ -191,7 +199,7 @@ NSString *const kMinServerVersion = @"0.3.0.0";
 
 - (void)cameToForeground {
     if (mode == CAMERA_MODE) {
-        [UIScreen mainScreen].brightness = 0;
+        dimTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(dimScreen) userInfo:nil repeats:NO];
     }
     else {
         [UIScreen mainScreen].brightness = 1;
@@ -199,6 +207,10 @@ NSString *const kMinServerVersion = @"0.3.0.0";
     // TODO: restore what was closed when went to background
     [self.streamServer startAcceptingConnections];
     [_captureManager prepareAssetWriter];
+}
+
+- (void)dimScreen {
+    [UIScreen mainScreen].brightness = 0;
 }
 
 - (void)hideStatusBar {
@@ -236,54 +248,11 @@ NSString *const kMinServerVersion = @"0.3.0.0";
 
 }
 
-- (void)receiveProtocolNotification:(NSNotification *)notification {
-    NSDictionary * cmdDict = notification.userInfo;
-    Command *command = cmdDict[@"command"];
-    CommandType cType = [command getCommandType];
-
-    switch (cType) {
-        case START:
-            [self startRecording];
-            break;
-        case STOP:
-            [self stopRecording];
-            break;
-        case POSITION:
-            [self setPosition:command];
-            break;
-        case GET_POSITION:
-            [self getPosition];
-            break;
-        case VERSION:
-            [self handleVersionCommand:command];
-            break;
-        case WRONG_VERSION:
-            [self handleWrongVersion];
-            break;
-        case CAMERA_SETTINGS:
-            [self.captureManager setCameraSettings];
-            break;
-        case PONG:
-            socketHandler.lastResponse = [NSDate date].timeIntervalSince1970;
-            break;
-        case DELETE:
-            [AVCaptureManager deleteVideo:file];
-            break;
-        case SLEEP:
-            // sleep if possible
-            break;
-        case WAKE:
-            break;
-        default:
-            break;
-    }
-}
-
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 }
 
-- (void)startRecording {
+- (void)handleStartCommand:(NSNotification *)notification {
     if (mode == CAMERA_MODE && !_captureManager.isRecording) {
         NSLog(@"Started recording");
         NSTimeInterval startTime = [NSDate date].timeIntervalSince1970;
@@ -297,7 +266,7 @@ NSString *const kMinServerVersion = @"0.3.0.0";
     }
 }
 
-- (void)stopRecording {
+- (void)handleStopCommand:(NSNotification *)notification {
     if (_captureManager.isRecording) {
         [_captureManager stopRecording];
     }
@@ -330,7 +299,9 @@ NSString *const kMinServerVersion = @"0.3.0.0";
     });
 }
 
-- (void)setPosition:(Command *)command {
+- (void)handlePositionCommand:(NSNotification *)notification {
+    Command *command = [Command getCommandFromNotification:notification];
+    assert(command != nil);
     if ([command isKindOfClass:[CommandWithValue class]]) {
         CameraSettings *sharedVars = [CameraSettings sharedVariables];
         NSString * JSONString = [[NSString alloc] initWithData:[command getData] encoding:NSUTF8StringEncoding];
@@ -341,7 +312,7 @@ NSString *const kMinServerVersion = @"0.3.0.0";
     }
 }
 
-- (void)getPosition {
+- (void)handleGetPositionCommand:(NSNotification *)notification {
     CameraSettings *sharedVars = [CameraSettings sharedVariables];
     NSDictionary * pov = @{@"dist" : @(sharedVars.dist),
             @"yaw" : @(sharedVars.yaw),
@@ -350,32 +321,16 @@ NSString *const kMinServerVersion = @"0.3.0.0";
     [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:POSITION :jsonStr]];
 }
 
-- (void)handleVersionCommand:(Command *)command {
-    if ([command isKindOfClass:[CommandWithValue class]]) {
-        CommandWithValue *cmd = (CommandWithValue *) command;
-        NSString * serverVersion = [cmd getDataAsString];
-        if ([VVVersionCompabilityChecker isCompatibleVersionWith:kMinServerVersion serverVersion:serverVersion]) {
-            // TODO: Enable after implementing different versions for android and ios versions on the server
-//            [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:VERSION :currentVersionNumber]];
-        }
-        else {
-            [socketHandler sendCommand:[[Command alloc] init:WRONG_VERSION]];
-            [socketHandler quitTCPSocketConnection];
-        }
-    }
+- (void)handlePongCommand:(NSNotification *)notification {
+
 }
 
-- (void)handleWrongVersion {
-    if (!versionAlertIsShowing) {
-        NSLog(@"Wrong version");
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"ERROR"
-                                                        message:@"Camera software is outdated and not compatible with the server software.\n\nPlease update the camera software."
-                                                       delegate:self
-                                              cancelButtonTitle:@"OK"
-                                              otherButtonTitles:nil];
-        [alert show];
-        versionAlertIsShowing = YES;
-    }
+- (void)handleCameraSettingsCommand:(NSNotification *)notification {
+    [self.captureManager setCameraSettings];
+}
+
+- (void)handleDeleteCommand:(NSNotification *)notification {
+    [AVCaptureManager deleteVideo:file];
 }
 
 
@@ -391,6 +346,7 @@ NSString *const kMinServerVersion = @"0.3.0.0";
     if (mode != AIM_MODE) {
         mode = AIM_MODE;
         [UIScreen mainScreen].brightness = 1;
+        [dimTimer invalidate];
         [_captureManager addPreview:self.view];
         [_logoView setHidden:YES];
         [_gridView setHidden:NO];
@@ -403,7 +359,9 @@ NSString *const kMinServerVersion = @"0.3.0.0";
 - (IBAction)switchToCameraMode:(id)sender {
     if (mode != CAMERA_MODE && [socketHandler isConnectedToTCP]) {
         mode = CAMERA_MODE;
-        [UIScreen mainScreen].brightness = 0;
+        if (dimTimer == nil || ![dimTimer isValid]) {
+            dimTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(dimScreen) userInfo:nil repeats:NO];
+        }
         [_logoView setHidden:NO];
         [_captureManager removePreview];
         if (!_captureManager.isStreaming) {
@@ -437,5 +395,19 @@ NSString *const kMinServerVersion = @"0.3.0.0";
 - (void)stopLogoAnimation {
     [_logo.layer removeAllAnimations];
 }
+
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    [super touchesBegan:touches withEvent:event];
+    [UIScreen mainScreen].brightness = 1;
+    [dimTimer invalidate];
+}
+
+- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    [super touchesEnded:touches withEvent:event];
+    if (mode == CAMERA_MODE && (dimTimer == nil || ![dimTimer isValid])) {
+        dimTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(dimScreen) userInfo:nil repeats:NO];
+    }
+}
+
 
 @end
