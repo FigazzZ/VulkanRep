@@ -36,7 +36,7 @@
 
 - (void)startAcceptingConnections {
     if (!_isRunning) {
-        NSError * error = nil;
+        NSError *error = nil;
         [_serverSocket acceptOnPort:8080 error:&error];
         _isRunning = YES;
     }

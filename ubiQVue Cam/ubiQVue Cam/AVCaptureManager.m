@@ -79,7 +79,7 @@
 
 - (BOOL)setupCaptureSession {
 
-    NSError * error;
+    NSError *error;
     self.captureSession = [[AVCaptureSession alloc] init];
     self.captureSession.sessionPreset = AVCaptureSessionPresetInputPriority;
 
@@ -180,12 +180,12 @@
 }
 
 - (void)setupVideoAssetWriterInput {
-    NSDictionary * settings = @{AVVideoCodecKey : AVVideoCodecH264,
+    NSDictionary *settings = @{AVVideoCodecKey : AVVideoCodecH264,
             AVVideoHeightKey : @720,
             AVVideoWidthKey : @1280};
     videoInput = [[AVAssetWriterInput alloc] initWithMediaType:AVMediaTypeVideo outputSettings:settings];
     videoInput.expectsMediaDataInRealTime = YES;
-    NSDictionary * pxlBufAttrs = @{(NSString *) kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA)};
+    NSDictionary *pxlBufAttrs = @{(NSString *) kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA)};
     pixelBufferAdaptor = [[AVAssetWriterInputPixelBufferAdaptor alloc] initWithAssetWriterInput:videoInput sourcePixelBufferAttributes:pxlBufAttrs];
 }
 
@@ -199,7 +199,7 @@
     NSData *channelLayoutAsData = [NSData dataWithBytes:&stereoChannelLayout length:offsetof(AudioChannelLayout, mChannelDescriptions)];
 
     // Get the compression settings for 128 kbps AAC.
-    NSDictionary * compressionAudioSettings = @{
+    NSDictionary *compressionAudioSettings = @{
             AVFormatIDKey : @(kAudioFormatMPEG4AAC),
             AVEncoderBitRateKey : @128000,
             AVSampleRateKey : @44100,
@@ -215,7 +215,7 @@
 - (void)prepareAssetWriter {
 
     fileURL = [self generateFilePath];
-    NSError * err;
+    NSError *err;
     writer = [[AVAssetWriter alloc] initWithURL:fileURL fileType:AVFileTypeMPEG4 error:&err];
     [self setupVideoAssetWriterInput];
     if ([writer canAddInput:videoInput]) {
@@ -242,8 +242,8 @@
 
 
 - (void)receiveStreamNotification:(NSNotification *)notification {
-    NSDictionary * cmdDict = notification.userInfo;
-    NSString * msg = cmdDict[@"message"];
+    NSDictionary *cmdDict = notification.userInfo;
+    NSString *msg = cmdDict[@"message"];
     if ([msg isEqualToString:@"start"]) {
         [self startStreaming];
     }
@@ -273,16 +273,16 @@
     GCDAsyncSocket *socket = _streamServer.connectedSocket;
     if (socket != nil) {
         NSData *imgAsJPEG = UIImageJPEGRepresentation(image, 0.1);
-        NSString * content = [[NSString alloc] initWithFormat:@"%@%@%lu%@%@%lu%@",
-                                                              @"Content-type: image/jpeg\r\n",
-                                                              @"Content-Length: ",
-                                                              (unsigned long) imgAsJPEG.length,
-                                                              @"\r\n",
-                                                              @"X-Timestamp:",
-                                                              (unsigned long) timestamp,
-                                                              @"\r\n\r\n"];
-        NSString * end = [[NSString alloc] initWithFormat:@"%@%@%@",
-                                                          @"\r\n--", BOUNDARY, @"\r\n"];
+        NSString *content = [[NSString alloc] initWithFormat:@"%@%@%lu%@%@%lu%@",
+                                                             @"Content-type: image/jpeg\r\n",
+                                                             @"Content-Length: ",
+                                                             (unsigned long) imgAsJPEG.length,
+                                                             @"\r\n",
+                                                             @"X-Timestamp:",
+                                                             (unsigned long) timestamp,
+                                                             @"\r\n\r\n"];
+        NSString *end = [[NSString alloc] initWithFormat:@"%@%@%@",
+                                                         @"\r\n--", BOUNDARY, @"\r\n"];
         [socket writeData:[content dataUsingEncoding:NSUTF8StringEncoding] withTimeout:-1 tag:1];
         [socket writeData:imgAsJPEG withTimeout:-1 tag:2];
         [socket writeData:[end dataUsingEncoding:NSUTF8StringEncoding] withTimeout:-3 tag:3];
@@ -298,7 +298,7 @@
     // Pass 1.0 to force exact pixel size.
     UIGraphicsBeginImageContextWithOptions(newSize, NO, 0.0);
     [image drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
-    UIImage * newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     return newImage;
 }
@@ -413,12 +413,12 @@
 - (NSURL *)generateFilePath {
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     formatter.dateFormat = @"yyyy-MM-dd-HH-mm-ss";
-    NSString * dateTimePrefix = [formatter stringFromDate:[NSDate date]];
+    NSString *dateTimePrefix = [formatter stringFromDate:[NSDate date]];
 
     int fileNamePostfix = 0;
-    NSArray * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString * documentsDirectory = paths[0];
-    NSString * filePath = nil;
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = paths[0];
+    NSString *filePath = nil;
     do {
         filePath = [NSString stringWithFormat:@"/%@/%@-%i.mp4", documentsDirectory, dateTimePrefix, fileNamePostfix++];
     } while ([[NSFileManager defaultManager] fileExistsAtPath:filePath]);
@@ -469,9 +469,9 @@
     NSLog(@"Deleting video");
     NSFileManager *manager = [NSFileManager defaultManager];
 
-    NSError * error = nil;
+    NSError *error = nil;
 
-    NSString * path = file.path;
+    NSString *path = file.path;
     [manager removeItemAtPath:path error:&error];
     // TODO: check error
 }
@@ -496,7 +496,7 @@
     if (_isStreaming && streamFrame == streamfps) {
         CVImageBufferRef buf = (CVImageBufferRef) CFRetain(imageBuffer);
         dispatch_async(self.streamQueue, ^(void) {
-            UIImage * image = [self imageFromSampleBuffer:buf];
+            UIImage *image = [self imageFromSampleBuffer:buf];
 
             NSTimeInterval timestamp = [NSDate date].timeIntervalSince1970;
             image = [self imageWithImage:image scaledToSize:size];
@@ -552,7 +552,7 @@
     CGColorSpaceRelease(colorSpace);
 
     // Create an image object from the Quartz image
-    UIImage * image = [UIImage imageWithCGImage:quartzImage];
+    UIImage *image = [UIImage imageWithCGImage:quartzImage];
 
     // Release the Quartz image
     CGImageRelease(quartzImage);

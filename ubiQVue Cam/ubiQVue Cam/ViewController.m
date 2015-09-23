@@ -40,7 +40,6 @@ static const CommandType observedCommands[] = {
     CameraState mode;
     NSURL *file;
     BOOL logoIsWhite;
-    BOOL versionAlertIsShowing;
     NSTimer *dimTimer;
 }
 
@@ -49,16 +48,10 @@ static const CommandType observedCommands[] = {
     mode = AIM_MODE;
     [UIApplication sharedApplication].idleTimerDisabled = YES;
     [UIScreen mainScreen].brightness = 1;
-    versionAlertIsShowing = NO;
-    // TODO: Close camera and stuff when view disappears
-    self.captureManager = [[AVCaptureManager alloc] initWithPreviewView:self.view];
-
-    [self setCameraFramerate];
-
     [self drawGrid];
     self.streamServer = [[StreamServer alloc] init];
-    (self.captureManager).streamServer = self.streamServer;
     [self.streamServer startAcceptingConnections];
+    [self setupCamera];
 
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self
                                                                                  action:@selector(handleDoubleTap:)];
@@ -72,23 +65,21 @@ static const CommandType observedCommands[] = {
     [_wifiImage startAnimating];
 }
 
+- (void)setupCamera {
+    self.captureManager = [[AVCaptureManager alloc] initWithPreviewView:self.view];
+    [self setCameraFramerate];
+    self.captureManager.streamServer = self.streamServer;
+}
+
 - (void)drawGrid {
     CGRect frame = _gridView.frame;
     if (frame.size.width < frame.size.height) {
         CGPoint origin = _gridView.frame.origin;
         frame = CGRectMake(origin.x, origin.y, frame.size.height, frame.size.width);
     }
-    if (self.view.frame.size.width < self.view.frame.size.height) {
-        frame.size.height = self.view.frame.size.width;
-    }
-    else {
-        frame.size.height = self.view.frame.size.height;
-    }
-    NSLog(@"%f x %f", _gridView.frame.size.width, _gridView.frame.size.height);
-    NSLog(@"%f x %f", _controls.frame.size.width, _controls.frame.size.height);
-    NSLog(@"%f x %f", frame.size.width, frame.size.height);
+    CGSize viewSize = self.view.frame.size;
+    frame.size.height = viewSize.width < viewSize.height ? viewSize.width : viewSize.height;
     frame.size.width = frame.size.width - _controls.frame.size.width;
-    NSLog(@"%f x %f", _gridView.frame.size.width, _gridView.frame.size.height);
     CGFloat width = frame.size.width;
     CGFloat height = frame.size.height;
     float yDiv = height / 4.0F;
@@ -122,7 +113,7 @@ static const CommandType observedCommands[] = {
 }
 
 - (void)setUpWifiAnimation {
-    NSArray * imageNames = @[@"wifi_1.png", @"wifi_2.png", @"wifi_3.png", @"wifi_4.png"];
+    NSArray *imageNames = @[@"wifi_1.png", @"wifi_2.png", @"wifi_3.png", @"wifi_4.png"];
     NSMutableArray *images = [[NSMutableArray alloc] init];
     for (int i = 0; i < imageNames.count; i++) {
         [images addObject:[UIImage imageNamed:imageNames[i]]];
@@ -135,23 +126,22 @@ static const CommandType observedCommands[] = {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     size_t length = sizeof(observedCommands) / sizeof(CommandType);
     for (int i = 0; i < length; i++) {
-        [VVUtility addNotificationObserverForCommandType:self commandType:observedCommands[i]];
+        [Command addNotificationObserverForCommandType:self commandType:observedCommands[i]];
     }
+    [center addObserver:self selector:@selector(connectedToServer) name:@"Connected" object:socketHandler];
+    [center addObserver:self selector:@selector(disconnectedFromServer) name:@"Disconnected" object:socketHandler];
+
     [center addObserver:self
                selector:@selector(sendJsonAndVideo:)
                    name:@"StopNotification"
                  object:nil];
     [center addObserver:self
-               selector:@selector(connectedNotification:)
-                   name:@"NetworkingNotification"
-                 object:nil];
-    [center addObserver:self
                selector:@selector(wentToBackground)
-                   name:@"Background"
+                   name:@"CloseAll"
                  object:nil];
     [center addObserver:self
                selector:@selector(cameToForeground)
-                   name:@"Foreground"
+                   name:@"RestoreAll"
                  object:nil];
     [center addObserver:self
                selector:@selector(receiveStreamNotification:)
@@ -160,8 +150,8 @@ static const CommandType observedCommands[] = {
 }
 
 - (void)receiveStreamNotification:(NSNotification *)notification {
-    NSDictionary * cmdDict = notification.userInfo;
-    NSString * msg = cmdDict[@"message"];
+    NSDictionary *cmdDict = notification.userInfo;
+    NSString *msg = cmdDict[@"message"];
     if ([msg isEqualToString:@"start"]) {
         if (mode == CAMERA_MODE) {
             [self stopLogoAnimation];
@@ -174,25 +164,22 @@ static const CommandType observedCommands[] = {
     }
 }
 
-- (void)connectedNotification:(NSNotification *)notification {
-    NSDictionary * dict = notification.userInfo;
-    BOOL connected = [dict[@"isConnected"] boolValue];
-    if (connected) {
-        [_wifiImage stopAnimating];
-        _wifiImage.image = [UIImage imageNamed:@"wifi_connected"];
-        NSString * ID = [[NSUserDefaults standardUserDefaults] stringForKey:@"uuid"];
-        [[NSUserDefaults standardUserDefaults] setValue:ID forKey:@"uuid"];
+- (void)connectedToServer {
+    [_wifiImage stopAnimating];
+    _wifiImage.image = [UIImage imageNamed:@"wifi_connected"];
+    NSString *ID = [[NSUserDefaults standardUserDefaults] stringForKey:@"uuid"];
+    [[NSUserDefaults standardUserDefaults] setValue:ID forKey:@"uuid"];
 
-        [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:UUID :ID]];
-    }
-    else {
-        [_wifiImage startAnimating];
-    }
+    [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:UUID :ID]];
+}
+
+- (void)disconnectedFromServer {
+    [_wifiImage startAnimating];
 }
 
 - (void)wentToBackground {
     // TODO: close socket, stream stuff, camera?
-    [socketHandler sendCommand:[[Command alloc] init:QUIT]];
+//    [socketHandler sendCommand:[[Command alloc] init:QUIT]];
     [self.streamServer stopAcceptingConnections];
     [_captureManager closeAssetWriter];
 }
@@ -218,9 +205,6 @@ static const CommandType observedCommands[] = {
         // iOS 7
         [self prefersStatusBarHidden];
         [self performSelector:@selector(setNeedsStatusBarAppearanceUpdate)];
-    } else {
-        // iOS 6
-        [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
     }
 }
 
@@ -276,23 +260,23 @@ static const CommandType observedCommands[] = {
 }
 
 - (void)sendJsonAndVideo:(NSNotification *)notification {
-    NSDictionary * dict = notification.userInfo;
+    NSDictionary *dict = notification.userInfo;
     NSMutableDictionary *json = [[NSMutableDictionary alloc] init];
     CameraSettings *sharedVars = [CameraSettings sharedVariables];
-    NSDictionary * pov = [sharedVars getPositionJson];
-    NSNumber * fps = @(sharedVars.framerate);
+    NSDictionary *pov = [sharedVars getPositionJson];
+    NSNumber *fps = @(sharedVars.framerate);
     json[@"fps"] = fps;
     json[@"pointOfView"] = pov;
     json[@"delay"] = delay;
     file = dict[@"file"];
     AVURLAsset *sourceAsset = [AVURLAsset URLAssetWithURL:file options:nil];
     CMTime duration = sourceAsset.duration;
-    NSNumber * dur = @(CMTimeGetSeconds(duration));
+    NSNumber *dur = @(CMTimeGetSeconds(duration));
     json[@"duration"] = dur;
-    NSString * jsonStr = [VVUtility convertNSDictToJSONString:json];
+    NSString *jsonStr = [VVUtility convertNSDictToJSONString:json];
     [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:VIDEO_COMING :jsonStr]];
     dispatch_async(dispatch_get_main_queue(), ^{
-        NSString * path = file.path;
+        NSString *path = file.path;
         NSData *bytes = [[NSData alloc] initWithContentsOfFile:path];
         NSLog(@"Sending video");
         [socketHandler sendCommand:[[CommandWithValue alloc] init:VIDEODATA :bytes]];
@@ -304,8 +288,8 @@ static const CommandType observedCommands[] = {
     assert(command != nil);
     if ([command isKindOfClass:[CommandWithValue class]]) {
         CameraSettings *sharedVars = [CameraSettings sharedVariables];
-        NSString * JSONString = [[NSString alloc] initWithData:[command getData] encoding:NSUTF8StringEncoding];
-        NSDictionary * json = [VVUtility getNSDictFromJSONString:JSONString];
+        NSString *JSONString = [[NSString alloc] initWithData:[command getData] encoding:NSUTF8StringEncoding];
+        NSDictionary *json = [VVUtility getNSDictFromJSONString:JSONString];
         sharedVars.dist = [json[@"dist"] doubleValue];
         sharedVars.yaw = [json[@"yaw"] intValue];
         sharedVars.pitch = [json[@"pitch"] intValue];
@@ -314,15 +298,11 @@ static const CommandType observedCommands[] = {
 
 - (void)handleGetPositionCommand:(NSNotification *)notification {
     CameraSettings *sharedVars = [CameraSettings sharedVariables];
-    NSDictionary * pov = @{@"dist" : @(sharedVars.dist),
+    NSDictionary *pov = @{@"dist" : @(sharedVars.dist),
             @"yaw" : @(sharedVars.yaw),
             @"pitch" : @(sharedVars.pitch)};
-    NSString * jsonStr = [VVUtility convertNSDictToJSONString:pov];
+    NSString *jsonStr = [VVUtility convertNSDictToJSONString:pov];
     [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:POSITION :jsonStr]];
-}
-
-- (void)handlePongCommand:(NSNotification *)notification {
-
 }
 
 - (void)handleCameraSettingsCommand:(NSNotification *)notification {
@@ -376,20 +356,23 @@ static const CommandType observedCommands[] = {
 }
 
 - (void)startLogoAnimation {
+    BOOL newLogoState;
+    UIColor *color;
     if (logoIsWhite) {
-        [UIView animateWithDuration:4.0 delay:0 options:(UIViewAnimationOptionAutoreverse | UIViewAnimationOptionRepeat) animations:^{
-            _logo.backgroundColor = [UIColor colorWithRed:1.0 green:0.0 blue:0.0 alpha:1.0];
-        }                completion:^(BOOL res) {
-            logoIsWhite = NO;
-        }];
+        color = [UIColor colorWithRed:1.0 green:0.0 blue:0.0 alpha:1.0];
+        newLogoState = NO;
     }
     else {
-        [UIView animateWithDuration:4.0 delay:0 options:(UIViewAnimationOptionAutoreverse | UIViewAnimationOptionRepeat) animations:^{
-            _logo.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1.0];
-        }                completion:^(BOOL res) {
-            logoIsWhite = YES;
-        }];
+        color = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1.0];
+        newLogoState = YES;
     }
+    [UIView animateWithDuration:4.0 delay:0 options:(UIViewAnimationOptionAutoreverse | UIViewAnimationOptionRepeat)
+                     animations:^{
+                         _logo.backgroundColor = color;
+                     }
+                     completion:^(BOOL res) {
+                         logoIsWhite = newLogoState;
+                     }];
 }
 
 - (void)stopLogoAnimation {
