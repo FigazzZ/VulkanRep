@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Z1h-yx-sK9">
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
     </dependencies>
@@ -14,18 +15,18 @@
                         <viewControllerLayoutGuide type="bottom" id="m6L-Bq-Nd9"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="ALk-c9-gXC" userLabel="TopView">
-                        <rect key="frame" x="0.0" y="0.0" width="736" height="414"/>
+                        <rect key="frame" x="0.0" y="0.0" width="568" height="320"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="ULR-Ea-F6y" userLabel="GridView">
-                                <rect key="frame" x="0.0" y="0.0" width="613" height="414"/>
+                                <rect key="frame" x="0.0" y="0.0" width="472" height="320"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             </view>
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Wcf-ne-Agx" userLabel="Logo">
-                                <rect key="frame" x="0.0" y="0.0" width="613" height="414"/>
+                                <rect key="frame" x="0.0" y="0.0" width="472" height="320"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="vulcan_logo" translatesAutoresizingMaskIntoConstraints="NO" id="kMS-CX-KVx">
-                                        <rect key="frame" x="99" y="66" width="414" height="282"/>
+                                        <rect key="frame" x="99" y="66" width="273" height="188"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </imageView>
                                 </subviews>
@@ -38,10 +39,10 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9Lu-eY-n3Y" userLabel="Controls">
-                                <rect key="frame" x="613" y="0.0" width="123" height="414"/>
+                                <rect key="frame" x="472" y="0.0" width="96" height="320"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="749" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Phr-Hb-GEM" userLabel="CameraMode">
-                                        <rect key="frame" x="11" y="221" width="100" height="50"/>
+                                        <rect key="frame" x="11" y="188" width="73" height="37"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="Phr-Hb-GEM" secondAttribute="height" multiplier="2:1" id="m2Q-Cx-V8g"/>
                                         </constraints>
@@ -53,13 +54,13 @@
                                         </connections>
                                     </button>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="I1J-FG-PzV" userLabel="connectionInfo">
-                                        <rect key="frame" x="11" y="35" width="100" height="67"/>
+                                        <rect key="frame" x="11" y="35" width="73" height="48"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" secondItem="I1J-FG-PzV" secondAttribute="height" multiplier="100:67" id="I2Z-1f-aCs"/>
+                                            <constraint firstAttribute="width" secondItem="I1J-FG-PzV" secondAttribute="height" multiplier="100:67" constant="1.3582089552238727" id="I2Z-1f-aCs"/>
                                         </constraints>
                                     </imageView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Rzr-FH-Ton" userLabel="AimMode">
-                                        <rect key="frame" x="11" y="139" width="100" height="50"/>
+                                        <rect key="frame" x="11" y="120" width="73" height="37"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="Rzr-FH-Ton" secondAttribute="height" multiplier="2:1" id="DLb-3p-hJV"/>
                                         </constraints>
@@ -101,11 +102,11 @@
                             <constraint firstAttribute="bottom" secondItem="ULR-Ea-F6y" secondAttribute="bottom" id="skt-yK-ado"/>
                         </constraints>
                     </view>
-                    <nil key="simulatedStatusBarMetrics"/>
+                    <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
-                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina55"/>
+                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <connections>
                         <outlet property="aimMode" destination="Rzr-FH-Ton" id="tYa-LI-w0F"/>
                         <outlet property="cameraMode" destination="Phr-Hb-GEM" id="bdP-Wg-j3p"/>

@@ -1,6 +1,6 @@
 //
 //  CameraSettings.m
-//  VVCamera
+//  ubiQVue Cam
 //
 //  Created by Juuso Kaitila on 13.8.2015.
 //  Copyright (c) 2015 Bitwise. All rights reserved.

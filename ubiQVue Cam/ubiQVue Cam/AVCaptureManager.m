@@ -1,6 +1,6 @@
 //
 //  AVCaptureManager.m
-//  VVCamera
+//  ubiQVue Cam
 //
 //  Created by Juuso Kaitila on 23.8.2015.
 //  Copyright (c) 2015 Bitwise. All rights reserved.
@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "AVCaptureManager.h"
 #import "CameraSettings.h"
+#import "VVNotificationNames.h"
 
 #ifndef USE_AUDIO
 //#define USE_AUDIO
@@ -59,10 +60,7 @@
         _isRecording = NO;
         size = CGSizeMake(320, 180);
 
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(receiveStreamNotification:)
-                                                     name:@"StreamNotification"
-                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setStreamState:) name:kNNStream object:nil];
         self.videoDataQueue = dispatch_queue_create("videoDataQueue", DISPATCH_QUEUE_SERIAL);
         self.audioDataQueue = dispatch_queue_create("audioDataQueue", DISPATCH_QUEUE_SERIAL);
         self.writingQueue = dispatch_queue_create("writingQueue", DISPATCH_QUEUE_SERIAL);
@@ -241,7 +239,7 @@
 #pragma mark Streaming
 
 
-- (void)receiveStreamNotification:(NSNotification *)notification {
+- (void)setStreamState:(NSNotification *)notification {
     NSDictionary *cmdDict = notification.userInfo;
     NSString *msg = cmdDict[@"message"];
     if ([msg isEqualToString:@"start"]) {
@@ -282,7 +280,7 @@
                                                              (unsigned long) timestamp,
                                                              @"\r\n\r\n"];
         NSString *end = [[NSString alloc] initWithFormat:@"%@%@%@",
-                                                         @"\r\n--", BOUNDARY, @"\r\n"];
+                                                         @"\r\n--", kQVStreamBoundary, @"\r\n"];
         [socket writeData:[content dataUsingEncoding:NSUTF8StringEncoding] withTimeout:-1 tag:1];
         [socket writeData:imgAsJPEG withTimeout:-1 tag:2];
         [socket writeData:[end dataUsingEncoding:NSUTF8StringEncoding] withTimeout:-3 tag:3];

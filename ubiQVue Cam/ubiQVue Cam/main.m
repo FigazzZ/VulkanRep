@@ -1,6 +1,6 @@
 //
 //  main.m
-//  VVCamera
+//  ubiQVue Cam
 //
 //  Created by Käyttäjä on 11.8.2015.
 //  Copyright (c) 2015 Bitwise. All rights reserved.

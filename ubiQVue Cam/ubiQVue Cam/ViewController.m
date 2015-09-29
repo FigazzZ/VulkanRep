@@ -1,6 +1,6 @@
 //
 //  ViewController.m
-//  VVCamera
+//  ubiQVue Cam
 //
 //  Created by Juuso Kaitila on 11.8.2015.
 //  Copyright (c) 2015 Bitwise. All rights reserved.
@@ -13,6 +13,7 @@
 #import "CommandWithValue.h"
 #import "CameraSettings.h"
 #import "VVUtility.h"
+#import "VVNotificationNames.h"
 
 static NSString *const kMinServerVersion = @"0.3.0.0";
 
@@ -72,14 +73,12 @@ static const CommandType observedCommands[] = {
 }
 
 - (void)drawGrid {
-    CGRect frame = _gridView.frame;
+    CGRect frame = self.view.frame;
     if (frame.size.width < frame.size.height) {
-        CGPoint origin = _gridView.frame.origin;
+        CGPoint origin = self.view.frame.origin;
         frame = CGRectMake(origin.x, origin.y, frame.size.height, frame.size.width);
     }
-    CGSize viewSize = self.view.frame.size;
-    frame.size.height = viewSize.width < viewSize.height ? viewSize.width : viewSize.height;
-    frame.size.width = frame.size.width - _controls.frame.size.width;
+    frame.size.width -= _controls.frame.size.width - 1;
     CGFloat width = frame.size.width;
     CGFloat height = frame.size.height;
     float yDiv = height / 4.0F;
@@ -128,24 +127,15 @@ static const CommandType observedCommands[] = {
     for (int i = 0; i < length; i++) {
         [Command addNotificationObserverForCommandType:self commandType:observedCommands[i]];
     }
-    [center addObserver:self selector:@selector(connectedToServer) name:@"Connected" object:socketHandler];
-    [center addObserver:self selector:@selector(disconnectedFromServer) name:@"Disconnected" object:socketHandler];
+    [center addObserver:self selector:@selector(connectedToServer) name:kNNConnected object:socketHandler];
+    [center addObserver:self selector:@selector(disconnectedFromServer) name:kNNDisconnected object:socketHandler];
+    [center addObserver:self selector:@selector(wentToBackground) name:kNNCloseAll object:nil];
+    [center addObserver:self selector:@selector(cameToForeground) name:kNNRestoreAll object:nil];
+    [center addObserver:self selector:@selector(receiveStreamNotification:) name:kNNStream object:nil];
 
     [center addObserver:self
                selector:@selector(sendJsonAndVideo:)
                    name:@"StopNotification"
-                 object:nil];
-    [center addObserver:self
-               selector:@selector(wentToBackground)
-                   name:@"CloseAll"
-                 object:nil];
-    [center addObserver:self
-               selector:@selector(cameToForeground)
-                   name:@"RestoreAll"
-                 object:nil];
-    [center addObserver:self
-               selector:@selector(receiveStreamNotification:)
-                   name:@"StreamNotification"
                  object:nil];
 }
 
@@ -209,7 +199,11 @@ static const CommandType observedCommands[] = {
 }
 
 - (BOOL)prefersStatusBarHidden {
-    return YES;
+    return NO;
+}
+
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent;
 }
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations {
@@ -263,7 +257,7 @@ static const CommandType observedCommands[] = {
     NSDictionary *dict = notification.userInfo;
     NSMutableDictionary *json = [[NSMutableDictionary alloc] init];
     CameraSettings *sharedVars = [CameraSettings sharedVariables];
-    NSDictionary *pov = [sharedVars getPositionJson];
+    NSDictionary *pov = sharedVars.positionJson;
     NSNumber *fps = @(sharedVars.framerate);
     json[@"fps"] = fps;
     json[@"pointOfView"] = pov;
@@ -288,7 +282,7 @@ static const CommandType observedCommands[] = {
     assert(command != nil);
     if ([command isKindOfClass:[CommandWithValue class]]) {
         CameraSettings *sharedVars = [CameraSettings sharedVariables];
-        NSString *JSONString = [[NSString alloc] initWithData:[command getData] encoding:NSUTF8StringEncoding];
+        NSString *JSONString = [[NSString alloc] initWithData:command.data encoding:NSUTF8StringEncoding];
         NSDictionary *json = [VVUtility getNSDictFromJSONString:JSONString];
         sharedVars.dist = [json[@"dist"] doubleValue];
         sharedVars.yaw = [json[@"yaw"] intValue];
@@ -328,8 +322,8 @@ static const CommandType observedCommands[] = {
         [UIScreen mainScreen].brightness = 1;
         [dimTimer invalidate];
         [_captureManager addPreview:self.view];
-        [_logoView setHidden:YES];
-        [_gridView setHidden:NO];
+        _logoView.hidden = YES;
+        _gridView.hidden = NO;
         [_aimMode setImage:[UIImage imageNamed:@"aim_mode_selected"] forState:UIControlStateNormal];
         [_cameraMode setImage:[UIImage imageNamed:@"camera_mode_off"] forState:UIControlStateNormal];
         [self stopLogoAnimation];
@@ -337,19 +331,19 @@ static const CommandType observedCommands[] = {
 }
 
 - (IBAction)switchToCameraMode:(id)sender {
-    if (mode != CAMERA_MODE && [socketHandler isConnectedToTCP]) {
+    if (mode != CAMERA_MODE && socketHandler.isConnectedToTCP) {
         mode = CAMERA_MODE;
-        if (dimTimer == nil || ![dimTimer isValid]) {
+        if (dimTimer == nil || !dimTimer.valid) {
             dimTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(dimScreen) userInfo:nil repeats:NO];
         }
-        [_logoView setHidden:NO];
+        _logoView.hidden = NO;
         [_captureManager removePreview];
         if (!_captureManager.isStreaming) {
             _logo.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1.0];
             logoIsWhite = YES;
             [self startLogoAnimation];
         }
-        [_gridView setHidden:YES];
+        _gridView.hidden = YES;
         [_aimMode setImage:[UIImage imageNamed:@"aim_mode_off"] forState:UIControlStateNormal];
         [_cameraMode setImage:[UIImage imageNamed:@"camera_mode_selected"] forState:UIControlStateNormal];
     }
@@ -387,7 +381,7 @@ static const CommandType observedCommands[] = {
 
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     [super touchesEnded:touches withEvent:event];
-    if (mode == CAMERA_MODE && (dimTimer == nil || ![dimTimer isValid])) {
+    if (mode == CAMERA_MODE && (dimTimer == nil || !dimTimer.valid)) {
         dimTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(dimScreen) userInfo:nil repeats:NO];
     }
 }

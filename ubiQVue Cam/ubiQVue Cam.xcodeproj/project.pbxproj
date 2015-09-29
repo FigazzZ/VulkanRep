@@ -28,6 +28,7 @@
 		32DF0F3F1B95C4E000467255 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 32DF0F3E1B95C4E000467255 /* ViewController.m */; };
 		32DF0F441B95C4E000467255 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 32DF0F431B95C4E000467255 /* Images.xcassets */; };
 		32DF0F531B95C4E000467255 /* ubiQVue_CamTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32DF0F521B95C4E000467255 /* ubiQVue_CamTests.m */; };
+		449C048565B8D336909A0BB5 /* VVNotificationNames.m in Sources */ = {isa = PBXBuildFile; fileRef = 449C0F2F1EB49B6F564C0765 /* VVNotificationNames.m */; };
 		AA9FB3B8F54D115B5737BD14 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 40D10F2B7CB5532A6B712E60 /* libPods.a */; };
 /* End PBXBuildFile section */
 
@@ -84,6 +85,8 @@
 		32DF0F511B95C4E000467255 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		32DF0F521B95C4E000467255 /* ubiQVue_CamTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ubiQVue_CamTests.m; sourceTree = "<group>"; };
 		40D10F2B7CB5532A6B712E60 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		449C04F59AFEBD5EAA5074FD /* VVNotificationNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VVNotificationNames.h; sourceTree = "<group>"; };
+		449C0F2F1EB49B6F564C0765 /* VVNotificationNames.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VVNotificationNames.m; sourceTree = "<group>"; };
 		E0F3FE66C916650BC3DEC008 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -148,6 +151,8 @@
 				325E862E1BAB0A610051C4DA /* VVUtility.m */,
 				32855AD81B95C6F0003CC551 /* VVNetworkSocketHandler.h */,
 				32855AE11B95C6F0003CC551 /* VVNetworkSocketHandler.m */,
+				449C04F59AFEBD5EAA5074FD /* VVNotificationNames.h */,
+				449C0F2F1EB49B6F564C0765 /* VVNotificationNames.m */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -401,6 +406,7 @@
 				32855AEC1B95C6F0003CC551 /* VVNetworkSocketHandler.m in Sources */,
 				32855AEE1B95C6F0003CC551 /* MessageHandler.m in Sources */,
 				32855ACC1B95C6BC003CC551 /* AVCaptureManager.m in Sources */,
+				449C048565B8D336909A0BB5 /* VVNotificationNames.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

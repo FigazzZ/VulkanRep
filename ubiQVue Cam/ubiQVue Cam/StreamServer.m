@@ -1,12 +1,15 @@
 //
 //  StreamServer.m
-//  VVCamera
+//  ubiQVue Cam
 //
 //  Created by Bitwise on 18/08/15.
 //  Copyright (c) 2015 Bitwise. All rights reserved.
 //
 
 #import "StreamServer.h"
+#import "VVNotificationNames.h"
+
+NSString *const kQVStreamBoundary = @"boundary";
 
 @implementation StreamServer {
     dispatch_queue_t socketQueue;
@@ -28,8 +31,8 @@
                                                @"Cache-Control: no-store, no-cache, must-revalidate, pre-check=0, post-check=0, max-age=0\r\n",
                                                @"Pragma: no-cache\r\n",
                                                @"Content-Type: multipart/x-mixed-replace; ",
-                                               @"boundary=", BOUNDARY, @"\r\n",
-                                               @"\r\n--", BOUNDARY, @"\r\n"];
+                                               @"boundary=", kQVStreamBoundary, @"\r\n",
+                                               @"\r\n--", kQVStreamBoundary, @"\r\n"];
     }
     return self;
 }
@@ -66,10 +69,7 @@
 }
 
 - (void)sendStreamNotification:(NSString *)message {
-    [[NSNotificationCenter defaultCenter]
-            postNotificationName:@"StreamNotification"
-                          object:self
-                        userInfo:@{@"message" : message}];
+    [[NSNotificationCenter defaultCenter] postNotificationName:kNNStream object:self userInfo:@{@"message" : message}];
 }
 
 - (void)socket:(GCDAsyncSocket *)sock didWriteDataWithTag:(long)tag {

@@ -1,6 +1,6 @@
 //
 //  AVCaptureManager.h
-//  VVCamera
+//  ubiQVue Cam
 //
 //  Created by Juuso Kaitila on 23.8.2015.
 //  Copyright (c) 2015 Bitwise. All rights reserved.
@@ -11,7 +11,7 @@
 #import <UIKit/UIKit.h>
 #import "StreamServer.h"
 
-typedef NS_ENUM(unsigned int, CameraState) {
+typedef NS_ENUM(NSInteger, CameraState) {
     AIM_MODE,
     CAMERA_MODE
 };
