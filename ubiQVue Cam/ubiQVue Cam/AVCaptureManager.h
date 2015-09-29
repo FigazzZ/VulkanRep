@@ -25,7 +25,7 @@ typedef NS_ENUM(NSInteger, CameraState) {
 
 - (instancetype)initWithPreviewView:(UIView *)previewView;
 
-- (void)setCameraSettings;
+- (void)setCameraSettings:(CGPoint)point;
 
 - (void)resetFormat;
 

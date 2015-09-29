@@ -302,15 +302,21 @@ static const CGSize kQVStreamSize = (CGSize) {
 // =============================================================================
 #pragma mark - Public
 
-- (void)setCameraSettings {
+- (void)setCameraSettings:(CGPoint)point {
     AVCaptureDevice *videoDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
     [videoDevice lockForConfiguration:nil];
     CameraSettings *sharedVars = [CameraSettings sharedVariables];
 
     if ([videoDevice isExposureModeSupported:sharedVars.exposureMode]) {
+        if(videoDevice.exposurePointOfInterestSupported) {
+            videoDevice.exposurePointOfInterest = point;
+        }
         videoDevice.exposureMode = sharedVars.exposureMode;
     }
     if ([videoDevice isFocusModeSupported:sharedVars.focusMode]) {
+        if(videoDevice.focusPointOfInterestSupported) {
+            videoDevice.focusPointOfInterest = point;
+        }
         videoDevice.focusMode = sharedVars.focusMode;
     }
     if (videoDevice.smoothAutoFocusSupported) {

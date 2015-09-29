@@ -300,7 +300,16 @@ static const CommandType observedCommands[] = {
 }
 
 - (void)handleCameraSettingsCommand:(NSNotification *)notification {
-    [self.captureManager setCameraSettings];
+    Command *cmd = [Command getCommandFromNotification:notification];
+    if([cmd isKindOfClass:[CommandWithValue class]]){
+        NSString *jsonString = ((CommandWithValue *)cmd).dataAsString;
+        NSDictionary *dict = [VVUtility getNSDictFromJSONString:jsonString][@"touch"];
+        CFDictionaryRef pointDict = (__bridge CFDictionaryRef)(dict);
+        CGPoint point;
+        if(CGPointMakeWithDictionaryRepresentation(pointDict, &point)){
+            [self.captureManager setCameraSettings:point];
+        }
+    }
 }
 
 - (void)handleDeleteCommand:(NSNotification *)notification {
@@ -312,7 +321,11 @@ static const CommandType observedCommands[] = {
 #pragma mark - Gesture Handler
 
 - (void)handleDoubleTap:(UITapGestureRecognizer *)sender {
-    [self.captureManager setCameraSettings];
+    CGPoint point = [sender locationInView:self.view];
+    CGFloat newX = point.x / self.view.frame.size.width;
+    CGFloat newY = point.y / self.view.frame.size.height;
+    point = CGPointMake(newX,newY);
+    [self.captureManager setCameraSettings:point];
 }
 
 
