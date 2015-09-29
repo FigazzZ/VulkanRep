@@ -304,11 +304,12 @@ static const CommandType observedCommands[] = {
     if([cmd isKindOfClass:[CommandWithValue class]]){
         NSString *jsonString = ((CommandWithValue *)cmd).dataAsString;
         NSDictionary *dict = [VVUtility getNSDictFromJSONString:jsonString][@"touch"];
-        CFDictionaryRef pointDict = (__bridge CFDictionaryRef)(dict);
+        CFDictionaryRef pointDict = (__bridge_retained CFDictionaryRef)(dict);
         CGPoint point;
         if(CGPointMakeWithDictionaryRepresentation(pointDict, &point)){
             [self.captureManager setCameraSettings:point];
         }
+        CFRelease(pointDict);
     }
 }
 
