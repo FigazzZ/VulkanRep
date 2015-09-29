@@ -23,7 +23,7 @@ typedef NS_ENUM(NSInteger, CameraState) {
 @property(nonatomic, readonly) BOOL isStreaming;
 @property(nonatomic, weak) StreamServer *streamServer;
 
-- (instancetype)initWithPreviewView:(UIView *)previewView NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithPreviewView:(UIView *)previewView;
 
 - (void)setCameraSettings;
 

@@ -15,6 +15,11 @@
 //#define USE_AUDIO
 #endif
 
+static const CGSize kQVStreamSize = (CGSize) {
+        .width = 320,
+        .height = 180
+};
+
 @interface AVCaptureManager ()
         <AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudioDataOutputSampleBufferDelegate> {
     CMTime defaultVideoMaxFrameDuration;
@@ -33,7 +38,6 @@
 
 @implementation AVCaptureManager {
     NSTimer *timer;
-    CGSize size;
     AVAssetWriter *writer;
     AVAssetWriterInput *videoInput;
     AVAssetWriterInput *audioInput;
@@ -46,19 +50,12 @@
     BOOL finishRecording;
 }
 
-- (instancetype)init {
-    return [self initWithPreviewView:nil];
-}
-
 - (instancetype)initWithPreviewView:(UIView *)previewView {
-
     self = [super init];
-
     if (self) {
         _isStreaming = NO;
         finishRecording = NO;
         _isRecording = NO;
-        size = CGSizeMake(320, 180);
 
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setStreamState:) name:kNNStream object:nil];
         self.videoDataQueue = dispatch_queue_create("videoDataQueue", DISPATCH_QUEUE_SERIAL);
@@ -497,7 +494,7 @@
             UIImage *image = [self imageFromSampleBuffer:buf];
 
             NSTimeInterval timestamp = [NSDate date].timeIntervalSince1970;
-            image = [self imageWithImage:image scaledToSize:size];
+            image = [self imageWithImage:image scaledToSize:kQVStreamSize];
             [self writeImageToSocket:image withTimestamp:timestamp];
             CFRelease(buf);
         });
@@ -520,8 +517,6 @@
 
 // From https://developer.apple.com/library/ios/documentation/AudioVideo/Conceptual/AVFoundationPG/Articles/06_MediaRepresentations.html#//apple_ref/doc/uid/TP40010188-CH2-SW4
 - (UIImage *)imageFromSampleBuffer:(CVImageBufferRef)imageBuffer {
-    // Get a CMSampleBuffer's Core Video image buffer for the media data
-//    CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
     // Lock the base address of the pixel buffer
     CVPixelBufferLockBaseAddress(imageBuffer, 0);
 
