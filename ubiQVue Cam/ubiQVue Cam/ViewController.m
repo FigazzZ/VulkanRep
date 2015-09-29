@@ -301,12 +301,12 @@ static const CommandType observedCommands[] = {
 
 - (void)handleCameraSettingsCommand:(NSNotification *)notification {
     Command *cmd = [Command getCommandFromNotification:notification];
-    if([cmd isKindOfClass:[CommandWithValue class]]){
-        NSString *jsonString = ((CommandWithValue *)cmd).dataAsString;
+    if ([cmd isKindOfClass:[CommandWithValue class]]) {
+        NSString *jsonString = ((CommandWithValue *) cmd).dataAsString;
         NSDictionary *dict = [VVUtility getNSDictFromJSONString:jsonString][@"touch"];
-        CFDictionaryRef pointDict = (__bridge_retained CFDictionaryRef)(dict);
+        CFDictionaryRef pointDict = (__bridge_retained CFDictionaryRef) (dict);
         CGPoint point;
-        if(CGPointMakeWithDictionaryRepresentation(pointDict, &point)){
+        if (CGPointMakeWithDictionaryRepresentation(pointDict, &point)) {
             [self.captureManager setCameraSettings:point];
         }
         CFRelease(pointDict);
@@ -325,7 +325,7 @@ static const CommandType observedCommands[] = {
     CGPoint point = [sender locationInView:self.view];
     CGFloat newX = point.x / self.view.frame.size.width;
     CGFloat newY = point.y / self.view.frame.size.height;
-    point = CGPointMake(newX,newY);
+    point = CGPointMake(newX, newY);
     [self.captureManager setCameraSettings:point];
 }
 

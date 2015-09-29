@@ -291,7 +291,7 @@ static const CGSize kQVStreamSize = (CGSize) {
     //UIGraphicsBeginImageContext(newSize);
     // In next line, pass 0.0 to use the current device's pixel scaling factor (and thus account for Retina resolution).
     // Pass 1.0 to force exact pixel size.
-    UIGraphicsBeginImageContextWithOptions(newSize, NO, 0.0);
+    UIGraphicsBeginImageContextWithOptions(newSize, YES, 0.0);
     [image drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
     UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
@@ -304,46 +304,56 @@ static const CGSize kQVStreamSize = (CGSize) {
 
 - (void)setCameraSettings:(CGPoint)point {
     AVCaptureDevice *videoDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-    [videoDevice lockForConfiguration:nil];
-    CameraSettings *sharedVars = [CameraSettings sharedVariables];
+    NSError *error;
+    if ([videoDevice lockForConfiguration:&error]) {
+        CameraSettings *sharedVars = [CameraSettings sharedVariables];
 
-    if ([videoDevice isExposureModeSupported:sharedVars.exposureMode]) {
-        if(videoDevice.exposurePointOfInterestSupported) {
-            videoDevice.exposurePointOfInterest = point;
+        if ([videoDevice isExposureModeSupported:sharedVars.exposureMode]) {
+            if (videoDevice.exposurePointOfInterestSupported) {
+                videoDevice.exposurePointOfInterest = point;
+            }
+            videoDevice.exposureMode = sharedVars.exposureMode;
         }
-        videoDevice.exposureMode = sharedVars.exposureMode;
-    }
-    if ([videoDevice isFocusModeSupported:sharedVars.focusMode]) {
-        if(videoDevice.focusPointOfInterestSupported) {
-            videoDevice.focusPointOfInterest = point;
+
+        if ([videoDevice isFocusModeSupported:sharedVars.focusMode]) {
+//            if (videoDevice.focusPointOfInterestSupported) {
+//                videoDevice.focusPointOfInterest = point;
+//            }
+            videoDevice.focusMode = sharedVars.focusMode;
         }
-        videoDevice.focusMode = sharedVars.focusMode;
+
+        if (videoDevice.smoothAutoFocusSupported) {
+            videoDevice.smoothAutoFocusEnabled = sharedVars.smoothFocusEnabled;
+        }
+        if (videoDevice.autoFocusRangeRestrictionSupported) {
+            videoDevice.autoFocusRangeRestriction = sharedVars.autoFocusRange;
+        }
+        if ([videoDevice isWhiteBalanceModeSupported:sharedVars.wbMode]) {
+            videoDevice.whiteBalanceMode = sharedVars.wbMode;
+        }
+        [videoDevice unlockForConfiguration];
     }
-    if (videoDevice.smoothAutoFocusSupported) {
-        videoDevice.smoothAutoFocusEnabled = sharedVars.smoothFocusEnabled;
+    else {
+        NSLog(@"%@", error.localizedDescription);
     }
-    if (videoDevice.autoFocusRangeRestrictionSupported) {
-        videoDevice.autoFocusRangeRestriction = sharedVars.autoFocusRange;
-    }
-    if ([videoDevice isWhiteBalanceModeSupported:sharedVars.wbMode]) {
-        videoDevice.whiteBalanceMode = sharedVars.wbMode;
-    }
-    [videoDevice unlockForConfiguration];
 }
 
 - (void)resetFormat {
-
     BOOL isRunning = self.captureSession.isRunning;
-
     if (isRunning) {
         [self.captureSession stopRunning];
     }
 
     AVCaptureDevice *videoDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-    [videoDevice lockForConfiguration:nil];
-    videoDevice.activeFormat = self.defaultFormat;
-    videoDevice.activeVideoMaxFrameDuration = defaultVideoMaxFrameDuration;
-    [videoDevice unlockForConfiguration];
+    NSError *error;
+    if ([videoDevice lockForConfiguration:&error]) {
+        videoDevice.activeFormat = self.defaultFormat;
+        videoDevice.activeVideoMaxFrameDuration = defaultVideoMaxFrameDuration;
+        [videoDevice unlockForConfiguration];
+    }
+    else {
+        NSLog(@"%@", error.localizedDescription);
+    }
 
     if (isRunning) {
         [self.captureSession startRunning];
@@ -352,24 +362,21 @@ static const CGSize kQVStreamSize = (CGSize) {
 
 - (BOOL)switchFormatWithDesiredFPS:(CGFloat)desiredFPS {
     BOOL isRunning = self.captureSession.isRunning;
-    BOOL framerateChanged = NO;
-
-    if (isRunning) [self.captureSession stopRunning];
+    if (isRunning) {
+        [self.captureSession stopRunning];
+    }
 
     AVCaptureDevice *videoDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
     AVCaptureDeviceFormat *selectedFormat = nil;
     int32_t maxWidth = 0;
+    BOOL framerateChanged = NO;
 
     for (AVCaptureDeviceFormat *format in videoDevice.formats) {
-
         for (AVFrameRateRange *range in format.videoSupportedFrameRateRanges) {
-
             CMFormatDescriptionRef desc = format.formatDescription;
-            CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(desc);
-            int32_t width = dimensions.width;
+            int32_t width = (CMVideoFormatDescriptionGetDimensions(desc)).width;
 
             if (range.minFrameRate <= desiredFPS && desiredFPS <= range.maxFrameRate && width >= maxWidth) {
-
                 selectedFormat = format;
                 maxWidth = width;
                 [[CameraSettings sharedVariables] setFramerate:desiredFPS];
@@ -380,34 +387,24 @@ static const CGSize kQVStreamSize = (CGSize) {
         }
     }
 
-    if (selectedFormat) {
-        CameraSettings *sharedVars = [CameraSettings sharedVariables];
-        if ([videoDevice lockForConfiguration:nil]) {
-
+    if (selectedFormat != nil) {
+        NSError *error;
+        if ([videoDevice lockForConfiguration:&error]) {
             NSLog(@"selected format:%@", selectedFormat);
             videoDevice.activeFormat = selectedFormat;
             videoDevice.activeVideoMinFrameDuration = CMTimeMake(1, (int32_t) desiredFPS);
             videoDevice.activeVideoMaxFrameDuration = CMTimeMake(1, (int32_t) desiredFPS);
-            if ([videoDevice isExposureModeSupported:sharedVars.exposureMode]) {
-                videoDevice.exposureMode = sharedVars.exposureMode;
-            }
-            if ([videoDevice isFocusModeSupported:sharedVars.focusMode]) {
-                videoDevice.focusMode = sharedVars.focusMode;
-            }
-            if (videoDevice.smoothAutoFocusSupported) {
-                videoDevice.smoothAutoFocusEnabled = sharedVars.smoothFocusEnabled;
-            }
-            if (videoDevice.autoFocusRangeRestrictionSupported) {
-                videoDevice.autoFocusRangeRestriction = sharedVars.autoFocusRange;
-            }
-            if ([videoDevice isWhiteBalanceModeSupported:sharedVars.wbMode]) {
-                videoDevice.whiteBalanceMode = sharedVars.wbMode;
-            }
             [videoDevice unlockForConfiguration];
         }
+        else {
+            NSLog(@"%@", error.localizedDescription);
+        }
+        [self setCameraSettings:CGPointMake(0.5f, 0.5f)];
     }
 
-    if (isRunning) [self.captureSession startRunning];
+    if (isRunning) {
+        [self.captureSession startRunning];
+    }
     return framerateChanged;
 }
 
@@ -525,8 +522,6 @@ static const CGSize kQVStreamSize = (CGSize) {
 - (UIImage *)imageFromSampleBuffer:(CVImageBufferRef)imageBuffer {
     // Lock the base address of the pixel buffer
     CVPixelBufferLockBaseAddress(imageBuffer, 0);
-
-    // Get the number of bytes per row for the pixel buffer
     void *baseAddress = CVPixelBufferGetBaseAddress(imageBuffer);
 
     // Get the number of bytes per row for the pixel buffer
