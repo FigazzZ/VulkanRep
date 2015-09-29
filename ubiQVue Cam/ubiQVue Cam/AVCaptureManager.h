@@ -1,43 +1,50 @@
 //
 //  AVCaptureManager.h
-//  VVCamera
+//  ubiQVue Cam
 //
 //  Created by Juuso Kaitila on 23.8.2015.
 //  Copyright (c) 2015 Bitwise. All rights reserved.
 //
 
-#ifndef VVCamera_AVCaptureManager_h
-#define VVCamera_AVCaptureManager_h
-#import "StreamServer.h"
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 #import <UIKit/UIKit.h>
+#import "StreamServer.h"
 
-typedef enum {
+typedef NS_ENUM(NSInteger, CameraState) {
     AIM_MODE,
     CAMERA_MODE
-} CameraState;
+};
 
 
 @interface AVCaptureManager : NSObject
 
-@property (nonatomic, readonly) BOOL isRecording;
-@property (nonatomic, readonly) BOOL isStreaming;
-@property (nonatomic, weak) StreamServer *streamServer;
+@property(nonatomic, readonly) BOOL isRecording;
+@property(nonatomic, readonly) BOOL isStreaming;
+@property(nonatomic, weak) StreamServer *streamServer;
 
-- (id)initWithPreviewView:(UIView *)previewView;
-- (void)setCameraSettings;
+- (instancetype)initWithPreviewView:(UIView *)previewView;
+
+- (void)setCameraSettings:(CGPoint)point;
+
 - (void)resetFormat;
-- (NSURL *)getVideoFile;
+
+@property(NS_NONATOMIC_IOSONLY, getter=getVideoFile, readonly, copy) NSURL *videoFile;
+
 - (void)addPreview:(UIView *)previewView;
+
 - (void)removePreview;
+
 - (BOOL)switchFormatWithDesiredFPS:(CGFloat)desiredFPS;
+
 - (void)prepareAssetWriter;
+
 - (void)closeAssetWriter;
+
 - (void)startRecording;
+
 - (void)stopRecording;
+
 + (void)deleteVideo:(NSURL *)file;
 
 @end
-
-#endif

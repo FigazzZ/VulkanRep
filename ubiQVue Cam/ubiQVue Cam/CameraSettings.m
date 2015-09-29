@@ -1,6 +1,6 @@
 //
 //  CameraSettings.m
-//  VVCamera
+//  ubiQVue Cam
 //
 //  Created by Juuso Kaitila on 13.8.2015.
 //  Copyright (c) 2015 Bitwise. All rights reserved.
@@ -23,7 +23,7 @@
 @synthesize smoothFocusEnabled;
 @synthesize wbMode;
 
-+ (id) sharedVariables{
++ (id)sharedVariables {
     static CameraSettings *sharedVariables = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -32,15 +32,15 @@
     return sharedVariables;
 }
 
-- (id) init{
+- (instancetype)init {
     self = [super init];
-    if(self){
+    if (self) {
         // TODO: load values from stored settings if they exist
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         framerate = [defaults floatForKey:@"framerate"];
-        yaw = (int)[defaults integerForKey:@"yaw"];
-        pitch = (int)[defaults integerForKey:@"pitch"];
-        dist = (int)[defaults integerForKey:@"dist"];
+        yaw = (int) [defaults integerForKey:@"yaw"];
+        pitch = (int) [defaults integerForKey:@"pitch"];
+        dist = (int) [defaults integerForKey:@"dist"];
         roll = 0;
         NSLog(@"fps: %f", framerate);
         exposureMode = AVCaptureExposureModeAutoExpose;
@@ -53,35 +53,19 @@
     return self;
 }
 
-- (NSDictionary *)getPositionJson{
-    NSNumber *dst = [NSNumber numberWithInt: dist];
-    NSNumber *yw = [NSNumber numberWithInt: yaw];
-    NSNumber *ptch = [NSNumber numberWithInt: pitch];
-    UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
-    NSNumber *rll;
-    if(UIDeviceOrientationIsPortrait(orientation)){
-        if(orientation == UIDeviceOrientationPortrait){
-            rll = [NSNumber numberWithInt:-90];
-        }
-        else{
-            rll = [NSNumber numberWithInt:90];
-        }
-    }
-    else{
-        rll = [NSNumber numberWithInt:0];
-    }
-    NSArray *positions = [[NSArray alloc] initWithObjects:dst, yw, ptch, rll, nil];
-    NSArray *keys = [[NSArray alloc] initWithObjects:@"dist", @"yaw", @"pitch", @"roll", nil];
-    NSDictionary *pov = [[NSDictionary alloc] initWithObjects:positions forKeys:keys];
+- (NSDictionary *)getPositionJson {
+    UIDeviceOrientation orient = [UIDevice currentDevice].orientation;
+    NSNumber *rll = UIDeviceOrientationIsPortrait(orient) ? orient == UIDeviceOrientationPortrait ? @(-90) : @90 : @0;
+    NSDictionary *pov = @{@"dist" : @(dist), @"yaw" : @(yaw), @"pitch" : @(pitch), @"roll" : rll};
     return pov;
 }
 
-- (void)saveSettings{
+- (void)saveSettings {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setValue:[NSNumber numberWithFloat:framerate] forKey:@"framerate"];
-    [defaults setValue:[NSNumber numberWithInt: dist] forKey:@"dist"];
-    [defaults setValue:[NSNumber numberWithInt: yaw] forKey:@"yaw"];
-    [defaults setValue:[NSNumber numberWithInt: pitch] forKey:@"pitch"];
+    [defaults setValue:@(framerate) forKey:@"framerate"];
+    [defaults setValue:@(dist) forKey:@"dist"];
+    [defaults setValue:@(yaw) forKey:@"yaw"];
+    [defaults setValue:@(pitch) forKey:@"pitch"];
 }
 
 @end
