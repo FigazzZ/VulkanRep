@@ -227,9 +227,18 @@ static const CGSize kQVStreamSize = (CGSize) {
 }
 
 - (void)closeAssetWriter {
-    [writer finishWritingWithCompletionHandler:^{
-        [AVCaptureManager deleteVideo:fileURL];
-    }];
+    @try {
+        if(writer.status == AVAssetWriterStatusWriting){
+            [writer finishWritingWithCompletionHandler:^{
+                [AVCaptureManager deleteVideo:fileURL];
+            }];
+        }
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Closing the assetwriter failed");
+    }
+    
+    
 }
 
 // ====================================================
