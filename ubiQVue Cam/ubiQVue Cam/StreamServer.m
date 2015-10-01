@@ -7,7 +7,7 @@
 //
 
 #import "StreamServer.h"
-#import "VVNotificationNames.h"
+#import "CommonNotificationNames.h"
 
 NSString *const kQVStreamBoundary = @"boundary";
 

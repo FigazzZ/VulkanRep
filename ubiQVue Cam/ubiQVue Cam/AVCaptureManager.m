@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "AVCaptureManager.h"
 #import "CameraSettings.h"
-#import "VVNotificationNames.h"
+#import "CommonNotificationNames.h"
 
 #ifndef USE_AUDIO
 //#define USE_AUDIO

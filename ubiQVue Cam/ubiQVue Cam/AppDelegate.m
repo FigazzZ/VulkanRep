@@ -8,7 +8,7 @@
 
 #import "AppDelegate.h"
 #import "CameraSettings.h"
-#import "VVNotificationNames.h"
+#import "CommonNotificationNames.h"
 
 @interface AppDelegate ()
 
