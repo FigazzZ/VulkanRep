@@ -237,8 +237,6 @@ static const CGSize kQVStreamSize = (CGSize) {
     @catch (NSException *exception) {
         NSLog(@"Closing the assetwriter failed");
     }
-    
-    
 }
 
 // ====================================================
