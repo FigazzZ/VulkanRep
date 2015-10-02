@@ -8,12 +8,12 @@
 
 #import "ViewController.h"
 #import "AVCaptureManager.h"
-#import "VVNetworkSocketHandler.h"
+#import "NetworkSocketHandler.h"
 #import "CameraProtocol.h"
 #import "CommandWithValue.h"
 #import "CameraSettings.h"
-#import "VVUtility.h"
-#import "VVNotificationNames.h"
+#import "CommonUtility.h"
+#import "CommonNotificationNames.h"
 
 static NSString *const kMinServerVersion = @"0.3.0.0";
 
@@ -36,7 +36,7 @@ static const CommandType observedCommands[] = {
 
 
 @implementation ViewController {
-    VVNetworkSocketHandler *socketHandler;
+    NetworkSocketHandler *socketHandler;
     NSNumber *delay;
     CameraState mode;
     NSURL *file;
@@ -58,7 +58,7 @@ static const CommandType observedCommands[] = {
                                                                                  action:@selector(handleDoubleTap:)];
     tapGesture.numberOfTapsRequired = 2;
     [self.view addGestureRecognizer:tapGesture];
-    socketHandler = [[VVNetworkSocketHandler alloc] init:1111 protocol:[[CameraProtocol alloc] init] minServerVer:kMinServerVersion];
+    socketHandler = [[NetworkSocketHandler alloc] init:1111 protocol:[[CameraProtocol alloc] init] minServerVer:kMinServerVersion];
     [self registerToNotifications];
     [self hideStatusBar];
 
@@ -267,7 +267,7 @@ static const CommandType observedCommands[] = {
     CMTime duration = sourceAsset.duration;
     NSNumber *dur = @(CMTimeGetSeconds(duration));
     json[@"duration"] = dur;
-    NSString *jsonStr = [VVUtility convertNSDictToJSONString:json];
+    NSString *jsonStr = [CommonUtility convertNSDictToJSONString:json];
     [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:VIDEO_COMING :jsonStr]];
     dispatch_async(dispatch_get_main_queue(), ^{
         NSString *path = file.path;
@@ -283,7 +283,7 @@ static const CommandType observedCommands[] = {
     if ([command isKindOfClass:[CommandWithValue class]]) {
         CameraSettings *sharedVars = [CameraSettings sharedVariables];
         NSString *JSONString = [[NSString alloc] initWithData:command.data encoding:NSUTF8StringEncoding];
-        NSDictionary *json = [VVUtility getNSDictFromJSONString:JSONString];
+        NSDictionary *json = [CommonUtility getNSDictFromJSONString:JSONString];
         sharedVars.dist = [json[@"dist"] doubleValue];
         sharedVars.yaw = [json[@"yaw"] intValue];
         sharedVars.pitch = [json[@"pitch"] intValue];
@@ -295,18 +295,18 @@ static const CommandType observedCommands[] = {
     NSDictionary *pov = @{@"dist" : @(sharedVars.dist),
             @"yaw" : @(sharedVars.yaw),
             @"pitch" : @(sharedVars.pitch)};
-    NSString *jsonStr = [VVUtility convertNSDictToJSONString:pov];
+    NSString *jsonStr = [CommonUtility convertNSDictToJSONString:pov];
     [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:POSITION :jsonStr]];
 }
 
 - (void)handleCameraSettingsCommand:(NSNotification *)notification {
     Command *cmd = [Command getCommandFromNotification:notification];
-    if([cmd isKindOfClass:[CommandWithValue class]]){
-        NSString *jsonString = ((CommandWithValue *)cmd).dataAsString;
-        NSDictionary *dict = [VVUtility getNSDictFromJSONString:jsonString][@"touch"];
-        CFDictionaryRef pointDict = (__bridge_retained CFDictionaryRef)(dict);
+    if ([cmd isKindOfClass:[CommandWithValue class]]) {
+        NSString *jsonString = ((CommandWithValue *) cmd).dataAsString;
+        NSDictionary *dict = [CommonUtility getNSDictFromJSONString:jsonString][@"touch"];
+        CFDictionaryRef pointDict = (__bridge_retained CFDictionaryRef) (dict);
         CGPoint point;
-        if(CGPointMakeWithDictionaryRepresentation(pointDict, &point)){
+        if (CGPointMakeWithDictionaryRepresentation(pointDict, &point)) {
             [self.captureManager setCameraSettings:point];
         }
         CFRelease(pointDict);
@@ -325,7 +325,7 @@ static const CommandType observedCommands[] = {
     CGPoint point = [sender locationInView:self.view];
     CGFloat newX = point.x / self.view.frame.size.width;
     CGFloat newY = point.y / self.view.frame.size.height;
-    point = CGPointMake(newX,newY);
+    point = CGPointMake(newX, newY);
     [self.captureManager setCameraSettings:point];
 }
 

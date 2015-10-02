@@ -7,7 +7,7 @@
 //
 
 #import "StreamServer.h"
-#import "VVNotificationNames.h"
+#import "CommonNotificationNames.h"
 
 NSString *const kQVStreamBoundary = @"boundary";
 
@@ -41,7 +41,12 @@ NSString *const kQVStreamBoundary = @"boundary";
     if (!_isRunning) {
         NSError *error = nil;
         [_serverSocket acceptOnPort:8080 error:&error];
+        if (error != nil) {
+            NSLog(@"Creating the stream socket failed due to: %@", error.localizedDescription);
+        }
+        else{
         _isRunning = YES;
+        }
     }
 }
 
@@ -57,6 +62,7 @@ NSString *const kQVStreamBoundary = @"boundary";
 - (void)stopAcceptingConnections {
     [_serverSocket disconnect];
     [self closeSocket];
+    _isRunning = NO;
 }
 
 - (void)socket:(GCDAsyncSocket *)sock didAcceptNewSocket:(GCDAsyncSocket *)newSocket {
