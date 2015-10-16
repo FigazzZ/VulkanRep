@@ -14,6 +14,7 @@
 #import "CameraSettings.h"
 #import "CommonUtility.h"
 #import "CommonNotificationNames.h"
+#import "CamNotificationNames.h"
 
 static NSString *const kMinServerVersion = @"0.3.0.0";
 
