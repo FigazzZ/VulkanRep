@@ -228,7 +228,7 @@ static const CGSize kQVStreamSize = (CGSize) {
 
 - (void)closeAssetWriter {
     @try {
-        if(writer.status == AVAssetWriterStatusWriting){
+        if (writer.status == AVAssetWriterStatusWriting) {
             [writer finishWritingWithCompletionHandler:^{
                 [AVCaptureManager deleteVideo:fileURL];
             }];
@@ -498,19 +498,22 @@ static const CGSize kQVStreamSize = (CGSize) {
         [self finishRecording];
     }
 
-    if (_isStreaming && streamFrame == streamfps) {
-        CVImageBufferRef buf = (CVImageBufferRef) CFRetain(imageBuffer);
-        dispatch_async(self.streamQueue, ^(void) {
-            UIImage *image = [self imageFromSampleBuffer:buf];
+    if (_isStreaming) {
+        streamFrame++;
+        if (streamFrame == streamfps) {
+            CVImageBufferRef buf = (CVImageBufferRef) CFRetain(imageBuffer);
+            dispatch_async(self.streamQueue, ^(void) {
+                UIImage *image = [self imageFromSampleBuffer:buf];
 
-            NSTimeInterval timestamp = [NSDate date].timeIntervalSince1970;
-            image = [self imageWithImage:image scaledToSize:kQVStreamSize];
-            [self writeImageToSocket:image withTimestamp:timestamp];
-            CFRelease(buf);
-        });
-        streamFrame = 0;
+                NSTimeInterval timestamp = [NSDate date].timeIntervalSince1970;
+                image = [self imageWithImage:image scaledToSize:kQVStreamSize];
+                [self writeImageToSocket:image withTimestamp:timestamp];
+                CFRelease(buf);
+            });
+            streamFrame = 0;
+        }
+
     }
-    streamFrame++;
 //    }
 //    else {
 //        if (_isRecording && audioInput.readyForMoreMediaData) {

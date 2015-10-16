@@ -24,7 +24,8 @@ static const CommandType observedCommands[] = {
         POSITION,
         GET_POSITION,
         DELETE,
-        CAMERA_SETTINGS
+        CAMERA_SETTINGS,
+        SET_FPS
 };
 
 @interface ViewController ()
@@ -213,17 +214,31 @@ static const CommandType observedCommands[] = {
 - (void)setCameraFramerate {
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(queue, ^{
-        if ([self.captureManager switchFormatWithDesiredFPS:120.0]) {
-            // TODO: something
+        CameraSettings *sharedVars = [CameraSettings sharedVariables];
+        if ([self.captureManager switchFormatWithDesiredFPS:240.0]) {
+            [sharedVars setMaxFramerate:240.0];
+        }
+        else if ([self.captureManager switchFormatWithDesiredFPS:120.0]) {
+            [sharedVars setMaxFramerate:120.0];
         }
         else if ([self.captureManager switchFormatWithDesiredFPS:60.0]) {
-            // TODO: something
+            [sharedVars setMaxFramerate:60.0];
         }
         else {
             [self.captureManager resetFormat];
+            [sharedVars setMaxFramerate:30.0];
         }
     });
+}
 
+- (void)handleSetFPSCommand:(NSNotification *)notification {
+    NSNumber *framerate = notification.userInfo[@"fps"];
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(queue, ^{
+        if ([self.captureManager switchFormatWithDesiredFPS:framerate.floatValue]) {
+            [socketHandler sendCommand:[[CommandWithValue alloc] initWithInt:SET_FPS :framerate.intValue]];
+        }
+    });
 }
 
 - (void)didReceiveMemoryWarning {
@@ -246,6 +261,7 @@ static const CommandType observedCommands[] = {
 
 - (void)handleStopCommand:(NSNotification *)notification {
     if (_captureManager.isRecording) {
+        [socketHandler sendCommand:[[Command alloc] init:STOP_OK]];
         [_captureManager stopRecording];
     }
     else {
@@ -294,7 +310,8 @@ static const CommandType observedCommands[] = {
     CameraSettings *sharedVars = [CameraSettings sharedVariables];
     NSDictionary *pov = @{@"dist" : @(sharedVars.dist),
             @"yaw" : @(sharedVars.yaw),
-            @"pitch" : @(sharedVars.pitch)};
+            @"pitch" : @(sharedVars.pitch),
+            @"maxFps" : @(sharedVars.maxFramerate)};
     NSString *jsonStr = [CommonUtility convertNSDictToJSONString:pov];
     [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:POSITION :jsonStr]];
 }
