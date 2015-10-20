@@ -10,6 +10,7 @@
 #import "AVCaptureManager.h"
 #import "CameraSettings.h"
 #import "CommonNotificationNames.h"
+#import "CamNotificationNames.h"
 
 #ifndef USE_AUDIO
 //#define USE_AUDIO

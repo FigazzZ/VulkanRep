@@ -262,7 +262,7 @@ static const CommandType observedCommands[] = {
 
 - (void)handleStopCommand:(NSNotification *)notification {
     if (_captureManager.isRecording) {
-        [socketHandler sendCommand:[[Command alloc] init:STOP_OK]];
+//        [socketHandler sendCommand:[[Command alloc] init:STOP_OK]];
         [_captureManager stopRecording];
     }
     else {
