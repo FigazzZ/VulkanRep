@@ -12,6 +12,7 @@
 @implementation CameraSettings
 
 @synthesize framerate;
+@synthesize maxFramerate;
 @synthesize yaw;
 @synthesize pitch;
 @synthesize dist;
@@ -37,6 +38,7 @@
     if (self) {
         // TODO: load values from stored settings if they exist
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        maxFramerate = 240.0;
         framerate = [defaults floatForKey:@"framerate"];
         yaw = (int) [defaults integerForKey:@"yaw"];
         pitch = (int) [defaults integerForKey:@"pitch"];
