@@ -13,6 +13,7 @@
 
 @synthesize framerate;
 @synthesize maxFramerate;
+@synthesize shutterSpeed;
 @synthesize yaw;
 @synthesize pitch;
 @synthesize dist;
@@ -43,6 +44,7 @@
         yaw = (int) [defaults integerForKey:@"yaw"];
         pitch = (int) [defaults integerForKey:@"pitch"];
         dist = (int) [defaults integerForKey:@"dist"];
+        shutterSpeed = (int) [defaults integerForKey:@"shutterSpeed"];
         roll = 0;
         NSLog(@"fps: %f", framerate);
         exposureMode = AVCaptureExposureModeAutoExpose;
@@ -68,6 +70,7 @@
     [defaults setValue:@(dist) forKey:@"dist"];
     [defaults setValue:@(yaw) forKey:@"yaw"];
     [defaults setValue:@(pitch) forKey:@"pitch"];
+    [defaults setValue:@(shutterSpeed) forKey:@"shutterSpeed"];
 }
 
 @end

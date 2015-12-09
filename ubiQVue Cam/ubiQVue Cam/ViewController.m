@@ -26,7 +26,8 @@ static const CommandType observedCommands[] = {
         GET_POSITION,
         DELETE,
         CAMERA_SETTINGS,
-        SET_FPS
+        SET_FPS,
+        SET_SHUTTERSPEED
 };
 
 @interface ViewController ()
@@ -134,11 +135,8 @@ static const CommandType observedCommands[] = {
     [center addObserver:self selector:@selector(wentToBackground) name:kNNCloseAll object:nil];
     [center addObserver:self selector:@selector(cameToForeground) name:kNNRestoreAll object:nil];
     [center addObserver:self selector:@selector(receiveStreamNotification:) name:kNNStream object:nil];
-
-    [center addObserver:self
-               selector:@selector(sendJsonAndVideo:)
-                   name:@"StopNotification"
-                 object:nil];
+    [center addObserver:self selector:@selector(sendStopOKCommand) name:kNNStopOK object:nil];
+    [center addObserver:self selector:@selector(sendJsonAndVideo:) name:kNNStopRecording object:nil];
 }
 
 - (void)receiveStreamNotification:(NSNotification *)notification {
@@ -262,12 +260,15 @@ static const CommandType observedCommands[] = {
 
 - (void)handleStopCommand:(NSNotification *)notification {
     if (_captureManager.isRecording) {
-//        [socketHandler sendCommand:[[Command alloc] init:STOP_OK]];
         [_captureManager stopRecording];
     }
     else {
         [socketHandler sendCommand:[[Command alloc] init:NOT_OK]];
     }
+}
+
+- (void)sendStopOKCommand {
+    [socketHandler sendCommand:[[Command alloc] init:STOP_OK]];
 }
 
 - (void)sendJsonAndVideo:(NSNotification *)notification {
@@ -304,6 +305,17 @@ static const CommandType observedCommands[] = {
         sharedVars.dist = [json[@"dist"] doubleValue];
         sharedVars.yaw = [json[@"yaw"] intValue];
         sharedVars.pitch = [json[@"pitch"] intValue];
+    }
+}
+
+- (void)handleSetShutterSpeedCommand:(NSNotification *)notification {
+    Command *cmd = [Command getCommandFromNotification:notification];
+    if ([cmd isKindOfClass:[CommandWithValue class]]) {
+        CameraSettings *sharedVars = [CameraSettings sharedVariables];
+        NSString *jsonString = ((CommandWithValue *) cmd).dataAsString;
+        NSDictionary *dict = [CommonUtility getNSDictFromJSONString:jsonString];
+        sharedVars.shutterSpeed = [dict[@"shutterspeed"] intValue];
+        [self.captureManager setShutterSpeed];
     }
 }
 

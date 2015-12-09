@@ -10,4 +10,6 @@
 #define CamNotificationNames_h
 
 extern NSString *const kNNStream;
+extern NSString *const kNNStopOK;
+extern NSString *const kNNStopRecording;
 #endif /* CamNotificationNames_h */
