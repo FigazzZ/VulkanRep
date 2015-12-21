@@ -357,6 +357,7 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
         double setISO = MIN(MAX(nISO,videoDevice.activeFormat.minISO),videoDevice.activeFormat.maxISO);
         [videoDevice setExposureModeCustomWithDuration:newSpeed ISO:setISO completionHandler:nil];
         [videoDevice unlockForConfiguration];
+        NSLog(@"Shutterspeed changed to 1/%zd", sharedVars.shutterSpeed);
     }
 }
 

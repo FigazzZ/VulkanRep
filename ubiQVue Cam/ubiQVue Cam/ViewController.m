@@ -312,9 +312,7 @@ static const CommandType observedCommands[] = {
     Command *cmd = [Command getCommandFromNotification:notification];
     if ([cmd isKindOfClass:[CommandWithValue class]]) {
         CameraSettings *sharedVars = [CameraSettings sharedVariables];
-        NSString *jsonString = ((CommandWithValue *) cmd).dataAsString;
-        NSDictionary *dict = [CommonUtility getNSDictFromJSONString:jsonString];
-        sharedVars.shutterSpeed = [dict[@"shutterspeed"] intValue];
+        sharedVars.shutterSpeed = ((CommandWithValue *) cmd).dataAsInt;
         [self.captureManager setShutterSpeed];
     }
 }
