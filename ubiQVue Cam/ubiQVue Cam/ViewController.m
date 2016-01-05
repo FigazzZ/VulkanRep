@@ -15,6 +15,7 @@
 #import "CommonUtility.h"
 #import "CommonNotificationNames.h"
 #import "CamNotificationNames.h"
+#import "SplashScreen.h"
 
 static NSString *const kMinServerVersion = @"0.3.0.0";
 
@@ -50,8 +51,11 @@ static const CommandType observedCommands[] = {
 - (void)viewDidLoad {
     [super viewDidLoad];
     mode = AIM_MODE;
+    [self drawSplashScreen];
     [UIApplication sharedApplication].idleTimerDisabled = YES;
     [UIScreen mainScreen].brightness = 1;
+    NSString *version = [NSBundle mainBundle].infoDictionary[@"CFBundleShortVersionString"];
+    _versionLabel.text = [NSString stringWithFormat:@"v%@", version];
     [self drawGrid];
     self.streamServer = [[StreamServer alloc] init];
     [self.streamServer startAcceptingConnections];
@@ -73,6 +77,28 @@ static const CommandType observedCommands[] = {
     self.captureManager = [[AVCaptureManager alloc] initWithPreviewView:self.view];
     [self setCameraFramerate];
     self.captureManager.streamServer = self.streamServer;
+}
+
+- (void)drawSplashScreen {
+    SplashScreen *splashView = [[SplashScreen alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+    splashView.tag = 11;
+    [self.view addSubview:splashView];
+    [CommonUtility setFullscreenConstraintsForView:splashView toSuperview:self.view];
+    
+    [NSTimer scheduledTimerWithTimeInterval:4
+                                     target:self
+                                   selector:@selector(removeSplashScreen:)
+                                   userInfo:nil
+                                    repeats:NO];
+    
+}
+
+- (void)removeSplashScreen:(NSTimer *)timer {
+    for (UIView *subview in (self.view).subviews) {
+        if (subview.tag == 11) {
+            [subview removeFromSuperview];
+        }
+    }
 }
 
 - (void)drawGrid {

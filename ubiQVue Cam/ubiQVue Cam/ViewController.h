@@ -16,6 +16,7 @@
 @property(weak, nonatomic) IBOutlet UIButton *aimMode;
 @property(weak, nonatomic) IBOutlet UIButton *cameraMode;
 @property(weak, nonatomic) IBOutlet UIImageView *logo;
+@property (weak, nonatomic) IBOutlet UILabel *versionLabel;
 
 - (IBAction)switchToAimMode:(id)sender;
 
