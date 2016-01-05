@@ -19,7 +19,12 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    NSDictionary *appDefaults = @{@"framerate" : @120.0F, @"yaw" : @0, @"pitch" : @0, @"dist" : @10, @"uuid" : [NSUUID UUID].UUIDString};
+    NSDictionary *appDefaults = @{@"framerate" : @120.0F,
+                                  @"yaw" : @0,
+                                  @"pitch" : @0,
+                                  @"dist" : @10,
+                                  @"uuid" : [NSUUID UUID].UUIDString,
+                                  @"shutterSpeed" : @120};
     [[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];
     if (getenv("NSZombieEnabled") || getenv("NSAutoreleaseFreedObjectCheckEnabled")) {
         NSLog(@"NSZombieEnabled/NSAutoreleaseFreedObjectCheckEnabled enabled!");

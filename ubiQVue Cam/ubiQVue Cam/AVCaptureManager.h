@@ -35,6 +35,8 @@ typedef NS_ENUM(NSInteger, CameraState) {
 
 - (void)removePreview;
 
+- (void)setShutterSpeed;
+
 - (BOOL)switchFormatWithDesiredFPS:(CGFloat)desiredFPS;
 
 - (void)prepareAssetWriter;

@@ -21,6 +21,8 @@ static const CGSize kQVStreamSize = (CGSize) {
         .height = 180
 };
 
+static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
+
 @interface AVCaptureManager ()
         <AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudioDataOutputSampleBufferDelegate> {
     CMTime defaultVideoMaxFrameDuration;
@@ -48,6 +50,7 @@ static const CGSize kQVStreamSize = (CGSize) {
     int64_t streamFrame;
     int32_t fps;
     int32_t streamfps;
+    CGFloat lux;
     BOOL finishRecording;
 }
 
@@ -259,17 +262,11 @@ static const CGSize kQVStreamSize = (CGSize) {
     streamFrame = 0;
     NSLog(@"Streaming started");
     _isStreaming = YES;
-//    timer = [NSTimer scheduledTimerWithTimeInterval:0.07
-//                                             target:self
-//                                           selector:@selector(captureImage)
-//                                           userInfo:nil
-//                                            repeats:YES];
 }
 
 - (void)stopStreaming {
     _isStreaming = NO;
     NSLog(@"Streaming stopped");
-//    [timer invalidate];
 }
 
 - (void)writeImageToSocket:(UIImage *)image withTimestamp:(NSTimeInterval)timestamp {
@@ -296,7 +293,6 @@ static const CGSize kQVStreamSize = (CGSize) {
 }
 
 - (UIImage *)imageWithImage:(UIImage *)image scaledToSize:(CGSize)newSize {
-    //UIGraphicsBeginImageContext(newSize);
     // In next line, pass 0.0 to use the current device's pixel scaling factor (and thus account for Retina resolution).
     // Pass 1.0 to force exact pixel size.
     UIGraphicsBeginImageContextWithOptions(newSize, YES, 0.0);
@@ -315,7 +311,6 @@ static const CGSize kQVStreamSize = (CGSize) {
     NSError *error;
     if ([videoDevice lockForConfiguration:&error]) {
         CameraSettings *sharedVars = [CameraSettings sharedVariables];
-
         if ([videoDevice isExposureModeSupported:sharedVars.exposureMode]) {
             if (videoDevice.exposurePointOfInterestSupported) {
                 videoDevice.exposurePointOfInterest = point;
@@ -343,6 +338,26 @@ static const CGSize kQVStreamSize = (CGSize) {
     }
     else {
         NSLog(@"%@", error.localizedDescription);
+    }
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, kQVCameraSettingDelay),dispatch_get_main_queue(), ^{
+        lux = pow(videoDevice.lensAperture, 2)/(CMTimeGetSeconds(videoDevice.exposureDuration)*videoDevice.ISO);
+        [self setShutterSpeed];
+    });
+    
+}
+
+- (void)setShutterSpeed{
+    AVCaptureDevice *videoDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    NSError *error;
+    
+    if ([videoDevice lockForConfiguration:&error]) {
+        CameraSettings *sharedVars = [CameraSettings sharedVariables];
+        CMTime newSpeed = CMTimeMake(1, (int32_t)sharedVars.shutterSpeed);
+        double nISO = pow(videoDevice.lensAperture, 2)/(CMTimeGetSeconds(newSpeed)*lux);
+        double setISO = MIN(MAX(nISO,videoDevice.activeFormat.minISO),videoDevice.activeFormat.maxISO);
+        [videoDevice setExposureModeCustomWithDuration:newSpeed ISO:setISO completionHandler:nil];
+        [videoDevice unlockForConfiguration];
+        NSLog(@"Shutterspeed changed to 1/%zd", sharedVars.shutterSpeed);
     }
 }
 
@@ -389,7 +404,7 @@ static const CGSize kQVStreamSize = (CGSize) {
                 maxWidth = width;
                 [[CameraSettings sharedVariables] setFramerate:desiredFPS];
                 fps = (int32_t) desiredFPS;
-                streamfps = fps / 15;
+                streamfps = 10;
                 framerateChanged = YES;
             }
         }
@@ -407,7 +422,7 @@ static const CGSize kQVStreamSize = (CGSize) {
         else {
             NSLog(@"%@", error.localizedDescription);
         }
-        [self setCameraSettings:CGPointMake(0.5f, 0.5f)];
+        //[self setCameraSettings:CGPointMake(0.5f, 0.5f)];
     }
 
     if (isRunning) {
@@ -441,26 +456,20 @@ static const CGSize kQVStreamSize = (CGSize) {
                                            selector:@selector(stopRecording)
                                            userInfo:nil
                                             repeats:NO];
-
-//    NSURL *fileURL = [self generateFilePath];
-
-//    CMTime fragmentInterval = CMTimeMake(1,1);
-//    [self.fileOutput setMovieFragmentInterval:fragmentInterval];
-//    [self.fileOutput startRecordingToOutputFileURL:fileURL recordingDelegate:self];
 }
 
 - (void)stopRecording {
     [timer invalidate];
+    [[NSNotificationCenter defaultCenter] postNotificationName:kNNStopOK object:self userInfo:nil];
     _isRecording = NO;
     finishRecording = YES;
-//    [self.fileOutput stopRecording];
 }
 
 - (void)finishRecording {
     finishRecording = NO;
     [writer finishWritingWithCompletionHandler:^(void) {
         [[NSNotificationCenter defaultCenter]
-                postNotificationName:@"StopNotification"
+                postNotificationName:kNNStopRecording
                               object:self
                             userInfo:@{@"file" : fileURL}];
         [self prepareAssetWriter];

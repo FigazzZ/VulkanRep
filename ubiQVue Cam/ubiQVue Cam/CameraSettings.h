@@ -16,6 +16,7 @@
     int pitch;
     int roll;
     float maxFramerate;
+    int shutterSpeed;
     AVCaptureExposureMode exposureMode;
     AVCaptureFocusMode focusMode;
     AVCaptureVideoStabilizationMode stabilizationMode;
@@ -28,6 +29,7 @@
 
 @property(nonatomic) float framerate;
 @property(nonatomic) float maxFramerate;
+@property(nonatomic) int shutterSpeed;
 @property(nonatomic) int yaw;
 @property(nonatomic) int pitch;
 @property(nonatomic) double dist;

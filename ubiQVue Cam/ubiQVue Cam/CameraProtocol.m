@@ -34,6 +34,10 @@
             // Fall through
         case CAMERA_SETTINGS:
             // Fall through
+        case SET_SHUTTERSPEED:
+            // Fall through
+        case SET_FPS:
+            // Fall through
         case VIDEODATA:
             return true;
         default:
