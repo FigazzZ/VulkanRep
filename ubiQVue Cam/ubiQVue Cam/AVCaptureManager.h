@@ -3,7 +3,7 @@
 //  ubiQVue Cam
 //
 //  Created by Juuso Kaitila on 23.8.2015.
-//  Copyright (c) 2015 Bitwise. All rights reserved.
+//  Copyright (c) 2015 Bitwise Oy. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -19,9 +19,9 @@ typedef NS_ENUM(NSInteger, CameraState) {
 
 @interface AVCaptureManager : NSObject
 
-@property(nonatomic, readonly) BOOL isRecording;
-@property(nonatomic, readonly) BOOL isStreaming;
-@property(nonatomic, weak) StreamServer *streamServer;
+@property(NS_NONATOMIC_IOSONLY, getter=isRecording, readonly) BOOL isRecording;
+@property(NS_NONATOMIC_IOSONLY, getter=isStreaming, readonly) BOOL isStreaming;
+@property(nonatomic, setter=setStreamServer:, weak) StreamServer *streamServer;
 
 - (instancetype)initWithPreviewView:(UIView *)previewView;
 
@@ -46,6 +46,10 @@ typedef NS_ENUM(NSInteger, CameraState) {
 - (void)startRecording;
 
 - (void)stopRecording;
+
+- (void)startCaptureSession;
+
+- (void)stopCaptureSession;
 
 + (void)deleteVideo:(NSURL *)file;
 

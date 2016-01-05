@@ -3,7 +3,7 @@
 //  ubiQVue Cam
 //
 //  Created by Juuso Kaitila on 11.8.2015.
-//  Copyright (c) 2015 Bitwise. All rights reserved.
+//  Copyright (c) 2015 Bitwise Oy. All rights reserved.
 //
 
 #import "ViewController.h"
@@ -57,15 +57,17 @@ static const CommandType observedCommands[] = {
     NSString *version = [NSBundle mainBundle].infoDictionary[@"CFBundleShortVersionString"];
     _versionLabel.text = [NSString stringWithFormat:@"v%@", version];
     [self drawGrid];
-    self.streamServer = [[StreamServer alloc] init];
-    [self.streamServer startAcceptingConnections];
+    _streamServer = [[StreamServer alloc] init];
+    [_streamServer startAcceptingConnections];
     [self setupCamera];
 
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self
                                                                                  action:@selector(handleDoubleTap:)];
     tapGesture.numberOfTapsRequired = 2;
     [self.view addGestureRecognizer:tapGesture];
-    socketHandler = [[NetworkSocketHandler alloc] init:1111 protocol:[[CameraProtocol alloc] init] minServerVer:kMinServerVersion];
+    socketHandler = [[NetworkSocketHandler alloc] init:1111
+                                              protocol:[[CameraProtocol alloc] init]
+                                          minServerVer:kMinServerVersion];
     [self registerToNotifications];
     [self hideStatusBar];
 
@@ -74,9 +76,9 @@ static const CommandType observedCommands[] = {
 }
 
 - (void)setupCamera {
-    self.captureManager = [[AVCaptureManager alloc] initWithPreviewView:self.view];
+    _captureManager = [[AVCaptureManager alloc] initWithPreviewView:self.view];
     [self setCameraFramerate];
-    self.captureManager.streamServer = self.streamServer;
+    _captureManager.streamServer = _streamServer;
 }
 
 - (void)drawSplashScreen {
@@ -90,7 +92,6 @@ static const CommandType observedCommands[] = {
                                    selector:@selector(removeSplashScreen:)
                                    userInfo:nil
                                     repeats:NO];
-    
 }
 
 - (void)removeSplashScreen:(NSTimer *)timer {
@@ -143,7 +144,7 @@ static const CommandType observedCommands[] = {
 - (void)setUpWifiAnimation {
     NSArray *imageNames = @[@"wifi_1.png", @"wifi_2.png", @"wifi_3.png", @"wifi_4.png"];
     NSMutableArray *images = [[NSMutableArray alloc] init];
-    for (int i = 0; i < imageNames.count; i++) {
+    for (int i = 0; i < imageNames.count; ++i) {
         [images addObject:[UIImage imageNamed:imageNames[i]]];
     }
     _wifiImage.animationImages = images;
@@ -153,7 +154,7 @@ static const CommandType observedCommands[] = {
 - (void)registerToNotifications {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     size_t length = sizeof(observedCommands) / sizeof(CommandType);
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < length; ++i) {
         [Command addNotificationObserverForCommandType:self commandType:observedCommands[i]];
     }
     [center addObserver:self selector:@selector(connectedToServer) name:kNNConnected object:socketHandler];
@@ -194,9 +195,7 @@ static const CommandType observedCommands[] = {
 }
 
 - (void)wentToBackground {
-    // TODO: close socket, stream stuff, camera?
-//    [socketHandler sendCommand:[[Command alloc] init:QUIT]];
-    [self.streamServer stopAcceptingConnections];
+    [_streamServer stopAcceptingConnections];
     [_captureManager closeAssetWriter];
 }
 
@@ -207,8 +206,7 @@ static const CommandType observedCommands[] = {
     else {
         [UIScreen mainScreen].brightness = 1;
     }
-    // TODO: restore what was closed when went to background
-    [self.streamServer startAcceptingConnections];
+    [_streamServer startAcceptingConnections];
     [_captureManager prepareAssetWriter];
 }
 
@@ -240,17 +238,17 @@ static const CommandType observedCommands[] = {
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(queue, ^{
         CameraSettings *sharedVars = [CameraSettings sharedVariables];
-        if ([self.captureManager switchFormatWithDesiredFPS:240.0]) {
+        if ([_captureManager switchFormatWithDesiredFPS:240.0]) {
             [sharedVars setMaxFramerate:240.0];
         }
-        else if ([self.captureManager switchFormatWithDesiredFPS:120.0]) {
+        else if ([_captureManager switchFormatWithDesiredFPS:120.0]) {
             [sharedVars setMaxFramerate:120.0];
         }
-        else if ([self.captureManager switchFormatWithDesiredFPS:60.0]) {
+        else if ([_captureManager switchFormatWithDesiredFPS:60.0]) {
             [sharedVars setMaxFramerate:60.0];
         }
         else {
-            [self.captureManager resetFormat];
+            [_captureManager resetFormat];
             [sharedVars setMaxFramerate:30.0];
         }
     });
@@ -260,7 +258,7 @@ static const CommandType observedCommands[] = {
     NSNumber *framerate = notification.userInfo[@"fps"];
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(queue, ^{
-        if ([self.captureManager switchFormatWithDesiredFPS:framerate.floatValue]) {
+        if ([_captureManager switchFormatWithDesiredFPS:framerate.floatValue]) {
             [socketHandler sendCommand:[[CommandWithValue alloc] initWithInt:SET_FPS :framerate.intValue]];
         }
     });
@@ -339,7 +337,7 @@ static const CommandType observedCommands[] = {
     if ([cmd isKindOfClass:[CommandWithValue class]]) {
         CameraSettings *sharedVars = [CameraSettings sharedVariables];
         sharedVars.shutterSpeed = ((CommandWithValue *) cmd).dataAsInt;
-        [self.captureManager setShutterSpeed];
+        [_captureManager setShutterSpeed];
     }
 }
 
@@ -361,7 +359,7 @@ static const CommandType observedCommands[] = {
         CFDictionaryRef pointDict = (__bridge_retained CFDictionaryRef) (dict);
         CGPoint point;
         if (CGPointMakeWithDictionaryRepresentation(pointDict, &point)) {
-            [self.captureManager setCameraSettings:point];
+            [_captureManager setCameraSettings:point];
         }
         CFRelease(pointDict);
     }
@@ -380,7 +378,7 @@ static const CommandType observedCommands[] = {
     CGFloat newX = point.x / self.view.frame.size.width;
     CGFloat newY = point.y / self.view.frame.size.height;
     point = CGPointMake(newX, newY);
-    [self.captureManager setCameraSettings:point];
+    [_captureManager setCameraSettings:point];
 }
 
 
