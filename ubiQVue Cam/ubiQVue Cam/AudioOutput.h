@@ -11,9 +11,9 @@
 
 @interface AudioOutput : NSObject
 
-@property (nonatomic) AVCaptureAudioDataOutput *dataOutput;
-@property (nonatomic) AVAssetWriterInput *audioWriterInput;
-@property (nonatomic) BOOL isRecording;
+@property(nonatomic) AVCaptureAudioDataOutput *dataOutput;
+@property(nonatomic) AVAssetWriterInput *audioWriterInput;
+@property(nonatomic) BOOL isRecording;
 
 - (instancetype)init;
 

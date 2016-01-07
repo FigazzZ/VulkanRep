@@ -14,11 +14,11 @@
 static const int32_t kQVStreamFPS = 10;
 
 static const CGSize kQVStreamSize = (CGSize) {
-    .width = 320,
-    .height = 180
+        .width = 320,
+        .height = 180
 };
 
-@interface VideoOutput ()<AVCaptureVideoDataOutputSampleBufferDelegate>
+@interface VideoOutput () <AVCaptureVideoDataOutputSampleBufferDelegate>
 
 @property(nonatomic, strong) dispatch_queue_t videoDataQueue;
 @property(nonatomic, strong) dispatch_queue_t streamQueue;
@@ -34,7 +34,7 @@ static const CGSize kQVStreamSize = (CGSize) {
 
 - (instancetype)initWithInput:(AVCaptureDeviceInput *)input {
     self = [super init];
-    if(self){        
+    if (self) {
         _isStreaming = NO;
         finishRecording = NO;
         _isRecording = NO;
@@ -47,7 +47,7 @@ static const CGSize kQVStreamSize = (CGSize) {
 }
 
 - (void)setIsRecording:(BOOL)isRecording {
-    if (isRecording) {        
+    if (isRecording) {
         frameNumber = 0;
     }
     _isRecording = isRecording;
@@ -80,9 +80,11 @@ static const CGSize kQVStreamSize = (CGSize) {
 }
 
 - (void)setupVideoAssetWriterInput {
-    NSDictionary *settings = @{AVVideoCodecKey : AVVideoCodecH264,
-                               AVVideoHeightKey : @720,
-                               AVVideoWidthKey : @1280};
+    NSDictionary *settings = @{
+            AVVideoCodecKey : AVVideoCodecH264,
+            AVVideoHeightKey : @720,
+            AVVideoWidthKey : @1280
+    };
     _videoWriterInput = [[AVAssetWriterInput alloc] initWithMediaType:AVMediaTypeVideo outputSettings:settings];
     _videoWriterInput.expectsMediaDataInRealTime = YES;
     NSDictionary *pxlBufAttrs = @{(NSString *) kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA)};
@@ -107,6 +109,9 @@ static const CGSize kQVStreamSize = (CGSize) {
 
 - (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
        fromConnection:(AVCaptureConnection *)connection {
+    if (!CMSampleBufferDataIsReady(sampleBuffer)) {
+        return;
+    }
     CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
     if (_isRecording && _videoWriterInput.readyForMoreMediaData) {
         if (![pixelBufferAdaptor appendPixelBuffer:imageBuffer withPresentationTime:CMTimeMake(frameNumber, _videoFPS)]) {
@@ -120,14 +125,14 @@ static const CGSize kQVStreamSize = (CGSize) {
         finishRecording = NO;
         [[NSNotificationCenter defaultCenter] postNotificationName:kNNFinishRecording object:self];
     }
-    
+
     if (_isStreaming) {
         streamFrame++;
         if (streamFrame == kQVStreamFPS) {
             CVImageBufferRef buf = (CVImageBufferRef) CFRetain(imageBuffer);
             dispatch_async(_streamQueue, ^(void) {
                 UIImage *image = [ImageUtility imageFromSampleBuffer:buf];
-                
+
                 NSTimeInterval timestamp = [NSDate date].timeIntervalSince1970;
                 image = [ImageUtility scaleImage:image toSize:kQVStreamSize];
                 [_streamServer writeImageToSocket:image withTimestamp:timestamp];
@@ -135,7 +140,7 @@ static const CGSize kQVStreamSize = (CGSize) {
             });
             streamFrame = 0;
         }
-        
+
     }
 }
 

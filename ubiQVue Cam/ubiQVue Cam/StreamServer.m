@@ -7,7 +7,6 @@
 //
 
 #import "StreamServer.h"
-#import "CommonNotificationNames.h"
 #import "CamNotificationNames.h"
 
 NSString *const kQVStreamBoundary = @"boundary";
@@ -26,18 +25,18 @@ NSString *const kQVStreamBoundary = @"boundary";
                                                      socketQueue:socketQueue];
         _isRunning = NO;
         msg = [NSString stringWithFormat:@"HTTP/1.0 200 OK\r\n"
-                                          "Server: Vulcan\r\n"
-                                          "Connection: close\r\n"
-                                          "Max-Age: 0\r\n"
-                                          "Expires: 0\r\n"
-                                          "Cache-Control: no-store, no-cache, must-revalidate,"
-                                          "pre-check=0, post-check=0, max-age=0\r\n"
-                                          "Pragma: no-cache\r\n"
-                                          "Content-Type: multipart/x-mixed-replace;"
-                                          "boundary=%@\r\n"
-                                          "\r\n--%@\r\n",
-                                          kQVStreamBoundary,
-                                          kQVStreamBoundary];
+                                         "Server: Vulcan\r\n"
+                                         "Connection: close\r\n"
+                                         "Max-Age: 0\r\n"
+                                         "Expires: 0\r\n"
+                                         "Cache-Control: no-store, no-cache, must-revalidate,"
+                                         "pre-check=0, post-check=0, max-age=0\r\n"
+                                         "Pragma: no-cache\r\n"
+                                         "Content-Type: multipart/x-mixed-replace;"
+                                         "boundary=%@\r\n"
+                                         "\r\n--%@\r\n",
+                                         kQVStreamBoundary,
+                                         kQVStreamBoundary];
     }
     return self;
 }
@@ -49,8 +48,8 @@ NSString *const kQVStreamBoundary = @"boundary";
         if (error != nil) {
             NSLog(@"Creating the stream socket failed due to: %@", error.localizedDescription);
         }
-        else{
-        _isRunning = YES;
+        else {
+            _isRunning = YES;
         }
     }
 }
@@ -101,14 +100,14 @@ NSString *const kQVStreamBoundary = @"boundary";
     if (_connectedSocket != nil) {
         NSData *imgAsJPEG = UIImageJPEGRepresentation(image, 0.1);
         NSString *content = [NSString stringWithFormat:@"Content-type: image/jpeg\r\n"
-                             "Content-Length:"
-                             "%lu\r\n"
-                             "X-Timestamp:"
-                             "%lu\r\n\r\n",
-                             (unsigned long) imgAsJPEG.length,
-                             (unsigned long) timestamp];
+                                                               "Content-Length:"
+                                                               "%lu\r\n"
+                                                               "X-Timestamp:"
+                                                               "%lu\r\n\r\n",
+                                                       (unsigned long) imgAsJPEG.length,
+                                                       (unsigned long) timestamp];
         NSString *end = [NSString stringWithFormat:@"\r\n--%@\r\n",
-                         kQVStreamBoundary];
+                                                   kQVStreamBoundary];
         [_connectedSocket writeData:[content dataUsingEncoding:NSUTF8StringEncoding] withTimeout:-1 tag:1];
         [_connectedSocket writeData:imgAsJPEG withTimeout:-1 tag:2];
         [_connectedSocket writeData:[end dataUsingEncoding:NSUTF8StringEncoding] withTimeout:-1 tag:3];

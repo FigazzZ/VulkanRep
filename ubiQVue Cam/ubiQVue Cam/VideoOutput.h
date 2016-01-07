@@ -12,12 +12,12 @@
 
 @interface VideoOutput : NSObject
 
-@property (nonatomic) AVCaptureVideoDataOutput *dataOutput;
-@property (nonatomic) AVCaptureConnection *connection;
-@property (nonatomic) AVAssetWriterInput *videoWriterInput;
-@property (nonatomic) int32_t videoFPS;
-@property (nonatomic) BOOL isRecording;
-@property (nonatomic) BOOL isStreaming;
+@property(nonatomic) AVCaptureVideoDataOutput *dataOutput;
+@property(nonatomic) AVCaptureConnection *connection;
+@property(nonatomic) AVAssetWriterInput *videoWriterInput;
+@property(nonatomic) int32_t videoFPS;
+@property(nonatomic) BOOL isRecording;
+@property(nonatomic) BOOL isStreaming;
 @property(nonatomic, weak) StreamServer *streamServer;
 
 - (instancetype)initWithInput:(AVCaptureDeviceInput *)input;
