@@ -22,6 +22,8 @@
 
 - (BOOL)isValueCommand:(CommandType)cType {
     switch (cType) {
+        case START:
+            // Fall through
         case VERSION:
             // Fall through
         case VALUE:

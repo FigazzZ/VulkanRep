@@ -2,7 +2,7 @@
 //  StreamServer.m
 //  ubiQVue Cam
 //
-//  Created by Bitwise on 18/08/15.
+//  Created by Juuso Kaitila on 18/08/15.
 //  Copyright (c) 2015 Bitwise Oy. All rights reserved.
 //
 

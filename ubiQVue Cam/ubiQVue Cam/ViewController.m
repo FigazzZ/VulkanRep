@@ -16,8 +16,9 @@
 #import "CommonNotificationNames.h"
 #import "CamNotificationNames.h"
 #import "SplashScreen.h"
+#import <ios-ntp/ios-ntp.h>
 
-static NSString *const kMinServerVersion = @"0.3.0.0";
+static NSString *const kMinServerVersion = @"0.4.3.0";
 
 // has selectors "handle<CommandType>Command:"
 static const CommandType observedCommands[] = {
@@ -46,6 +47,8 @@ static const CommandType observedCommands[] = {
     NSURL *file;
     BOOL logoIsWhite;
     NSTimer *dimTimer;
+    NSTimer *ntpTimer;
+    NetAssociation *netAssociation;
 }
 
 - (void)viewDidLoad {
@@ -81,12 +84,16 @@ static const CommandType observedCommands[] = {
     _captureManager.streamServer = _streamServer;
 }
 
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+}
+
 - (void)drawSplashScreen {
     SplashScreen *splashView = [[SplashScreen alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
     splashView.tag = 11;
     [self.view addSubview:splashView];
     [CommonUtility setFullscreenConstraintsForView:splashView toSuperview:self.view];
-    
+
     [NSTimer scheduledTimerWithTimeInterval:4
                                      target:self
                                    selector:@selector(removeSplashScreen:)
@@ -184,6 +191,16 @@ static const CommandType observedCommands[] = {
 - (void)connectedToServer {
     [_wifiImage stopAnimating];
     _wifiImage.image = [UIImage imageNamed:@"wifi_connected"];
+    netAssociation = [[NetAssociation alloc] initWithServerName:socketHandler.hostIP];
+    netAssociation.delegate = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [netAssociation sendTimeQuery];
+    });
+    ntpTimer = [NSTimer scheduledTimerWithTimeInterval:15
+                                                target:netAssociation
+                                              selector:@selector(sendTimeQuery)
+                                              userInfo:nil
+                                               repeats:YES];
     NSString *ID = [[NSUserDefaults standardUserDefaults] stringForKey:@"uuid"];
     [[NSUserDefaults standardUserDefaults] setValue:ID forKey:@"uuid"];
 
@@ -191,12 +208,21 @@ static const CommandType observedCommands[] = {
 }
 
 - (void)disconnectedFromServer {
+    [ntpTimer invalidate];
+    ntpTimer = nil;
+    netAssociation = nil;
     [_wifiImage startAnimating];
 }
 
 - (void)wentToBackground {
+    if (ntpTimer != nil) {
+        [ntpTimer invalidate];
+        netAssociation = nil;
+        ntpTimer = nil;
+    }
     [_streamServer stopAcceptingConnections];
     [_captureManager closeAssetWriter];
+    [_captureManager stopCaptureSession];
 }
 
 - (void)cameToForeground {
@@ -207,6 +233,7 @@ static const CommandType observedCommands[] = {
         [UIScreen mainScreen].brightness = 1;
     }
     [_streamServer startAcceptingConnections];
+    [_captureManager startCaptureSession];
     [_captureManager prepareAssetWriter];
 }
 
@@ -264,17 +291,28 @@ static const CommandType observedCommands[] = {
     });
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-}
-
 - (void)handleStartCommand:(NSNotification *)notification {
     if (mode == CAMERA_MODE && !_captureManager.isRecording) {
         NSLog(@"Started recording");
-        NSTimeInterval startTime = [NSDate date].timeIntervalSince1970;
-        [_captureManager startRecording];
-        delay = @([NSDate date].timeIntervalSince1970 - startTime);
-        [socketHandler sendCommand:[[Command alloc] init:OK]];
+        Command *command = [Command getCommandFromNotification:notification];
+        if ([command isKindOfClass:[CommandWithValue class]]) {
+            NSString *time = [[NSString alloc] initWithData:command.data encoding:NSUTF8StringEncoding];
+            NSLog(@"%@", time);
+            NSTimeInterval startTime = time.doubleValue / 1000.f + _timeOffset;
+            NSLog(@"start time: %f", startTime);
+            NSDate *startDate = [NSDate dateWithTimeIntervalSince1970:startTime];
+            NSLog(@"Date: %@", startDate.description);
+            NSTimeInterval interval = startDate.timeIntervalSinceNow;
+            int64_t interval_in_nanos = interval * 1000000000;
+            NSLog(@"Starting after %f seconds", interval);
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, MAX(interval_in_nanos, 0)), dispatch_get_main_queue(), ^{
+                [_captureManager startRecording];
+                [socketHandler sendCommand:[[Command alloc] init:OK]];
+            });
+        } else {
+            NSLog(@"Start time missing");
+            [socketHandler sendCommand:[[Command alloc] init:NOT_OK]];
+        }
     }
     else {
         NSLog(@"was already recording");
@@ -307,8 +345,7 @@ static const CommandType observedCommands[] = {
     file = dict[@"file"];
     AVURLAsset *sourceAsset = [AVURLAsset URLAssetWithURL:file options:nil];
     CMTime duration = sourceAsset.duration;
-    NSNumber *dur = @(CMTimeGetSeconds(duration));
-    json[@"duration"] = dur;
+    json[@"duration"] = @(CMTimeGetSeconds(duration));
     NSString *jsonStr = [CommonUtility convertNSDictToJSONString:json];
     [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:VIDEO_COMING :jsonStr]];
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -450,6 +487,12 @@ static const CommandType observedCommands[] = {
     if (mode == CAMERA_MODE && (dimTimer == nil || !dimTimer.valid)) {
         dimTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(dimScreen) userInfo:nil repeats:NO];
     }
+}
+
+#pragma mark delegates
+
+- (void)reportFromDelegate {
+    _timeOffset = netAssociation.offset;
 }
 
 
