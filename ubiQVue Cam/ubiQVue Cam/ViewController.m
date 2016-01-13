@@ -295,7 +295,7 @@ static const CommandType observedCommands[] = {
     if (mode == CAMERA_MODE && !_captureManager.isRecording) {
         NSLog(@"Started recording");
         Command *command = [Command getCommandFromNotification:notification];
-        if ([command isKindOfClass:[CommandWithValue class]]) {
+        if ([command isKindOfClass:[CommandWithValue class]] && _timeOffset != INFINITY) {
             NSString *time = [[NSString alloc] initWithData:command.data encoding:NSUTF8StringEncoding];
             NSLog(@"%@", time);
             NSTimeInterval startTime = time.doubleValue / 1000.f + _timeOffset;
@@ -493,6 +493,14 @@ static const CommandType observedCommands[] = {
 
 - (void)reportFromDelegate {
     _timeOffset = netAssociation.offset;
+    if (_timeOffset != INFINITY && ntpTimer != nil && ntpTimer.timeInterval < 1800) {
+        [ntpTimer invalidate];
+        ntpTimer = [NSTimer scheduledTimerWithTimeInterval:1800
+                                                    target:netAssociation
+                                                  selector:@selector(sendTimeQuery)
+                                                  userInfo:nil
+                                                   repeats:YES];
+    }
 }
 
 
