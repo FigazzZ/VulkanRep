@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Z1h-yx-sK9">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Z1h-yx-sK9">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
     </dependencies>
     <scenes>
@@ -71,6 +71,16 @@
                                             <action selector="switchToAimMode:" destination="Z1h-yx-sK9" eventType="touchUpInside" id="lUl-u1-izo"/>
                                         </connections>
                                     </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="R52-fk-ohc">
+                                        <rect key="frame" x="17" y="291" width="60" height="21"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="60" id="J8H-Z2-9Ag"/>
+                                            <constraint firstAttribute="height" constant="21" id="rx6-IW-vkD"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
@@ -79,7 +89,9 @@
                                     <constraint firstAttribute="trailing" secondItem="Rzr-FH-Ton" secondAttribute="trailing" constant="12" id="7Md-Xt-xTn"/>
                                     <constraint firstAttribute="trailing" secondItem="I1J-FG-PzV" secondAttribute="trailing" constant="12" id="CGg-jw-aZ3"/>
                                     <constraint firstItem="Phr-Hb-GEM" firstAttribute="top" secondItem="Rzr-FH-Ton" secondAttribute="bottom" constant="32" id="HLC-yp-NXv"/>
+                                    <constraint firstAttribute="trailing" secondItem="R52-fk-ohc" secondAttribute="trailing" constant="19" id="KcG-72-uzK"/>
                                     <constraint firstItem="I1J-FG-PzV" firstAttribute="leading" secondItem="9Lu-eY-n3Y" secondAttribute="leading" constant="11" id="O66-je-G26"/>
+                                    <constraint firstAttribute="bottom" secondItem="R52-fk-ohc" secondAttribute="bottom" constant="8" id="bCE-vm-Qpk"/>
                                     <constraint firstAttribute="width" secondItem="9Lu-eY-n3Y" secondAttribute="height" multiplier="41:138" id="jtt-l8-k8R"/>
                                     <constraint firstItem="Rzr-FH-Ton" firstAttribute="leading" secondItem="9Lu-eY-n3Y" secondAttribute="leading" constant="11" id="plZ-xi-fTl"/>
                                     <constraint firstItem="Phr-Hb-GEM" firstAttribute="leading" secondItem="9Lu-eY-n3Y" secondAttribute="leading" constant="11" id="qPx-vM-Ifb"/>
@@ -114,6 +126,7 @@
                         <outlet property="gridView" destination="ULR-Ea-F6y" id="Vnn-XR-Zcs"/>
                         <outlet property="logo" destination="kMS-CX-KVx" id="Cm2-ZQ-qtM"/>
                         <outlet property="logoView" destination="Wcf-ne-Agx" id="8gM-ce-EdW"/>
+                        <outlet property="versionLabel" destination="R52-fk-ohc" id="sSi-j6-uJG"/>
                         <outlet property="wifiImage" destination="I1J-FG-PzV" id="3rw-Yb-7hD"/>
                     </connections>
                 </viewController>

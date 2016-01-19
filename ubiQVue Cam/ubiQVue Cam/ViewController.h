@@ -3,7 +3,7 @@
 //  ubiQVue Cam
 //
 //  Created by Juuso Kaitila on 11.8.2015.
-//  Copyright (c) 2015 Bitwise. All rights reserved.
+//  Copyright (c) 2015 Bitwise Oy. All rights reserved.
 
 #import <UIKit/UIKit.h>
 
@@ -16,6 +16,8 @@
 @property(weak, nonatomic) IBOutlet UIButton *aimMode;
 @property(weak, nonatomic) IBOutlet UIButton *cameraMode;
 @property(weak, nonatomic) IBOutlet UIImageView *logo;
+@property(weak, nonatomic) IBOutlet UILabel *versionLabel;
+@property(nonatomic, readonly) double timeOffset;
 
 - (IBAction)switchToAimMode:(id)sender;
 

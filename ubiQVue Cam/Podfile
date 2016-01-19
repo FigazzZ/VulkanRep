@@ -4,7 +4,8 @@ source 'https://github.com/CocoaPods/Specs.git'
 
 xcodeproj 'ubiQVue Cam.xcodeproj'
 
-pod 'CocoaAsyncSocket', '~> 7.3'
+pod 'CocoaAsyncSocket', :git => 'git@github.com:BitKaitsu/CocoaAsyncSocket', :branch => 'master'
+pod 'ios-ntp', '~> 1.1'
 
 #target "ubiQVue Cam" do
 #

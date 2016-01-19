@@ -3,7 +3,7 @@
 //  ubiQVue Cam
 //
 //  Created by Juuso Kaitila on 12.8.2015.
-//  Copyright (c) 2015 Bitwise. All rights reserved.
+//  Copyright (c) 2015 Bitwise Oy. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -22,6 +22,8 @@
 
 - (BOOL)isValueCommand:(CommandType)cType {
     switch (cType) {
+        case START:
+            // Fall through
         case VERSION:
             // Fall through
         case VALUE:
