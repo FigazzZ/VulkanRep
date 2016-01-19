@@ -239,6 +239,7 @@ static const CommandType observedCommands[] = {
 
 - (void)dimScreen {
     [UIScreen mainScreen].brightness = 0;
+    [self stopLogoAnimation];
 }
 
 - (void)hideStatusBar {
@@ -442,8 +443,6 @@ static const CommandType observedCommands[] = {
         _logoView.hidden = NO;
         [_captureManager removePreview];
         if (!_captureManager.isStreaming) {
-            _logo.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1.0];
-            logoIsWhite = YES;
             [self startLogoAnimation];
         }
         _gridView.hidden = YES;
@@ -453,6 +452,8 @@ static const CommandType observedCommands[] = {
 }
 
 - (void)startLogoAnimation {
+    _logo.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1.0];
+    logoIsWhite = YES;
     BOOL newLogoState;
     UIColor *color;
     if (logoIsWhite) {
@@ -478,6 +479,9 @@ static const CommandType observedCommands[] = {
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     [super touchesBegan:touches withEvent:event];
+    if (mode == CAMERA_MODE && !_captureManager.isStreaming) {
+        [self startLogoAnimation];
+    }
     [UIScreen mainScreen].brightness = 1;
     [dimTimer invalidate];
 }

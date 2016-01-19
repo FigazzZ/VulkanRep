@@ -123,17 +123,27 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
     _previewLayer.frame = frame;
     _previewLayer.contentsGravity = kCAGravityResizeAspect;
     _previewLayer.videoGravity = AVLayerVideoGravityResizeAspect;
-    [self addPreview:previewView];
+    [previewView.layer insertSublayer:_previewLayer atIndex:0];
     AVCaptureConnection *connection = (_previewLayer).connection;
     [VideoOutput configureVideoConnection:connection];
 }
 
 - (void)addPreview:(UIView *)previewView {
-    [previewView.layer insertSublayer:_previewLayer atIndex:0];
+    if (_captureSession.running){
+        [_captureSession stopRunning];
+    }
+    [self setupPreview:previewView];
+    [_captureSession startRunning];
 }
 
 - (void)removePreview {
+    if (_captureSession.running){
+        [_captureSession stopRunning];
+    }
+    [_captureSession removeConnection:_previewLayer.connection];
     [_previewLayer removeFromSuperlayer];
+    _previewLayer = nil;
+    [_captureSession startRunning];
 }
 
 - (void)setStreamServer:(StreamServer *)server {
