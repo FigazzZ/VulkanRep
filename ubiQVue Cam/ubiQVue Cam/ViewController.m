@@ -49,6 +49,7 @@ static const CommandType observedCommands[] = {
     NSTimer *dimTimer;
     NSTimer *ntpTimer;
     NetAssociation *netAssociation;
+    UITapGestureRecognizer *tapGesture;
 }
 
 - (void)viewDidLoad {
@@ -57,14 +58,12 @@ static const CommandType observedCommands[] = {
     [self drawSplashScreen];
     [UIApplication sharedApplication].idleTimerDisabled = YES;
     [UIScreen mainScreen].brightness = 1;
-    NSString *version = [NSBundle mainBundle].infoDictionary[@"CFBundleShortVersionString"];
-    _versionLabel.text = [NSString stringWithFormat:@"v%@", version];
     [self drawGrid];
     _streamServer = [[StreamServer alloc] init];
     [_streamServer startAcceptingConnections];
     [self setupCamera];
 
-    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self
+    tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self
                                                                                  action:@selector(handleDoubleTap:)];
     tapGesture.numberOfTapsRequired = 2;
     [self.view addGestureRecognizer:tapGesture];
@@ -76,6 +75,7 @@ static const CommandType observedCommands[] = {
 
     [self setUpWifiAnimation];
     [_wifiImage startAnimating];
+    [self.view bringSubviewToFront:_aboutViewWrapper];
 }
 
 - (void)setupCamera {
@@ -250,6 +250,19 @@ static const CommandType observedCommands[] = {
     }
 }
 
+
+- (IBAction)hideAboutView:(id)sender {
+    _aboutViewWrapper.hidden = YES;
+    [_aboutView closeAboutView];
+    [self.view addGestureRecognizer:tapGesture];
+}
+
+- (IBAction)showAboutView:(id)sender {
+    _aboutViewWrapper.hidden = NO;
+    [_aboutView showAboutView];
+    [self.view removeGestureRecognizer:tapGesture];
+}
+
 - (BOOL)prefersStatusBarHidden {
     return NO;
 }
@@ -294,21 +307,17 @@ static const CommandType observedCommands[] = {
 
 - (void)handleStartCommand:(NSNotification *)notification {
     if (mode == CAMERA_MODE && !_captureManager.isRecording) {
-        NSLog(@"Started recording");
         Command *command = [Command getCommandFromNotification:notification];
         if ([command isKindOfClass:[CommandWithValue class]] && _timeOffset != INFINITY) {
             NSString *time = [[NSString alloc] initWithData:command.data encoding:NSUTF8StringEncoding];
-            NSLog(@"%@", time);
             NSTimeInterval startTime = time.doubleValue / 1000.f + _timeOffset;
-            NSLog(@"start time: %f", startTime);
             NSDate *startDate = [NSDate dateWithTimeIntervalSince1970:startTime];
-            NSLog(@"Date: %@", startDate.description);
             NSTimeInterval interval = startDate.timeIntervalSinceNow;
             int64_t interval_in_nanos = interval * 1000000000;
             NSLog(@"Starting after %f seconds", interval);
+            [socketHandler sendCommand:[[Command alloc] init:OK]];
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, MAX(interval_in_nanos, 0)), dispatch_get_main_queue(), ^{
                 [_captureManager startRecording];
-                [socketHandler sendCommand:[[Command alloc] init:OK]];
             });
         } else {
             NSLog(@"Start time missing");

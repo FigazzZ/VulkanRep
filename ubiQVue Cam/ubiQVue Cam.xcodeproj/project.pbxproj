@@ -10,6 +10,7 @@
 		320685831BBD468000FAAC56 /* CommonNotificationNames.m in Sources */ = {isa = PBXBuildFile; fileRef = 3206857E1BBD468000FAAC56 /* CommonNotificationNames.m */; };
 		320685841BBD468000FAAC56 /* CommonUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 320685801BBD468000FAAC56 /* CommonUtility.m */; };
 		320685851BBD468000FAAC56 /* NetworkSocketHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 320685821BBD468000FAAC56 /* NetworkSocketHandler.m */; };
+		320DF26C1C4E6A5E0086E340 /* AppIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 320DF26B1C4E6A5E0086E340 /* AppIcon.png */; };
 		321325731C3AB5440059BC97 /* AboutView.m in Sources */ = {isa = PBXBuildFile; fileRef = 321325721C3AB5440059BC97 /* AboutView.m */; };
 		3213257F1C3BD41E0059BC97 /* SplashScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3213257E1C3BD41E0059BC97 /* SplashScreen.xib */; };
 		321325821C3BD4EE0059BC97 /* SplashScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 321325811C3BD4EE0059BC97 /* SplashScreen.m */; };
@@ -57,6 +58,7 @@
 		320685801BBD468000FAAC56 /* CommonUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommonUtility.m; sourceTree = "<group>"; };
 		320685811BBD468000FAAC56 /* NetworkSocketHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkSocketHandler.h; sourceTree = "<group>"; };
 		320685821BBD468000FAAC56 /* NetworkSocketHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetworkSocketHandler.m; sourceTree = "<group>"; };
+		320DF26B1C4E6A5E0086E340 /* AppIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = AppIcon.png; path = "ubiQVue Cam/AppIcon.png"; sourceTree = "<group>"; };
 		321325711C3AB5440059BC97 /* AboutView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AboutView.h; sourceTree = "<group>"; };
 		321325721C3AB5440059BC97 /* AboutView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AboutView.m; sourceTree = "<group>"; };
 		3213257E1C3BD41E0059BC97 /* SplashScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SplashScreen.xib; sourceTree = "<group>"; };
@@ -182,6 +184,7 @@
 		32DF0F2A1B95C4E000467255 = {
 			isa = PBXGroup;
 			children = (
+				320DF26B1C4E6A5E0086E340 /* AppIcon.png */,
 				32DF0F351B95C4E000467255 /* ubiQVue Cam */,
 				32DF0F4F1B95C4E000467255 /* ubiQVue CamTests */,
 				32DF0F341B95C4E000467255 /* Products */,
@@ -345,6 +348,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				320DF26C1C4E6A5E0086E340 /* AppIcon.png in Resources */,
 				32855AD01B95C6BC003CC551 /* Main.storyboard in Resources */,
 				32DF0F441B95C4E000467255 /* Images.xcassets in Resources */,
 				3213257F1C3BD41E0059BC97 /* SplashScreen.xib in Resources */,
