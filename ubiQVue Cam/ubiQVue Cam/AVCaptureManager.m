@@ -9,9 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "AVCaptureManager.h"
 #import "CameraSettings.h"
-#import "CommonNotificationNames.h"
 #import "CamNotificationNames.h"
-#import "ImageUtility.h"
 #import "VideoOutput.h"
 #import "AudioOutput.h"
 
@@ -21,7 +19,7 @@
 
 static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
 
-@interface AVCaptureManager (){
+@interface AVCaptureManager () {
     CMTime defaultVideoMaxFrameDuration;
 }
 
@@ -85,7 +83,7 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
     // save the default format
     _defaultFormat = videoDevice.activeFormat;
     defaultVideoMaxFrameDuration = videoDevice.activeVideoMaxFrameDuration;
-    
+
     videoOutput = [[VideoOutput alloc] initWithInput:videoIn];
     if ([_captureSession canAddOutput:videoOutput.dataOutput]) {
         [_captureSession addOutputWithNoConnections:videoOutput.dataOutput];
@@ -105,7 +103,7 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
     if ([_captureSession canAddOutput:audioOutput.dataOutput]) {
         [_captureSession addOutput:audioOutput.dataOutput];
     }
-    
+
 #endif
     [self prepareAssetWriter];
 
@@ -129,7 +127,7 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
 }
 
 - (void)addPreview:(UIView *)previewView {
-    if (_captureSession.running){
+    if (_captureSession.running) {
         [_captureSession stopRunning];
     }
     [self setupPreview:previewView];
@@ -137,7 +135,7 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
 }
 
 - (void)removePreview {
-    if (_captureSession.running){
+    if (_captureSession.running) {
         [_captureSession stopRunning];
     }
     [_captureSession removeConnection:_previewLayer.connection];
@@ -148,19 +146,19 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
 
 - (void)setStreamServer:(StreamServer *)server {
     _streamServer = server;
-    if(videoOutput != nil) {
+    if (videoOutput != nil) {
         videoOutput.streamServer = server;
     }
 }
 
 - (void)startCaptureSession {
-    if(_captureSession != nil && !_captureSession.running) {
+    if (_captureSession != nil && !_captureSession.running) {
         [_captureSession startRunning];
     }
 }
 
 - (void)stopCaptureSession {
-    if(_captureSession != nil && _captureSession.running) {
+    if (_captureSession != nil && _captureSession.running) {
         [_captureSession stopRunning];
     }
 }
@@ -252,22 +250,22 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
     else {
         NSLog(@"%@", error.localizedDescription);
     }
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, kQVCameraSettingDelay),dispatch_get_main_queue(), ^{
-        lux = pow(videoDevice.lensAperture, 2)/(CMTimeGetSeconds(videoDevice.exposureDuration)*videoDevice.ISO);
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, kQVCameraSettingDelay), dispatch_get_main_queue(), ^{
+        lux = pow(videoDevice.lensAperture, 2) / (CMTimeGetSeconds(videoDevice.exposureDuration) * videoDevice.ISO);
         [self setShutterSpeed];
     });
-    
+
 }
 
-- (void)setShutterSpeed{
+- (void)setShutterSpeed {
     AVCaptureDevice *videoDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
     NSError *error;
-    
+
     if ([videoDevice lockForConfiguration:&error]) {
         CameraSettings *sharedVars = [CameraSettings sharedVariables];
-        CMTime newSpeed = CMTimeMake(1, (int32_t)sharedVars.shutterSpeed);
-        double nISO = pow(videoDevice.lensAperture, 2)/(CMTimeGetSeconds(newSpeed)*lux);
-        double setISO = MIN(MAX(nISO,videoDevice.activeFormat.minISO),videoDevice.activeFormat.maxISO);
+        CMTime newSpeed = CMTimeMake(1, (int32_t) sharedVars.shutterSpeed);
+        double nISO = pow(videoDevice.lensAperture, 2) / (CMTimeGetSeconds(newSpeed) * lux);
+        double setISO = MIN(MAX(nISO, videoDevice.activeFormat.minISO), videoDevice.activeFormat.maxISO);
         [videoDevice setExposureModeCustomWithDuration:newSpeed ISO:setISO completionHandler:nil];
         [videoDevice unlockForConfiguration];
         NSLog(@"Shutterspeed changed to 1/%d", sharedVars.shutterSpeed);
@@ -360,7 +358,7 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
 }
 
 - (BOOL)isRecording {
-    
+
 #ifdef USE_AUDIO
     return videoOutput.isRecording && audioOutput.isRecording;
 #else
@@ -370,7 +368,7 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
 
 - (void)startRecording {
     videoOutput.isRecording = YES;
-    
+
 #ifdef USE_AUDIO
     audioOutput.isRecording = YES;
 #endif
@@ -412,7 +410,7 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
         videoWritingFinished = NO;
         audioWritingFinished = NO;
         [self prepareAssetWriter];
-        
+
     }];
 }
 

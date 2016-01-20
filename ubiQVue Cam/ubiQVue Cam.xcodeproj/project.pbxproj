@@ -97,7 +97,7 @@
 		32855ADE1B95C6F0003CC551 /* ProtocolUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProtocolUtility.m; sourceTree = "<group>"; };
 		32855AE21B95C6F0003CC551 /* CommandWithValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommandWithValue.m; sourceTree = "<group>"; };
 		32855AE31B95C6F0003CC551 /* MessageHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageHandler.m; sourceTree = "<group>"; };
-		32DF0F331B95C4E000467255 /* ubiQVue Cam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ubiQVue Cam.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		32DF0F331B95C4E000467255 /* vulCam eye.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "vulCam eye.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		32DF0F371B95C4E000467255 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		32DF0F381B95C4E000467255 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		32DF0F3A1B95C4E000467255 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -105,7 +105,7 @@
 		32DF0F3D1B95C4E000467255 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		32DF0F3E1B95C4E000467255 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		32DF0F431B95C4E000467255 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		32DF0F4C1B95C4E000467255 /* ubiQVue CamTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ubiQVue CamTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		32DF0F4C1B95C4E000467255 /* vulCam eyeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "vulCam eyeTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		32DF0F511B95C4E000467255 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		32DF0F521B95C4E000467255 /* ubiQVue_CamTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ubiQVue_CamTests.m; sourceTree = "<group>"; };
 		40D10F2B7CB5532A6B712E60 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -185,7 +185,7 @@
 			isa = PBXGroup;
 			children = (
 				320DF26B1C4E6A5E0086E340 /* AppIcon.png */,
-				32DF0F351B95C4E000467255 /* ubiQVue Cam */,
+				32DF0F351B95C4E000467255 /* vulCam eye */,
 				32DF0F4F1B95C4E000467255 /* ubiQVue CamTests */,
 				32DF0F341B95C4E000467255 /* Products */,
 				168C38C7C373001856A71E59 /* Pods */,
@@ -196,13 +196,13 @@
 		32DF0F341B95C4E000467255 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				32DF0F331B95C4E000467255 /* ubiQVue Cam.app */,
-				32DF0F4C1B95C4E000467255 /* ubiQVue CamTests.xctest */,
+				32DF0F331B95C4E000467255 /* vulCam eye.app */,
+				32DF0F4C1B95C4E000467255 /* vulCam eyeTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		32DF0F351B95C4E000467255 /* ubiQVue Cam */ = {
+		32DF0F351B95C4E000467255 /* vulCam eye */ = {
 			isa = PBXGroup;
 			children = (
 				32855AD21B95C6F0003CC551 /* Common */,
@@ -233,6 +233,7 @@
 				32DF0F431B95C4E000467255 /* Images.xcassets */,
 				32DF0F361B95C4E000467255 /* Supporting Files */,
 			);
+			name = "vulCam eye";
 			path = "ubiQVue Cam";
 			sourceTree = "<group>";
 		};
@@ -265,9 +266,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		32DF0F321B95C4E000467255 /* ubiQVue Cam */ = {
+		32DF0F321B95C4E000467255 /* vulCam eye */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 32DF0F561B95C4E000467255 /* Build configuration list for PBXNativeTarget "ubiQVue Cam" */;
+			buildConfigurationList = 32DF0F561B95C4E000467255 /* Build configuration list for PBXNativeTarget "vulCam eye" */;
 			buildPhases = (
 				F2DD8C832C38BBDCF43E6B37 /* Check Pods Manifest.lock */,
 				32DF0F2F1B95C4E000467255 /* Sources */,
@@ -282,14 +283,14 @@
 			);
 			dependencies = (
 			);
-			name = "ubiQVue Cam";
+			name = "vulCam eye";
 			productName = "ubiQVue Cam";
-			productReference = 32DF0F331B95C4E000467255 /* ubiQVue Cam.app */;
+			productReference = 32DF0F331B95C4E000467255 /* vulCam eye.app */;
 			productType = "com.apple.product-type.application";
 		};
-		32DF0F4B1B95C4E000467255 /* ubiQVue CamTests */ = {
+		32DF0F4B1B95C4E000467255 /* vulCam eyeTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 32DF0F591B95C4E000467255 /* Build configuration list for PBXNativeTarget "ubiQVue CamTests" */;
+			buildConfigurationList = 32DF0F591B95C4E000467255 /* Build configuration list for PBXNativeTarget "vulCam eyeTests" */;
 			buildPhases = (
 				32DF0F481B95C4E000467255 /* Sources */,
 				32DF0F491B95C4E000467255 /* Frameworks */,
@@ -300,9 +301,9 @@
 			dependencies = (
 				32DF0F4E1B95C4E000467255 /* PBXTargetDependency */,
 			);
-			name = "ubiQVue CamTests";
+			name = "vulCam eyeTests";
 			productName = "ubiQVue CamTests";
-			productReference = 32DF0F4C1B95C4E000467255 /* ubiQVue CamTests.xctest */;
+			productReference = 32DF0F4C1B95C4E000467255 /* vulCam eyeTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -337,8 +338,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				32DF0F321B95C4E000467255 /* ubiQVue Cam */,
-				32DF0F4B1B95C4E000467255 /* ubiQVue CamTests */,
+				32DF0F321B95C4E000467255 /* vulCam eye */,
+				32DF0F4B1B95C4E000467255 /* vulCam eyeTests */,
 			);
 		};
 /* End PBXProject section */
@@ -483,7 +484,7 @@
 /* Begin PBXTargetDependency section */
 		32DF0F4E1B95C4E000467255 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 32DF0F321B95C4E000467255 /* ubiQVue Cam */;
+			target = 32DF0F321B95C4E000467255 /* vulCam eye */;
 			targetProxy = 32DF0F4D1B95C4E000467255 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -646,7 +647,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		32DF0F561B95C4E000467255 /* Build configuration list for PBXNativeTarget "ubiQVue Cam" */ = {
+		32DF0F561B95C4E000467255 /* Build configuration list for PBXNativeTarget "vulCam eye" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				32DF0F571B95C4E000467255 /* Debug */,
@@ -655,7 +656,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		32DF0F591B95C4E000467255 /* Build configuration list for PBXNativeTarget "ubiQVue CamTests" */ = {
+		32DF0F591B95C4E000467255 /* Build configuration list for PBXNativeTarget "vulCam eyeTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				32DF0F5A1B95C4E000467255 /* Debug */,

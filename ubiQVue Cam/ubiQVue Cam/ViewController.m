@@ -64,7 +64,7 @@ static const CommandType observedCommands[] = {
     [self setupCamera];
 
     tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self
-                                                                                 action:@selector(handleDoubleTap:)];
+                                                         action:@selector(handleDoubleTap:)];
     tapGesture.numberOfTapsRequired = 2;
     [self.view addGestureRecognizer:tapGesture];
     socketHandler = [[NetworkSocketHandler alloc] init:1111
@@ -313,7 +313,7 @@ static const CommandType observedCommands[] = {
             NSTimeInterval startTime = time.doubleValue / 1000.f + _timeOffset;
             NSDate *startDate = [NSDate dateWithTimeIntervalSince1970:startTime];
             NSTimeInterval interval = startDate.timeIntervalSinceNow;
-            int64_t interval_in_nanos = interval * 1000000000;
+            int64_t interval_in_nanos = (int64_t) (interval * 1000000000);
             NSLog(@"Starting after %f seconds", interval);
             [socketHandler sendCommand:[[Command alloc] init:OK]];
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, MAX(interval_in_nanos, 0)), dispatch_get_main_queue(), ^{
