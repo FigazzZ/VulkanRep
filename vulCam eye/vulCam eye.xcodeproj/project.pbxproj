@@ -251,8 +251,7 @@
 				32DF0F521B95C4E000467255 /* ubiQVue_CamTests.m */,
 				32DF0F501B95C4E000467255 /* Supporting Files */,
 			);
-			name = "vulCam eyeTests";
-			path = "ubiQVue CamTests";
+			path = "vulCam eyeTests";
 			sourceTree = "<group>";
 		};
 		32DF0F501B95C4E000467255 /* Supporting Files */ = {
@@ -614,7 +613,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = "ubiQVue CamTests/Info.plist";
+				INFOPLIST_FILE = "vulCam eyeTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.vulcanvision.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -627,7 +626,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = NO;
-				INFOPLIST_FILE = "ubiQVue CamTests/Info.plist";
+				INFOPLIST_FILE = "vulCam eyeTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.vulcanvision.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
