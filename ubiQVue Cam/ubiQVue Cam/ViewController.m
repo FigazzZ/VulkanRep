@@ -296,13 +296,15 @@ static const CommandType observedCommands[] = {
 }
 
 - (void)handleSetFPSCommand:(NSNotification *)notification {
-    NSNumber *framerate = notification.userInfo[@"fps"];
-    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    dispatch_async(queue, ^{
-        if ([_captureManager switchFormatWithDesiredFPS:framerate.floatValue]) {
-            [socketHandler sendCommand:[[CommandWithValue alloc] initWithInt:SET_FPS :framerate.intValue]];
-        }
-    });
+    Command *cmd = [Command getCommandFromNotification:notification];
+    if ([cmd isKindOfClass:[CommandWithValue class]]) {
+        CommandWithValue *valueCommand = (CommandWithValue *) cmd;
+        __block NSInteger framerate = [valueCommand getDataAsInt];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if ([_captureManager switchFormatWithDesiredFPS:framerate]) {
+            }
+        });
+    }
 }
 
 - (void)handleStartCommand:(NSNotification *)notification {
