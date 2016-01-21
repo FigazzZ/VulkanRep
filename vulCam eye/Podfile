@@ -2,15 +2,15 @@ platform :ios, "7.0"
 
 source 'https://github.com/CocoaPods/Specs.git'
 
-xcodeproj 'ubiQVue Cam.xcodeproj'
+xcodeproj 'vulCam eye.xcodeproj'
 
 pod 'CocoaAsyncSocket', :git => 'git@github.com:BitKaitsu/CocoaAsyncSocket', :branch => 'master'
 pod 'ios-ntp', '~> 1.1'
 
-#target "ubiQVue Cam" do
+#target "vulCam eye" do
 #
 #end
 #
-#target "ubiQVue CamTests" do
+#target "vulCam eyeTests" do
 #
 #end

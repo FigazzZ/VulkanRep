@@ -6,6 +6,7 @@
 //  Copyright (c) 2015 Bitwise Oy. All rights reserved.
 
 #import <UIKit/UIKit.h>
+#import "AboutView.h"
 
 @interface ViewController : UIViewController
 
@@ -16,11 +17,17 @@
 @property(weak, nonatomic) IBOutlet UIButton *aimMode;
 @property(weak, nonatomic) IBOutlet UIButton *cameraMode;
 @property(weak, nonatomic) IBOutlet UIImageView *logo;
-@property(weak, nonatomic) IBOutlet UILabel *versionLabel;
+@property(weak, nonatomic) IBOutlet UIView *aboutViewWrapper;
+@property(weak, nonatomic) IBOutlet AboutView *aboutView;
+@property(weak, nonatomic) IBOutlet UIButton *closeButton;
 @property(nonatomic, readonly) double timeOffset;
 
 - (IBAction)switchToAimMode:(id)sender;
 
 - (IBAction)switchToCameraMode:(id)sender;
+
+- (IBAction)hideAboutView:(id)sender;
+
+- (IBAction)showAboutView:(id)sender;
 
 @end

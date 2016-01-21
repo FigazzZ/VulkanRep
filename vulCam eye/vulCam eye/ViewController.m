@@ -49,6 +49,7 @@ static const CommandType observedCommands[] = {
     NSTimer *dimTimer;
     NSTimer *ntpTimer;
     NetAssociation *netAssociation;
+    UITapGestureRecognizer *tapGesture;
 }
 
 - (void)viewDidLoad {
@@ -57,15 +58,13 @@ static const CommandType observedCommands[] = {
     [self drawSplashScreen];
     [UIApplication sharedApplication].idleTimerDisabled = YES;
     [UIScreen mainScreen].brightness = 1;
-    NSString *version = [NSBundle mainBundle].infoDictionary[@"CFBundleShortVersionString"];
-    _versionLabel.text = [NSString stringWithFormat:@"v%@", version];
     [self drawGrid];
     _streamServer = [[StreamServer alloc] init];
     [_streamServer startAcceptingConnections];
     [self setupCamera];
 
-    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self
-                                                                                 action:@selector(handleDoubleTap:)];
+    tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                         action:@selector(handleDoubleTap:)];
     tapGesture.numberOfTapsRequired = 2;
     [self.view addGestureRecognizer:tapGesture];
     socketHandler = [[NetworkSocketHandler alloc] init:1111
@@ -76,6 +75,7 @@ static const CommandType observedCommands[] = {
 
     [self setUpWifiAnimation];
     [_wifiImage startAnimating];
+    [self.view bringSubviewToFront:_aboutViewWrapper];
 }
 
 - (void)setupCamera {
@@ -239,6 +239,7 @@ static const CommandType observedCommands[] = {
 
 - (void)dimScreen {
     [UIScreen mainScreen].brightness = 0;
+    [self stopLogoAnimation];
 }
 
 - (void)hideStatusBar {
@@ -247,6 +248,19 @@ static const CommandType observedCommands[] = {
         [self prefersStatusBarHidden];
         [self performSelector:@selector(setNeedsStatusBarAppearanceUpdate)];
     }
+}
+
+
+- (IBAction)hideAboutView:(id)sender {
+    _aboutViewWrapper.hidden = YES;
+    [_aboutView closeAboutView];
+    [self.view addGestureRecognizer:tapGesture];
+}
+
+- (IBAction)showAboutView:(id)sender {
+    _aboutViewWrapper.hidden = NO;
+    [_aboutView showAboutView];
+    [self.view removeGestureRecognizer:tapGesture];
 }
 
 - (BOOL)prefersStatusBarHidden {
@@ -282,32 +296,30 @@ static const CommandType observedCommands[] = {
 }
 
 - (void)handleSetFPSCommand:(NSNotification *)notification {
-    NSNumber *framerate = notification.userInfo[@"fps"];
-    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    dispatch_async(queue, ^{
-        if ([_captureManager switchFormatWithDesiredFPS:framerate.floatValue]) {
-            [socketHandler sendCommand:[[CommandWithValue alloc] initWithInt:SET_FPS :framerate.intValue]];
-        }
-    });
+    Command *cmd = [Command getCommandFromNotification:notification];
+    if ([cmd isKindOfClass:[CommandWithValue class]]) {
+        CommandWithValue *valueCommand = (CommandWithValue *) cmd;
+        __block NSInteger framerate = [valueCommand getDataAsInt];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if ([_captureManager switchFormatWithDesiredFPS:framerate]) {
+            }
+        });
+    }
 }
 
 - (void)handleStartCommand:(NSNotification *)notification {
     if (mode == CAMERA_MODE && !_captureManager.isRecording) {
-        NSLog(@"Started recording");
         Command *command = [Command getCommandFromNotification:notification];
         if ([command isKindOfClass:[CommandWithValue class]] && _timeOffset != INFINITY) {
             NSString *time = [[NSString alloc] initWithData:command.data encoding:NSUTF8StringEncoding];
-            NSLog(@"%@", time);
             NSTimeInterval startTime = time.doubleValue / 1000.f + _timeOffset;
-            NSLog(@"start time: %f", startTime);
             NSDate *startDate = [NSDate dateWithTimeIntervalSince1970:startTime];
-            NSLog(@"Date: %@", startDate.description);
             NSTimeInterval interval = startDate.timeIntervalSinceNow;
-            int64_t interval_in_nanos = interval * 1000000000;
+            int64_t interval_in_nanos = (int64_t) (interval * 1000000000);
             NSLog(@"Starting after %f seconds", interval);
+            [socketHandler sendCommand:[[Command alloc] init:OK]];
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, MAX(interval_in_nanos, 0)), dispatch_get_main_queue(), ^{
                 [_captureManager startRecording];
-                [socketHandler sendCommand:[[Command alloc] init:OK]];
             });
         } else {
             NSLog(@"Start time missing");
@@ -442,8 +454,6 @@ static const CommandType observedCommands[] = {
         _logoView.hidden = NO;
         [_captureManager removePreview];
         if (!_captureManager.isStreaming) {
-            _logo.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1.0];
-            logoIsWhite = YES;
             [self startLogoAnimation];
         }
         _gridView.hidden = YES;
@@ -453,6 +463,8 @@ static const CommandType observedCommands[] = {
 }
 
 - (void)startLogoAnimation {
+    _logo.backgroundColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1.0];
+    logoIsWhite = YES;
     BOOL newLogoState;
     UIColor *color;
     if (logoIsWhite) {
@@ -478,6 +490,9 @@ static const CommandType observedCommands[] = {
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     [super touchesBegan:touches withEvent:event];
+    if (mode == CAMERA_MODE && !_captureManager.isStreaming) {
+        [self startLogoAnimation];
+    }
     [UIScreen mainScreen].brightness = 1;
     [dimTimer invalidate];
 }
