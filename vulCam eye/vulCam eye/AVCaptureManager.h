@@ -1,6 +1,6 @@
 //
 //  AVCaptureManager.h
-//  ubiQVue Cam
+//  vulCam eye
 //
 //  Created by Juuso Kaitila on 23.8.2015.
 //  Copyright (c) 2015 Bitwise Oy. All rights reserved.

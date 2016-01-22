@@ -1,6 +1,6 @@
 //
 //  AboutView.m
-//  ubiQVue Cam
+//  vulCam eye
 //
 //  Created by Juuso Kaitila on 04/01/16.
 //  Copyright © 2016 Bitwise. All rights reserved.

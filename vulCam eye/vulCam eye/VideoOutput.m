@@ -1,6 +1,6 @@
 //
 //  VideoOutput.m
-//  ubiQVue Cam
+//  vulCam eye
 //
 //  Created by Juuso Kaitila on 05/01/16.
 //  Copyright © 2016 Bitwise Oy. All rights reserved.
@@ -11,7 +11,6 @@
 #import "CameraSettings.h"
 #import "CamNotificationNames.h"
 
-static const int32_t kQVStreamFPS = 10;
 
 static const CGSize kQVStreamSize = (CGSize) {
         .width = 320,
@@ -29,7 +28,8 @@ static const CGSize kQVStreamSize = (CGSize) {
     AVAssetWriterInputPixelBufferAdaptor *pixelBufferAdaptor;
     BOOL finishRecording;
     int64_t frameNumber;
-    int64_t streamFrame;
+    int32_t streamFrame;
+    int32_t streamFrameSkip;
 }
 
 - (instancetype)initWithInput:(AVCaptureDeviceInput *)input {
@@ -45,6 +45,12 @@ static const CGSize kQVStreamSize = (CGSize) {
     }
     return self;
 }
+
+- (void)setVideoFPS:(int32_t)videoFPS {
+    _videoFPS = videoFPS;
+    streamFrameSkip = videoFPS / 10;
+}
+
 
 - (void)setIsRecording:(BOOL)isRecording {
     if (isRecording) {
@@ -128,7 +134,7 @@ static const CGSize kQVStreamSize = (CGSize) {
 
     if (_isStreaming) {
         streamFrame++;
-        if (streamFrame == kQVStreamFPS) {
+        if (streamFrame == streamFrameSkip) {
             CVImageBufferRef buf = (CVImageBufferRef) CFRetain(imageBuffer);
             dispatch_async(_streamQueue, ^(void) {
                 UIImage *image = [ImageUtility imageFromSampleBuffer:buf];
