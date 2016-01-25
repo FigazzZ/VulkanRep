@@ -280,17 +280,17 @@ static const CommandType observedCommands[] = {
     dispatch_async(queue, ^{
         CameraSettings *sharedVars = [CameraSettings sharedVariables];
         if ([_captureManager switchFormatWithDesiredFPS:240.0]) {
-            [sharedVars setMaxFramerate:240.0];
+            [sharedVars setMaxFramerate:240];
         }
         else if ([_captureManager switchFormatWithDesiredFPS:120.0]) {
-            [sharedVars setMaxFramerate:120.0];
+            [sharedVars setMaxFramerate:120];
         }
         else if ([_captureManager switchFormatWithDesiredFPS:60.0]) {
-            [sharedVars setMaxFramerate:60.0];
+            [sharedVars setMaxFramerate:60];
         }
         else {
             [_captureManager resetFormat];
-            [sharedVars setMaxFramerate:30.0];
+            [sharedVars setMaxFramerate:30];
         }
     });
 }
@@ -299,11 +299,13 @@ static const CommandType observedCommands[] = {
     Command *cmd = [Command getCommandFromNotification:notification];
     if ([cmd isKindOfClass:[CommandWithValue class]]) {
         CommandWithValue *valueCommand = (CommandWithValue *) cmd;
+        CameraSettings *settings = [CameraSettings sharedVariables];
         __block NSInteger framerate = [valueCommand getDataAsInt];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if ([_captureManager switchFormatWithDesiredFPS:framerate]) {
-            }
-        });
+        if (framerate != settings.framerate) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [_captureManager switchFormatWithDesiredFPS:framerate];
+            });
+        }
     }
 }
 
@@ -385,8 +387,11 @@ static const CommandType observedCommands[] = {
     Command *cmd = [Command getCommandFromNotification:notification];
     if ([cmd isKindOfClass:[CommandWithValue class]]) {
         CameraSettings *sharedVars = [CameraSettings sharedVariables];
-        sharedVars.shutterSpeed = ((CommandWithValue *) cmd).dataAsInt;
-        [_captureManager setShutterSpeed];
+        int sspeed = ((CommandWithValue *) cmd).dataAsInt;
+        if (sspeed != sharedVars.shutterSpeed){
+            sharedVars.shutterSpeed = sspeed;
+            [_captureManager setShutterSpeed];
+        }
     }
 }
 

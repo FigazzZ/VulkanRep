@@ -19,7 +19,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    NSDictionary *appDefaults = @{@"framerate" : @120.0F,
+    NSDictionary *appDefaults = @{@"framerate" : @120,
             @"yaw" : @0,
             @"pitch" : @0,
             @"dist" : @10,
