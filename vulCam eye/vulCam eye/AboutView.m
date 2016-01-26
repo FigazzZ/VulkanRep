@@ -27,13 +27,13 @@
         }
 
         if ([subview respondsToSelector:@selector(panGestureRecognizer)]) {
-            [[(id) subview panGestureRecognizer] setEnabled:enabled];
+            [(id) subview panGestureRecognizer].enabled = enabled;
         }
 
         // here comes the tricky part, disabling
         for (UIView *subScrollView in subview.subviews) {
             if ([subScrollView isKindOfClass:NSClassFromString(@"WKContentView")]) {
-                for (id gesture in [subScrollView gestureRecognizers]) {
+                for (id gesture in subScrollView.gestureRecognizers) {
                     if ([gesture isKindOfClass:NSClassFromString(@"UIWebTouchEventsGestureRecognizer")])
                         [subScrollView removeGestureRecognizer:gesture];
                 }
@@ -123,7 +123,7 @@
 
     [text appendString:@"<p style=\"height: 5em\"></p></body></html>"];
 
-    return [text description];
+    return text.description;
 }
 
 - (void)showAboutView {

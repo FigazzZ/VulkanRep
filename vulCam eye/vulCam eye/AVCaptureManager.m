@@ -165,7 +165,7 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
 
 
 - (void)prepareAssetWriter {
-    fileURL = [self generateFilePath];
+    fileURL = [AVCaptureManager generateFilePath];
     NSError *err;
     writer = [[AVAssetWriter alloc] initWithURL:fileURL fileType:AVFileTypeMPEG4 error:&err];
     [videoOutput setupVideoAssetWriterInput];
@@ -341,7 +341,7 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
     return framerateChanged;
 }
 
-- (NSURL *)generateFilePath {
++ (NSURL *)generateFilePath {
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     formatter.dateFormat = @"yyyy-MM-dd-HH-mm-ss";
     NSString *dateTimePrefix = [formatter stringFromDate:[NSDate date]];

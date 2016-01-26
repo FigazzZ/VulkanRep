@@ -20,7 +20,9 @@
 @property(nonatomic) BOOL isStreaming;
 @property(nonatomic, weak) StreamServer *streamServer;
 
-- (instancetype)initWithInput:(AVCaptureDeviceInput *)input;
+- (instancetype)init NS_UNAVAILABLE;
+
+- (instancetype)initWithInput:(AVCaptureDeviceInput *)input NS_DESIGNATED_INITIALIZER;
 
 - (void)startStreaming;
 

@@ -120,11 +120,11 @@ static const CGSize kQVStreamSize = (CGSize) {
     }
     CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
     if (_isRecording && _videoWriterInput.readyForMoreMediaData) {
-        if (![pixelBufferAdaptor appendPixelBuffer:imageBuffer withPresentationTime:CMTimeMake(frameNumber, _videoFPS)]) {
-            NSLog(@"writing video failed");
+        if ([pixelBufferAdaptor appendPixelBuffer:imageBuffer withPresentationTime:CMTimeMake(frameNumber, _videoFPS)]) {
+            frameNumber++;
         }
         else {
-            frameNumber++;
+            NSLog(@"writing video failed");
         }
     }
     else if (!_isRecording && finishRecording) {
