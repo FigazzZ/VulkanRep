@@ -50,6 +50,7 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
         //        _writingQueue = dispatch_queue_create("writingQueue", DISPATCH_QUEUE_SERIAL);
         videoWritingFinished = NO;
         audioWritingFinished = NO;
+        _recordingMode = NORMAL;
         if (![self setupCaptureSession]) {
             return nil;
         }
@@ -179,7 +180,7 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
         [writer addInput:audioOutput.audioWriterInput];
     }
 #endif
-    [writer startWriting];
+//    [writer startWriting];
 }
 
 - (void)closeAssetWriter {
@@ -311,8 +312,8 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
 
             if (range.minFrameRate <= desiredFPS && desiredFPS <= range.maxFrameRate && width <= 1280) {
                 selectedFormat = format;
-                settings.framerate = desiredFPS;
-                if (videoOutput != nil) {                    
+                settings.framerate = (int) desiredFPS;
+                if (videoOutput != nil) {
                     videoOutput.videoFPS = (int32_t) desiredFPS;
                 }
                 framerateChanged = YES;
@@ -366,21 +367,28 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
 }
 
 - (void)startRecording {
+    [writer startWriting];
     videoOutput.isRecording = YES;
 
 #ifdef USE_AUDIO
     audioOutput.isRecording = YES;
 #endif
     [writer startSessionAtSourceTime:kCMTimeZero];
-    timer = [NSTimer scheduledTimerWithTimeInterval:15.1
-                                             target:self
-                                           selector:@selector(stopRecording)
-                                           userInfo:nil
-                                            repeats:NO];
+    if (_recordingMode == NORMAL) {
+        timer = [NSTimer scheduledTimerWithTimeInterval:15.1
+                                                 target:self
+                                               selector:@selector(stopRecording)
+                                               userInfo:nil
+                                                repeats:NO];
+    } else if (_recordingMode == IMPACT) {
+        _videoTrimmer = [[VideoTrimmer alloc] init];
+    }
 }
 
 - (void)stopRecording {
-    [timer invalidate];
+    if (timer != nil) {
+        [timer invalidate];
+    }
     [[NSNotificationCenter defaultCenter] postNotificationName:kNNStopOK object:self userInfo:nil];
     videoOutput.isRecording = NO;
 #ifdef USE_AUDIO
@@ -402,12 +410,25 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
     }
 #endif
     [writer finishWritingWithCompletionHandler:^(void) {
+        NSURL *file = fileURL;
+        if (_recordingMode == IMPACT && _videoTrimmer != nil) {
+            Float64 secs = CMTimeGetSeconds(_impactTime) - _timeBefore;
+            CMTime startDiff = secs > 0.0 ? CMTimeMakeWithSeconds(secs, USEC_PER_SEC) : kCMTimeZero;
+            CMTime endDiff = CMTimeAdd(_impactTime, CMTimeMakeWithSeconds(_timeAfter, USEC_PER_SEC));
+            CMTimeRange range = CMTimeRangeMake(startDiff, endDiff);
+            [_videoTrimmer trimVideoAtURL:fileURL atRange:range];
+            [AVCaptureManager deleteVideo:fileURL];
+            file = _videoTrimmer.fileURL;
+            _videoTrimmer = nil;
+        }
         [[NSNotificationCenter defaultCenter]
                 postNotificationName:kNNStopRecording
                               object:self
-                            userInfo:@{@"file" : fileURL}];
+                            userInfo:@{@"file" : file}];
         videoWritingFinished = NO;
+#ifdef USE_AUDIO
         audioWritingFinished = NO;
+#endif
         [self prepareAssetWriter];
 
     }];

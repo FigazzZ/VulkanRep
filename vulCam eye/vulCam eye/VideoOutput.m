@@ -53,11 +53,13 @@ static const CGSize kQVStreamSize = (CGSize) {
 
 
 - (void)setIsRecording:(BOOL)isRecording {
-    if (isRecording) {
-        frameNumber = 0;
+    @synchronized (self) {
+        if (isRecording) {
+            frameNumber = 0;
+        }
+        _isRecording = isRecording;
+        finishRecording = !isRecording;
     }
-    _isRecording = isRecording;
-    finishRecording = !isRecording;
 }
 
 - (void)setupVideoDataOutput:(AVCaptureDeviceInput *)input {

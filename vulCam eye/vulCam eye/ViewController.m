@@ -24,6 +24,8 @@ static NSString *const kMinServerVersion = @"0.4.3.0";
 static const CommandType observedCommands[] = {
         START,
         STOP,
+        IMPACT_START,
+        IMPACT_STOP,
         POSITION,
         GET_POSITION,
         DELETE,
@@ -50,6 +52,7 @@ static const CommandType observedCommands[] = {
     NSTimer *ntpTimer;
     NetAssociation *netAssociation;
     UITapGestureRecognizer *tapGesture;
+    NSTimeInterval impactStart;
 }
 
 - (void)viewDidLoad {
@@ -342,6 +345,47 @@ static const CommandType observedCommands[] = {
 - (void)handleStopCommand:(NSNotification *)notification {
     if (_captureManager.isRecording) {
         [_captureManager stopRecording];
+    }
+    else {
+        [socketHandler sendCommand:[[Command alloc] init:NOT_OK]];
+    }
+}
+
+- (void)handleImpactStartCommand:(NSNotification *)notification {
+    if (mode == CAMERA_MODE && !_captureManager.isRecording) {
+        if (_timeOffset != INFINITY) {
+            [socketHandler sendCommand:[[Command alloc] init:OK]];
+            impactStart = [NSDate date].timeIntervalSince1970 + _timeOffset;
+            [_captureManager startRecording];
+        } else {
+            NSLog(@"Time offset missing");
+            [socketHandler sendCommand:[[Command alloc] init:NOT_OK]];
+        }
+    }
+    else {
+        NSLog(@"was already recording");
+        [socketHandler sendCommand:[[Command alloc] init:NOT_OK]];
+    }
+}
+
+- (void)handleImpactStopCommand:(NSNotification *)notification {
+    if (_captureManager.isRecording) {
+        Command *command = [Command getCommandFromNotification:notification];
+        if ([command isKindOfClass:[CommandWithValue class]] && _timeOffset != INFINITY) {
+            NSString *time = [[NSString alloc] initWithData:command.data encoding:NSUTF8StringEncoding];
+            NSTimeInterval impactTime = time.doubleValue / 1000.f + _timeOffset;
+            NSTimeInterval interval = impactTime + _captureManager.timeAfter + 0.5;
+            int64_t interval_in_nanos = (int64_t) (interval * NSEC_PER_SEC);
+            NSLog(@"Stopping after %f seconds", interval);
+            [socketHandler sendCommand:[[Command alloc] init:OK]];
+            _captureManager.impactTime = CMTimeMakeWithSeconds(impactTime - impactStart, USEC_PER_SEC);
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, MAX(interval_in_nanos, 0)), dispatch_get_main_queue(), ^{
+                [_captureManager stopRecording];
+            });
+        } else {
+            NSLog(@"Impact time missing");
+            [socketHandler sendCommand:[[Command alloc] init:NOT_OK]];
+        }
     }
     else {
         [socketHandler sendCommand:[[Command alloc] init:NOT_OK]];
