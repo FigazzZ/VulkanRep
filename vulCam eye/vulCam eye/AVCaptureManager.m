@@ -1,6 +1,6 @@
 //
 //  AVCaptureManager.m
-//  ubiQVue Cam
+//  vulCam eye
 //
 //  Created by Juuso Kaitila on 23.8.2015.
 //  Copyright (c) 2015 Bitwise Oy. All rights reserved.
@@ -165,7 +165,7 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
 
 
 - (void)prepareAssetWriter {
-    fileURL = [self generateFilePath];
+    fileURL = [AVCaptureManager generateFilePath];
     NSError *err;
     writer = [[AVAssetWriter alloc] initWithURL:fileURL fileType:AVFileTypeMPEG4 error:&err];
     [videoOutput setupVideoAssetWriterInput];
@@ -302,7 +302,6 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
 
     AVCaptureDevice *videoDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
     AVCaptureDeviceFormat *selectedFormat = nil;
-    int32_t maxWidth = 0;
     BOOL framerateChanged = NO;
 
     for (AVCaptureDeviceFormat *format in videoDevice.formats) {
@@ -310,11 +309,12 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
             CMFormatDescriptionRef desc = format.formatDescription;
             int32_t width = (CMVideoFormatDescriptionGetDimensions(desc)).width;
 
-            if (range.minFrameRate <= desiredFPS && desiredFPS <= range.maxFrameRate && width >= maxWidth) {
+            if (range.minFrameRate <= desiredFPS && desiredFPS <= range.maxFrameRate && width <= 1280) {
                 selectedFormat = format;
-                maxWidth = width;
                 [[CameraSettings sharedVariables] setFramerate:desiredFPS];
-                videoOutput.videoFPS = (int32_t) desiredFPS;
+                if (videoOutput != nil) {                    
+                    videoOutput.videoFPS = (int32_t) desiredFPS;
+                }
                 framerateChanged = YES;
             }
         }
@@ -341,7 +341,7 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
     return framerateChanged;
 }
 
-- (NSURL *)generateFilePath {
++ (NSURL *)generateFilePath {
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     formatter.dateFormat = @"yyyy-MM-dd-HH-mm-ss";
     NSString *dateTimePrefix = [formatter stringFromDate:[NSDate date]];

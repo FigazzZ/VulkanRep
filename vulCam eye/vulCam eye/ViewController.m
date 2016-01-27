@@ -1,6 +1,6 @@
 //
 //  ViewController.m
-//  ubiQVue Cam
+//  vulCam eye
 //
 //  Created by Juuso Kaitila on 11.8.2015.
 //  Copyright (c) 2015 Bitwise Oy. All rights reserved.
@@ -280,17 +280,17 @@ static const CommandType observedCommands[] = {
     dispatch_async(queue, ^{
         CameraSettings *sharedVars = [CameraSettings sharedVariables];
         if ([_captureManager switchFormatWithDesiredFPS:240.0]) {
-            [sharedVars setMaxFramerate:240.0];
+            sharedVars.maxFramerate = 240;
         }
         else if ([_captureManager switchFormatWithDesiredFPS:120.0]) {
-            [sharedVars setMaxFramerate:120.0];
+            sharedVars.maxFramerate = 120;
         }
         else if ([_captureManager switchFormatWithDesiredFPS:60.0]) {
-            [sharedVars setMaxFramerate:60.0];
+            sharedVars.maxFramerate = 60;
         }
         else {
             [_captureManager resetFormat];
-            [sharedVars setMaxFramerate:30.0];
+            sharedVars.maxFramerate = 30;
         }
     });
 }
@@ -299,11 +299,13 @@ static const CommandType observedCommands[] = {
     Command *cmd = [Command getCommandFromNotification:notification];
     if ([cmd isKindOfClass:[CommandWithValue class]]) {
         CommandWithValue *valueCommand = (CommandWithValue *) cmd;
-        __block NSInteger framerate = [valueCommand getDataAsInt];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if ([_captureManager switchFormatWithDesiredFPS:framerate]) {
-            }
-        });
+        CameraSettings *settings = [CameraSettings sharedVariables];
+        __block NSInteger framerate = valueCommand.dataAsInt;
+        if (framerate != settings.framerate && !_captureManager.isRecording) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [_captureManager switchFormatWithDesiredFPS:framerate];
+            });
+        }
     }
 }
 
@@ -315,7 +317,7 @@ static const CommandType observedCommands[] = {
             NSTimeInterval startTime = time.doubleValue / 1000.f + _timeOffset;
             NSDate *startDate = [NSDate dateWithTimeIntervalSince1970:startTime];
             NSTimeInterval interval = startDate.timeIntervalSinceNow;
-            int64_t interval_in_nanos = (int64_t) (interval * 1000000000);
+            int64_t interval_in_nanos = (int64_t) (interval * NSEC_PER_SEC);
             NSLog(@"Starting after %f seconds", interval);
             [socketHandler sendCommand:[[Command alloc] init:OK]];
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, MAX(interval_in_nanos, 0)), dispatch_get_main_queue(), ^{
@@ -385,8 +387,11 @@ static const CommandType observedCommands[] = {
     Command *cmd = [Command getCommandFromNotification:notification];
     if ([cmd isKindOfClass:[CommandWithValue class]]) {
         CameraSettings *sharedVars = [CameraSettings sharedVariables];
-        sharedVars.shutterSpeed = ((CommandWithValue *) cmd).dataAsInt;
-        [_captureManager setShutterSpeed];
+        int sspeed = ((CommandWithValue *) cmd).dataAsInt;
+        if (sspeed != sharedVars.shutterSpeed && !_captureManager.isRecording){
+            sharedVars.shutterSpeed = sspeed;
+            [_captureManager setShutterSpeed];
+        }
     }
 }
 

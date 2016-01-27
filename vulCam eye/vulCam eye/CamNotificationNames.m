@@ -1,6 +1,6 @@
 //
 //  CamNotificationNames.m
-//  ubiQVue Cam
+//  vulCam eye
 //
 //  Created by Juuso Kaitila on 16/10/15.
 //  Copyright © 2015 Bitwise Oy. All rights reserved.

@@ -1,6 +1,6 @@
 //
 //  CameraSettings.m
-//  ubiQVue Cam
+//  vulCam eye
 //
 //  Created by Juuso Kaitila on 13.8.2015.
 //  Copyright (c) 2015 Bitwise Oy. All rights reserved.
@@ -40,13 +40,12 @@
         // TODO: load values from stored settings if they exist
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         maxFramerate = 240.0;
-        framerate = [defaults floatForKey:@"framerate"];
+        framerate = (int)[defaults integerForKey:@"framerate"];
         yaw = (int) [defaults integerForKey:@"yaw"];
         pitch = (int) [defaults integerForKey:@"pitch"];
         dist = (int) [defaults integerForKey:@"dist"];
         shutterSpeed = (int) [defaults integerForKey:@"shutterSpeed"];
         roll = 0;
-        NSLog(@"fps: %f", framerate);
         exposureMode = AVCaptureExposureModeAutoExpose;
         focusMode = AVCaptureFocusModeAutoFocus;
         smoothFocusEnabled = YES;

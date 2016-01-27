@@ -1,6 +1,6 @@
 //
 //  VideoOutput.h
-//  ubiQVue Cam
+//  vulCam eye
 //
 //  Created by Juuso Kaitila on 05/01/16.
 //  Copyright © 2016 Bitwise Oy. All rights reserved.
@@ -20,7 +20,9 @@
 @property(nonatomic) BOOL isStreaming;
 @property(nonatomic, weak) StreamServer *streamServer;
 
-- (instancetype)initWithInput:(AVCaptureDeviceInput *)input;
+- (instancetype)init NS_UNAVAILABLE;
+
+- (instancetype)initWithInput:(AVCaptureDeviceInput *)input NS_DESIGNATED_INITIALIZER;
 
 - (void)startStreaming;
 

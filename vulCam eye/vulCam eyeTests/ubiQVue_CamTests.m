@@ -1,6 +1,6 @@
 //
 //  ubiQVue_CamTests.m
-//  ubiQVue CamTests
+//  vulCam eyeTests
 //
 //  Created by Juuso Kaitila on 01/09/15.
 //  Copyright (c) 2015 Bitwise Oy. All rights reserved.

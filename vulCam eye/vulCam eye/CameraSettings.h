@@ -1,6 +1,6 @@
 //
 //  CameraSettings.h
-//  ubiQVue Cam
+//  vulCam eye
 //
 //  Created by Juuso Kaitila on 13.8.2015.
 //  Copyright (c) 2015 Bitwise Oy. All rights reserved.
@@ -10,12 +10,12 @@
 #import <AVFoundation/AVFoundation.h>
 
 @interface CameraSettings : NSObject {
-    float framerate;
+    int framerate;
     int yaw;
     double dist;
     int pitch;
     int roll;
-    float maxFramerate;
+    int maxFramerate;
     int shutterSpeed;
     AVCaptureExposureMode exposureMode;
     AVCaptureFocusMode focusMode;
@@ -27,8 +27,8 @@
 
 + (id)sharedVariables;
 
-@property(nonatomic) float framerate;
-@property(nonatomic) float maxFramerate;
+@property(nonatomic) int framerate;
+@property(nonatomic) int maxFramerate;
 @property(nonatomic) int shutterSpeed;
 @property(nonatomic) int yaw;
 @property(nonatomic) int pitch;

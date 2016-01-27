@@ -1,6 +1,6 @@
 //
 //  AppDelegate.m
-//  ubiQVue Cam
+//  vulCam eye
 //
 //  Created by Juuso Kaitila on 11.8.2015.
 //  Copyright (c) 2015 Bitwise Oy. All rights reserved.
@@ -19,7 +19,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    NSDictionary *appDefaults = @{@"framerate" : @120.0F,
+    NSDictionary *appDefaults = @{@"framerate" : @120,
             @"yaw" : @0,
             @"pitch" : @0,
             @"dist" : @10,

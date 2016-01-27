@@ -1,6 +1,6 @@
 //
 //  AVCaptureManager.h
-//  ubiQVue Cam
+//  vulCam eye
 //
 //  Created by Juuso Kaitila on 23.8.2015.
 //  Copyright (c) 2015 Bitwise Oy. All rights reserved.
@@ -23,7 +23,9 @@ typedef NS_ENUM(NSInteger, CameraState) {
 @property(NS_NONATOMIC_IOSONLY, getter=isStreaming, readonly) BOOL isStreaming;
 @property(nonatomic, setter=setStreamServer:, weak) StreamServer *streamServer;
 
-- (instancetype)initWithPreviewView:(UIView *)previewView;
+- (instancetype)init NS_UNAVAILABLE;
+
+- (instancetype)initWithPreviewView:(UIView *)previewView NS_DESIGNATED_INITIALIZER;
 
 - (void)setCameraSettings:(CGPoint)point;
 
@@ -52,5 +54,7 @@ typedef NS_ENUM(NSInteger, CameraState) {
 - (void)stopCaptureSession;
 
 + (void)deleteVideo:(NSURL *)file;
+
++ (NSURL *)generateFilePath;
 
 @end

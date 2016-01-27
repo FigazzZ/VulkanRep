@@ -1,6 +1,6 @@
 //
 //  CameraProtocol.m
-//  ubiQVue Cam
+//  vulCam eye
 //
 //  Created by Juuso Kaitila on 12.8.2015.
 //  Copyright (c) 2015 Bitwise Oy. All rights reserved.
