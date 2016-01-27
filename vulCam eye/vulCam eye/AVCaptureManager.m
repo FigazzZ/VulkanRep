@@ -303,7 +303,7 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
     AVCaptureDevice *videoDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
     AVCaptureDeviceFormat *selectedFormat = nil;
     BOOL framerateChanged = NO;
-
+    CameraSettings *settings = [CameraSettings sharedVariables];
     for (AVCaptureDeviceFormat *format in videoDevice.formats) {
         for (AVFrameRateRange *range in format.videoSupportedFrameRateRanges) {
             CMFormatDescriptionRef desc = format.formatDescription;
@@ -311,7 +311,7 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
 
             if (range.minFrameRate <= desiredFPS && desiredFPS <= range.maxFrameRate && width <= 1280) {
                 selectedFormat = format;
-                [[CameraSettings sharedVariables] setFramerate:desiredFPS];
+                settings.framerate = desiredFPS;
                 if (videoOutput != nil) {                    
                     videoOutput.videoFPS = (int32_t) desiredFPS;
                 }
@@ -332,7 +332,6 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
         else {
             NSLog(@"%@", error.localizedDescription);
         }
-        //[self setCameraSettings:CGPointMake(0.5f, 0.5f)];
     }
 
     if (isRunning) {

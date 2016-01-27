@@ -303,7 +303,12 @@ static const CommandType observedCommands[] = {
         __block NSInteger framerate = valueCommand.dataAsInt;
         if (framerate != settings.framerate && !_captureManager.isRecording) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                [_captureManager switchFormatWithDesiredFPS:framerate];
+                while(![_captureManager switchFormatWithDesiredFPS:framerate]) {
+                    framerate /= 2;
+                    if (framerate == settings.framerate){
+                        break;
+                    }
+                }
             });
         }
     }
