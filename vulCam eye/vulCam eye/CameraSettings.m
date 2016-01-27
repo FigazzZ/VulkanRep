@@ -37,10 +37,9 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        // TODO: load values from stored settings if they exist
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        maxFramerate = 240.0;
-        framerate = (int)[defaults integerForKey:@"framerate"];
+        maxFramerate = 240;
+        framerate = (int) [defaults integerForKey:@"framerate"];
         yaw = (int) [defaults integerForKey:@"yaw"];
         pitch = (int) [defaults integerForKey:@"pitch"];
         dist = (int) [defaults integerForKey:@"dist"];

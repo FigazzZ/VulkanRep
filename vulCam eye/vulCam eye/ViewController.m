@@ -303,9 +303,9 @@ static const CommandType observedCommands[] = {
         __block NSInteger framerate = valueCommand.dataAsInt;
         if (framerate != settings.framerate && !_captureManager.isRecording) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                while(![_captureManager switchFormatWithDesiredFPS:framerate]) {
+                while (![_captureManager switchFormatWithDesiredFPS:framerate]) {
                     framerate /= 2;
-                    if (framerate == settings.framerate){
+                    if (framerate == settings.framerate) {
                         break;
                     }
                 }
@@ -356,10 +356,8 @@ static const CommandType observedCommands[] = {
     NSDictionary *dict = notification.userInfo;
     NSMutableDictionary *json = [[NSMutableDictionary alloc] init];
     CameraSettings *sharedVars = [CameraSettings sharedVariables];
-    NSDictionary *pov = sharedVars.positionJson;
-    NSNumber *fps = @(sharedVars.framerate);
-    json[@"fps"] = fps;
-    json[@"pointOfView"] = pov;
+    json[@"fps"] = @(sharedVars.framerate);
+    json[@"pointOfView"] = sharedVars.positionJson;
     json[@"delay"] = delay;
     file = dict[@"file"];
     AVURLAsset *sourceAsset = [AVURLAsset URLAssetWithURL:file options:nil];
@@ -385,6 +383,7 @@ static const CommandType observedCommands[] = {
         sharedVars.dist = [json[@"dist"] doubleValue];
         sharedVars.yaw = [json[@"yaw"] intValue];
         sharedVars.pitch = [json[@"pitch"] intValue];
+        [self switchToCameraMode:nil];
     }
 }
 
@@ -393,7 +392,7 @@ static const CommandType observedCommands[] = {
     if ([cmd isKindOfClass:[CommandWithValue class]]) {
         CameraSettings *sharedVars = [CameraSettings sharedVariables];
         int sspeed = ((CommandWithValue *) cmd).dataAsInt;
-        if (sspeed != sharedVars.shutterSpeed && !_captureManager.isRecording){
+        if (sspeed != sharedVars.shutterSpeed && !_captureManager.isRecording) {
             sharedVars.shutterSpeed = sspeed;
             [_captureManager setShutterSpeed];
         }
