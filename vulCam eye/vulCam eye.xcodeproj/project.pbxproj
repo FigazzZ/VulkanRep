@@ -32,6 +32,7 @@
 		32855AEA1B95C6F0003CC551 /* ProtocolUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 32855ADE1B95C6F0003CC551 /* ProtocolUtility.m */; };
 		32855AED1B95C6F0003CC551 /* CommandWithValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 32855AE21B95C6F0003CC551 /* CommandWithValue.m */; };
 		32855AEE1B95C6F0003CC551 /* MessageHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 32855AE31B95C6F0003CC551 /* MessageHandler.m */; };
+		32AE56301C5B700000844C58 /* CommonJSONKeys.m in Sources */ = {isa = PBXBuildFile; fileRef = 32AE562F1C5B700000844C58 /* CommonJSONKeys.m */; };
 		32DF0F391B95C4E000467255 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 32DF0F381B95C4E000467255 /* main.m */; };
 		32DF0F3C1B95C4E000467255 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 32DF0F3B1B95C4E000467255 /* AppDelegate.m */; };
 		32DF0F3F1B95C4E000467255 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 32DF0F3E1B95C4E000467255 /* ViewController.m */; };
@@ -97,6 +98,8 @@
 		32855ADE1B95C6F0003CC551 /* ProtocolUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProtocolUtility.m; sourceTree = "<group>"; };
 		32855AE21B95C6F0003CC551 /* CommandWithValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommandWithValue.m; sourceTree = "<group>"; };
 		32855AE31B95C6F0003CC551 /* MessageHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageHandler.m; sourceTree = "<group>"; };
+		32AE562E1C5B700000844C58 /* CommonJSONKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonJSONKeys.h; sourceTree = "<group>"; };
+		32AE562F1C5B700000844C58 /* CommonJSONKeys.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommonJSONKeys.m; sourceTree = "<group>"; };
 		32DF0F331B95C4E000467255 /* vulCam eye.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "vulCam eye.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		32DF0F371B95C4E000467255 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		32DF0F381B95C4E000467255 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -155,6 +158,8 @@
 		32855AD21B95C6F0003CC551 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				32AE562E1C5B700000844C58 /* CommonJSONKeys.h */,
+				32AE562F1C5B700000844C58 /* CommonJSONKeys.m */,
 				321325801C3BD4EE0059BC97 /* SplashScreen.h */,
 				321325811C3BD4EE0059BC97 /* SplashScreen.m */,
 				3206857D1BBD468000FAAC56 /* CommonNotificationNames.h */,
@@ -454,6 +459,7 @@
 				32855ACF1B95C6BC003CC551 /* CameraSettings.m in Sources */,
 				32855AE91B95C6F0003CC551 /* VVProtocol.m in Sources */,
 				32DF0F3C1B95C4E000467255 /* AppDelegate.m in Sources */,
+				32AE56301C5B700000844C58 /* CommonJSONKeys.m in Sources */,
 				32855AED1B95C6F0003CC551 /* CommandWithValue.m in Sources */,
 				320685841BBD468000FAAC56 /* CommonUtility.m in Sources */,
 				32855AD11B95C6BC003CC551 /* StreamServer.m in Sources */,
