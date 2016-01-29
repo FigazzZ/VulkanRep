@@ -179,7 +179,6 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
         [writer addInput:audioOutput.audioWriterInput];
     }
 #endif
-    [writer startWriting];
 }
 
 - (void)closeAssetWriter {
@@ -366,12 +365,13 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
 }
 
 - (void)startRecording {
+    [writer startWriting];
+    [writer startSessionAtSourceTime:kCMTimeZero];
     videoOutput.isRecording = YES;
 
 #ifdef USE_AUDIO
     audioOutput.isRecording = YES;
 #endif
-    [writer startSessionAtSourceTime:kCMTimeZero];
     timer = [NSTimer scheduledTimerWithTimeInterval:15.1
                                              target:self
                                            selector:@selector(stopRecording)
