@@ -377,8 +377,6 @@ static const CommandType observedCommands[] = {
         sharedVars.dist = [json[kVVDistanceKey] doubleValue];
         sharedVars.yaw = [json[kVVYawKey] intValue];
         sharedVars.pitch = [json[kVVPitchKey] intValue];
-        [self setShutterSpeed:[json[kVVShutterSpeedKey] intValue]];
-        sharedVars.framerate = [json[kVVFramerateKey] intValue];
         [self switchToCameraMode:nil];
     }
 }
