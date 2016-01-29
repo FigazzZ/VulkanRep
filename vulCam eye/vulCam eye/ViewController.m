@@ -69,9 +69,12 @@ static const CommandType observedCommands[] = {
                                                          action:@selector(handleDoubleTap:)];
     tapGesture.numberOfTapsRequired = 2;
     [self.view addGestureRecognizer:tapGesture];
-    socketHandler = [[NetworkSocketHandler alloc] init:1111
-                                              protocol:[[CameraProtocol alloc] init]
-                                          minServerVer:kMinServerVersion];
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(queue, ^{        
+        socketHandler = [[NetworkSocketHandler alloc] init:1111
+                                                  protocol:[[CameraProtocol alloc] init]
+                                              minServerVer:kMinServerVersion];
+    });
     [self registerToNotifications];
     [self hideStatusBar];
 
