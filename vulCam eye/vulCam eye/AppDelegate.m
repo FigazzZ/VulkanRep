@@ -25,7 +25,8 @@
             kVVPitchKey : @0,
             kVVDistanceKey : @10,
             @"uuid" : [NSUUID UUID].UUIDString,
-            kVVShutterSpeedKey : @125};
+            kVVShutterSpeedKey : @125,
+            kVVMaxFramerateKey : @120};
     [[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];
     if (getenv("NSZombieEnabled") || getenv("NSAutoreleaseFreedObjectCheckEnabled")) {
         NSLog(@"NSZombieEnabled/NSAutoreleaseFreedObjectCheckEnabled enabled!");
