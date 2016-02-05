@@ -26,7 +26,7 @@
 @synthesize smoothFocusEnabled;
 @synthesize wbMode;
 
-+ (id)sharedVariables {
++ (id)sharedVariables {	
     static CameraSettings *sharedVariables = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -39,7 +39,7 @@
     self = [super init];
     if (self) {
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        maxFramerate = 240;
+        maxFramerate = (int) [defaults integerForKey:kVVMaxFramerateKey];
         framerate = (int) [defaults integerForKey:kVVFramerateKey];
         yaw = (int) [defaults integerForKey:kVVYawKey];
         pitch = (int) [defaults integerForKey:kVVPitchKey];
@@ -73,6 +73,7 @@
     [defaults setValue:@(yaw) forKey:kVVYawKey];
     [defaults setValue:@(pitch) forKey:kVVPitchKey];
     [defaults setValue:@(shutterSpeed) forKey:kVVShutterSpeedKey];
+    [defaults setValue:@(maxFramerate) forKey:kVVMaxFramerateKey];
 }
 
 @end
