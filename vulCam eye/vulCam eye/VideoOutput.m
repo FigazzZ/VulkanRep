@@ -134,15 +134,16 @@ static const CGSize kQVStreamSize = (CGSize) {
 
     if (_isStreaming) {
         streamFrame++;
-        if (streamFrame == streamFrameSkip) {
+        if (streamFrame >= streamFrameSkip) {
             CVImageBufferRef buf = (CVImageBufferRef) CFRetain(imageBuffer);
             dispatch_async(_streamQueue, ^(void) {
                 UIImage *image = [ImageUtility imageFromSampleBuffer:buf];
-
                 NSTimeInterval timestamp = [NSDate date].timeIntervalSince1970;
                 image = [ImageUtility scaleImage:image toSize:kQVStreamSize];
                 [_streamServer writeImageToSocket:image withTimestamp:timestamp];
-                CFRelease(buf);
+                if (buf != nil) {
+                    CFRelease(buf);
+                }
             });
             streamFrame = 0;
         }
