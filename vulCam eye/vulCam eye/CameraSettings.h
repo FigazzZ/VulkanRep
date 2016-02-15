@@ -14,7 +14,6 @@
     int yaw;
     double dist;
     int pitch;
-    int roll;
     int maxFramerate;
     int shutterSpeed;
     AVCaptureExposureMode exposureMode;

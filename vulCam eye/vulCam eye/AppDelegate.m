@@ -21,9 +21,6 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     NSDictionary *appDefaults = @{kVVFramerateKey : @120,
-            kVVYawKey : @0,
-            kVVPitchKey : @0,
-            kVVDistanceKey : @10,
             @"uuid" : [NSUUID UUID].UUIDString,
             kVVShutterSpeedKey : @125,
             kVVMaxFramerateKey : @120};
