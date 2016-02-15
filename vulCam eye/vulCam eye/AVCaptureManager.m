@@ -364,9 +364,15 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
 #endif
 }
 
+- (void)startAssetWriter {
+    if (writer.status != AVAssetWriterStatusWriting) {
+        [writer startWriting];
+        [writer startSessionAtSourceTime:kCMTimeZero];
+    }
+}
+
 - (void)startRecording {
-    [writer startWriting];
-    [writer startSessionAtSourceTime:kCMTimeZero];
+    [self startAssetWriter];
     videoOutput.isRecording = YES;
 
 #ifdef USE_AUDIO
