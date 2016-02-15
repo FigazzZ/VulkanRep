@@ -189,7 +189,7 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
             }];
         }
     }
-    @catch (NSException *exception) {
+    @catch (NSException *exception) { 
         NSLog(@"Closing the assetwriter failed");
     }
 }
