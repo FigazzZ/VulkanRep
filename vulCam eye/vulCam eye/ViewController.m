@@ -322,6 +322,7 @@ static const CommandType observedCommands[] = {
             int64_t interval_in_nanos = (int64_t) (interval * NSEC_PER_SEC);
             NSLog(@"Starting after %f seconds", interval);
             [socketHandler sendCommand:[[Command alloc] init:OK]];
+            [_captureManager startAssetWriter];
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, MAX(interval_in_nanos, 0)), dispatch_get_main_queue(), ^{
                 [_captureManager startRecording];
             });

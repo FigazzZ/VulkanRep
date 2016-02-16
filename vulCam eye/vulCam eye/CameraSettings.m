@@ -8,6 +8,7 @@
 
 #import "CameraSettings.h"
 #import "CommonJSONKeys.h"
+#import "FileLogger.h"
 #import <UIKit/UIKit.h>
 
 @implementation CameraSettings
@@ -18,7 +19,6 @@
 @synthesize yaw;
 @synthesize pitch;
 @synthesize dist;
-@synthesize roll;
 @synthesize exposureMode;
 @synthesize autoFocusRange;
 @synthesize focusMode;
@@ -43,9 +43,8 @@
         framerate = (int) [defaults integerForKey:kVVFramerateKey];
         yaw = (int) [defaults integerForKey:kVVYawKey];
         pitch = (int) [defaults integerForKey:kVVPitchKey];
-        dist = (int) [defaults integerForKey:kVVDistanceKey];
+        dist = [defaults doubleForKey:kVVDistanceKey];
         shutterSpeed = (int) [defaults integerForKey:kVVShutterSpeedKey];
-        roll = 0;
         exposureMode = AVCaptureExposureModeAutoExpose;
         focusMode = AVCaptureFocusModeAutoFocus;
         smoothFocusEnabled = YES;
@@ -54,6 +53,11 @@
         stabilizationMode = AVCaptureVideoStabilizationModeAuto;
     }
     return self;
+}
+
+- (void)setMaxFramerate:(int)max {
+    maxFramerate = max;
+    [FileLogger logToFile:[NSString stringWithFormat:@"Max framerate set to %d", max]];
 }
 
 - (NSDictionary *)getPositionJson {

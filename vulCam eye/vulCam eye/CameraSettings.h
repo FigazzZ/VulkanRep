@@ -14,7 +14,6 @@
     int yaw;
     double dist;
     int pitch;
-    int roll;
     int maxFramerate;
     int shutterSpeed;
     AVCaptureExposureMode exposureMode;
@@ -33,7 +32,6 @@
 @property(nonatomic) int yaw;
 @property(nonatomic) int pitch;
 @property(nonatomic) double dist;
-@property(nonatomic) int roll;
 @property(nonatomic) AVCaptureExposureMode exposureMode;
 @property(nonatomic) AVCaptureFocusMode focusMode;
 @property(nonatomic) AVCaptureVideoStabilizationMode stabilizationMode;
