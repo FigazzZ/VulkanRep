@@ -14,6 +14,7 @@
 #import "CameraSettings.h"
 #import "CommonUtility.h"
 #import "CommonNotificationNames.h"
+#import "CommonJSONKeys.h"
 #import "CamNotificationNames.h"
 #import "SplashScreen.h"
 #import <ios-ntp/ios-ntp.h>
@@ -31,7 +32,8 @@ static const CommandType observedCommands[] = {
         DELETE,
         CAMERA_SETTINGS,
         SET_FPS,
-        SET_SHUTTERSPEED
+        SET_SHUTTERSPEED,
+        SET_RECORDING_MODE
 };
 
 @interface ViewController ()
@@ -70,9 +72,12 @@ static const CommandType observedCommands[] = {
                                                          action:@selector(handleDoubleTap:)];
     tapGesture.numberOfTapsRequired = 2;
     [self.view addGestureRecognizer:tapGesture];
-    socketHandler = [[NetworkSocketHandler alloc] init:1111
-                                              protocol:[[CameraProtocol alloc] init]
-                                          minServerVer:kMinServerVersion];
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(queue, ^{        
+        socketHandler = [[NetworkSocketHandler alloc] init:1111
+                                                  protocol:[[CameraProtocol alloc] init]
+                                              minServerVer:kMinServerVersion];
+    });
     [self registerToNotifications];
     [self hideStatusBar];
 
@@ -182,11 +187,6 @@ static const CommandType observedCommands[] = {
     if ([msg isEqualToString:@"start"]) {
         if (mode == CAMERA_MODE) {
             [self stopLogoAnimation];
-        }
-    }
-    else if ([msg isEqualToString:@"stop"]) {
-        if (mode == CAMERA_MODE) {
-            [self startLogoAnimation];
         }
     }
 }
@@ -302,18 +302,15 @@ static const CommandType observedCommands[] = {
     Command *cmd = [Command getCommandFromNotification:notification];
     if ([cmd isKindOfClass:[CommandWithValue class]]) {
         CommandWithValue *valueCommand = (CommandWithValue *) cmd;
-        CameraSettings *settings = [CameraSettings sharedVariables];
-        __block NSInteger framerate = valueCommand.dataAsInt;
-        if (framerate != settings.framerate && !_captureManager.isRecording) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                while (![_captureManager switchFormatWithDesiredFPS:framerate]) {
-                    framerate /= 2;
-                    if (framerate == settings.framerate) {
-                        break;
-                    }
-                }
-            });
-        }
+         NSInteger framerate = valueCommand.dataAsInt;
+        [self setFPS:framerate];
+    }
+}
+
+- (void)setFPS:(NSInteger)framerate {
+    CameraSettings *settings = [CameraSettings sharedVariables];
+    if (framerate <= settings.maxFramerate && framerate != settings.framerate && !_captureManager.isRecording) {
+        [_captureManager switchFormatWithDesiredFPS:framerate];
     }
 }
 
@@ -328,6 +325,7 @@ static const CommandType observedCommands[] = {
             int64_t interval_in_nanos = (int64_t) (interval * NSEC_PER_SEC);
             NSLog(@"Starting after %f seconds", interval);
             [socketHandler sendCommand:[[Command alloc] init:OK]];
+            [_captureManager startAssetWriter];
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, MAX(interval_in_nanos, 0)), dispatch_get_main_queue(), ^{
                 [_captureManager startRecording];
             });
@@ -400,13 +398,13 @@ static const CommandType observedCommands[] = {
     NSDictionary *dict = notification.userInfo;
     NSMutableDictionary *json = [[NSMutableDictionary alloc] init];
     CameraSettings *sharedVars = [CameraSettings sharedVariables];
-    json[@"fps"] = @(sharedVars.framerate);
-    json[@"pointOfView"] = sharedVars.positionJson;
-    json[@"delay"] = delay;
+    json[kVVFramerateKey] = @(sharedVars.framerate);
+    json[kVVPointOfViewKey] = sharedVars.positionJson;
+    json[kVVDelayKey] = delay;
     file = dict[@"file"];
     AVURLAsset *sourceAsset = [AVURLAsset URLAssetWithURL:file options:nil];
     CMTime duration = sourceAsset.duration;
-    json[@"duration"] = @(CMTimeGetSeconds(duration));
+    json[kVVDurationKey] = @(CMTimeGetSeconds(duration));
     NSString *jsonStr = [CommonUtility convertNSDictToJSONString:json];
     [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:VIDEO_COMING :jsonStr]];
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -424,9 +422,9 @@ static const CommandType observedCommands[] = {
         CameraSettings *sharedVars = [CameraSettings sharedVariables];
         NSString *JSONString = [[NSString alloc] initWithData:command.data encoding:NSUTF8StringEncoding];
         NSDictionary *json = [CommonUtility getNSDictFromJSONString:JSONString];
-        sharedVars.dist = [json[@"dist"] doubleValue];
-        sharedVars.yaw = [json[@"yaw"] intValue];
-        sharedVars.pitch = [json[@"pitch"] intValue];
+        sharedVars.dist = [json[kVVDistanceKey] doubleValue];
+        sharedVars.yaw = [json[kVVYawKey] intValue];
+        sharedVars.pitch = [json[kVVPitchKey] intValue];
         [self switchToCameraMode:nil];
     }
 }
@@ -434,21 +432,27 @@ static const CommandType observedCommands[] = {
 - (void)handleSetShutterSpeedCommand:(NSNotification *)notification {
     Command *cmd = [Command getCommandFromNotification:notification];
     if ([cmd isKindOfClass:[CommandWithValue class]]) {
-        CameraSettings *sharedVars = [CameraSettings sharedVariables];
         int sspeed = ((CommandWithValue *) cmd).dataAsInt;
-        if (sspeed != sharedVars.shutterSpeed && !_captureManager.isRecording) {
-            sharedVars.shutterSpeed = sspeed;
-            [_captureManager setShutterSpeed];
-        }
+        [self setShutterSpeed:sspeed];
+    }
+}
+
+- (void)setShutterSpeed:(int)shutterSpeed {
+    CameraSettings *sharedVars = [CameraSettings sharedVariables];
+    if (shutterSpeed != sharedVars.shutterSpeed && !_captureManager.isRecording) {
+        sharedVars.shutterSpeed = shutterSpeed;
+        [_captureManager setShutterSpeed];
     }
 }
 
 - (void)handleGetPositionCommand:(NSNotification *)notification {
     CameraSettings *sharedVars = [CameraSettings sharedVariables];
-    NSDictionary *pov = @{@"dist" : @(sharedVars.dist),
-            @"yaw" : @(sharedVars.yaw),
-            @"pitch" : @(sharedVars.pitch),
-            @"maxFps" : @(sharedVars.maxFramerate)};
+    NSDictionary *pov = @{kVVDistanceKey : @(sharedVars.dist),
+            kVVYawKey : @(sharedVars.yaw),
+            kVVPitchKey : @(sharedVars.pitch),
+            kVVMaxFramerateKey : @(sharedVars.maxFramerate),
+                          kVVFramerateKey: @(sharedVars.framerate),
+                          kVVShutterSpeedKey:@(sharedVars.shutterSpeed)};
     NSString *jsonStr = [CommonUtility convertNSDictToJSONString:pov];
     [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:POSITION :jsonStr]];
 }
@@ -471,6 +475,14 @@ static const CommandType observedCommands[] = {
     [AVCaptureManager deleteVideo:file];
 }
 
+//- (void)handleSetRecordingModeCommand:(NSNotification *)notification {
+//    Command *cmd = [Command getCommandFromNotification:notification];
+//    if ([cmd isKindOfClass:[CommandWithValue class]]) {
+//        NSString *jsonString = ((CommandWithValue *) cmd).dataAsString;
+//        NSDictionary *dict = [CommonUtility getNSDictFromJSONString:jsonString];
+//        // TODO: Get mode and possible timeAfter and timeBefore values
+//    }
+//}
 
 // =============================================================================
 #pragma mark - Gesture Handler

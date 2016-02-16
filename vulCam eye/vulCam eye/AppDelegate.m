@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import "CameraSettings.h"
 #import "CommonNotificationNames.h"
+#import "CommonJSONKeys.h"
 
 @interface AppDelegate ()
 
@@ -19,12 +20,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    NSDictionary *appDefaults = @{@"framerate" : @120,
-            @"yaw" : @0,
-            @"pitch" : @0,
-            @"dist" : @10,
+    NSDictionary *appDefaults = @{kVVFramerateKey : @120,
             @"uuid" : [NSUUID UUID].UUIDString,
-            @"shutterSpeed" : @125};
+            kVVShutterSpeedKey : @125,
+            kVVMaxFramerateKey : @120};
     [[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];
     if (getenv("NSZombieEnabled") || getenv("NSAutoreleaseFreedObjectCheckEnabled")) {
         NSLog(@"NSZombieEnabled/NSAutoreleaseFreedObjectCheckEnabled enabled!");

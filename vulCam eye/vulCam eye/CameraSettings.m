@@ -7,6 +7,8 @@
 //
 
 #import "CameraSettings.h"
+#import "CommonJSONKeys.h"
+#import "FileLogger.h"
 #import <UIKit/UIKit.h>
 
 @implementation CameraSettings
@@ -17,7 +19,6 @@
 @synthesize yaw;
 @synthesize pitch;
 @synthesize dist;
-@synthesize roll;
 @synthesize exposureMode;
 @synthesize autoFocusRange;
 @synthesize focusMode;
@@ -25,7 +26,7 @@
 @synthesize smoothFocusEnabled;
 @synthesize wbMode;
 
-+ (id)sharedVariables {
++ (id)sharedVariables {	
     static CameraSettings *sharedVariables = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -38,13 +39,12 @@
     self = [super init];
     if (self) {
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        maxFramerate = 240;
-        framerate = (int) [defaults integerForKey:@"framerate"];
-        yaw = (int) [defaults integerForKey:@"yaw"];
-        pitch = (int) [defaults integerForKey:@"pitch"];
-        dist = (int) [defaults integerForKey:@"dist"];
-        shutterSpeed = (int) [defaults integerForKey:@"shutterSpeed"];
-        roll = 0;
+        maxFramerate = (int) [defaults integerForKey:kVVMaxFramerateKey];
+        framerate = (int) [defaults integerForKey:kVVFramerateKey];
+        yaw = (int) [defaults integerForKey:kVVYawKey];
+        pitch = (int) [defaults integerForKey:kVVPitchKey];
+        dist = [defaults doubleForKey:kVVDistanceKey];
+        shutterSpeed = (int) [defaults integerForKey:kVVShutterSpeedKey];
         exposureMode = AVCaptureExposureModeAutoExpose;
         focusMode = AVCaptureFocusModeAutoFocus;
         smoothFocusEnabled = YES;
@@ -55,20 +55,29 @@
     return self;
 }
 
+- (void)setMaxFramerate:(int)max {
+    maxFramerate = max;
+    [FileLogger logToFile:[NSString stringWithFormat:@"Max framerate set to %d", max]];
+}
+
 - (NSDictionary *)getPositionJson {
     UIDeviceOrientation orient = [UIDevice currentDevice].orientation;
     NSNumber *rll = UIDeviceOrientationIsPortrait(orient) ? orient == UIDeviceOrientationPortrait ? @(-90) : @90 : @0;
-    NSDictionary *pov = @{@"dist" : @(dist), @"yaw" : @(yaw), @"pitch" : @(pitch), @"roll" : rll};
+    NSDictionary *pov = @{kVVDistanceKey : @(dist),
+                          kVVYawKey : @(yaw),
+                          kVVPitchKey : @(pitch),
+                          kVVRollKey : rll};
     return pov;
 }
 
 - (void)saveSettings {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setValue:@(framerate) forKey:@"framerate"];
-    [defaults setValue:@(dist) forKey:@"dist"];
-    [defaults setValue:@(yaw) forKey:@"yaw"];
-    [defaults setValue:@(pitch) forKey:@"pitch"];
-    [defaults setValue:@(shutterSpeed) forKey:@"shutterSpeed"];
+    [defaults setValue:@(framerate) forKey:kVVFramerateKey];
+    [defaults setValue:@(dist) forKey:kVVDistanceKey];
+    [defaults setValue:@(yaw) forKey:kVVYawKey];
+    [defaults setValue:@(pitch) forKey:kVVPitchKey];
+    [defaults setValue:@(shutterSpeed) forKey:kVVShutterSpeedKey];
+    [defaults setValue:@(maxFramerate) forKey:kVVMaxFramerateKey];
 }
 
 @end

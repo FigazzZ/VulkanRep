@@ -54,6 +54,8 @@ typedef NS_ENUM(NSInteger, RecordingMode) {
 
 - (void)closeAssetWriter;
 
+- (void)startAssetWriter;
+
 - (void)startRecording;
 
 - (void)stopRecording;
