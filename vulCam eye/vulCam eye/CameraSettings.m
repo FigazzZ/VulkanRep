@@ -8,7 +8,6 @@
 
 #import "CameraSettings.h"
 #import "CommonJSONKeys.h"
-#import "FileLogger.h"
 #import <UIKit/UIKit.h>
 
 @implementation CameraSettings
@@ -53,11 +52,6 @@
         stabilizationMode = AVCaptureVideoStabilizationModeAuto;
     }
     return self;
-}
-
-- (void)setMaxFramerate:(int)max {
-    maxFramerate = max;
-    [FileLogger logToFile:[NSString stringWithFormat:@"Max framerate set to %d", max]];
 }
 
 - (NSDictionary *)getPositionJson {
