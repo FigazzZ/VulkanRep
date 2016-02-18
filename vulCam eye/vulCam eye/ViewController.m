@@ -33,7 +33,6 @@ static const CommandType observedCommands[] = {
         CAMERA_SETTINGS,
         SET_FPS,
         SET_SHUTTERSPEED,
-        SET_RECORDING_MODE
 };
 
 @interface ViewController ()
@@ -463,26 +462,20 @@ static const CommandType observedCommands[] = {
         NSString *jsonString = ((CommandWithValue *) cmd).dataAsString;
         NSDictionary *dict = [CommonUtility getNSDictFromJSONString:jsonString][@"touch"];
         CFDictionaryRef pointDict = (__bridge_retained CFDictionaryRef) (dict);
-        CGPoint point;
-        if (CGPointMakeWithDictionaryRepresentation(pointDict, &point)) {
-            [_captureManager setCameraSettings:point];
+        if(pointDict != nil) {
+            CGPoint point;
+            if (CGPointMakeWithDictionaryRepresentation(pointDict, &point)) {
+                [_captureManager setCameraSettings:point];
+            }
+            
+            CFRelease(pointDict);
         }
-        CFRelease(pointDict);
     }
 }
 
 - (void)handleDeleteCommand:(NSNotification *)notification {
     [AVCaptureManager deleteVideo:file];
 }
-
-//- (void)handleSetRecordingModeCommand:(NSNotification *)notification {
-//    Command *cmd = [Command getCommandFromNotification:notification];
-//    if ([cmd isKindOfClass:[CommandWithValue class]]) {
-//        NSString *jsonString = ((CommandWithValue *) cmd).dataAsString;
-//        NSDictionary *dict = [CommonUtility getNSDictFromJSONString:jsonString];
-//        // TODO: Get mode and possible timeAfter and timeBefore values
-//    }
-//}
 
 // =============================================================================
 #pragma mark - Gesture Handler
