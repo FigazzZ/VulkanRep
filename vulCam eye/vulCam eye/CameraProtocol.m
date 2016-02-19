@@ -40,6 +40,10 @@
             // Fall through
         case SET_FPS:
             // Fall through
+        case IMPACT_START:
+            // Fall through
+        case IMPACT_STOP:
+            // Fall through
         case VIDEODATA:
             return true;
         default:
