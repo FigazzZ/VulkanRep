@@ -18,7 +18,7 @@ typedef NS_ENUM(NSInteger, CameraState) {
 };
 
 typedef NS_ENUM(NSInteger, RecordingMode) {
-    NORMAL,
+    STANDARD,
     IMPACT
 };
 
@@ -26,13 +26,10 @@ typedef NS_ENUM(NSInteger, RecordingMode) {
 
 @property(NS_NONATOMIC_IOSONLY, getter=isRecording, readonly) BOOL isRecording;
 @property(NS_NONATOMIC_IOSONLY, getter=isStreaming, readonly) BOOL isStreaming;
-@property(NS_NONATOMIC_IOSONLY, getter=getVideoFile, readonly, copy) NSURL *videoFile;
 @property(nonatomic, setter=setStreamServer:, weak) StreamServer *streamServer;
-@property(nonatomic) VideoTrimmer *videoTrimmer;
-@property(nonatomic) RecordingMode recordingMode;
 @property(nonatomic) CMTime impactTime;
-@property(nonatomic) NSInteger timeBefore;
-@property(nonatomic) NSInteger timeAfter;
+@property(nonatomic) float timeBefore;
+@property(nonatomic) float timeAfter;
 
 - (instancetype)init NS_UNAVAILABLE;
 
@@ -56,7 +53,7 @@ typedef NS_ENUM(NSInteger, RecordingMode) {
 
 - (void)startAssetWriter;
 
-- (void)startRecording;
+- (void)startRecording:(RecordingMode)mode;
 
 - (void)stopRecording;
 

@@ -12,8 +12,9 @@
 
 @interface VideoTrimmer : NSObject
 
-@property(nonatomic) NSURL *fileURL;
-
-- (BOOL)trimVideoAtURL:(NSURL *)videoURL atRange:(CMTimeRange)range;
++ (BOOL)trimVideoAtURL:(NSURL *)videoURL
+        withImpactTime:(CMTime)impactTime
+             timeAfter:(float)timeAfter
+            timeBefore:(float)timeBefore;
 
 @end

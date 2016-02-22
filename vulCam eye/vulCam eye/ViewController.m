@@ -72,7 +72,7 @@ static const CommandType observedCommands[] = {
     tapGesture.numberOfTapsRequired = 2;
     [self.view addGestureRecognizer:tapGesture];
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    dispatch_async(queue, ^{        
+    dispatch_async(queue, ^{
         socketHandler = [[NetworkSocketHandler alloc] init:1111
                                                   protocol:[[CameraProtocol alloc] init]
                                               minServerVer:kMinServerVersion];
@@ -301,7 +301,7 @@ static const CommandType observedCommands[] = {
     Command *cmd = [Command getCommandFromNotification:notification];
     if ([cmd isKindOfClass:[CommandWithValue class]]) {
         CommandWithValue *valueCommand = (CommandWithValue *) cmd;
-         NSInteger framerate = valueCommand.dataAsInt;
+        NSInteger framerate = valueCommand.dataAsInt;
         [self setFPS:framerate];
     }
 }
@@ -326,7 +326,7 @@ static const CommandType observedCommands[] = {
             [socketHandler sendCommand:[[Command alloc] init:OK]];
             [_captureManager startAssetWriter];
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, MAX(interval_in_nanos, 0)), dispatch_get_main_queue(), ^{
-                [_captureManager startRecording];
+                [_captureManager startRecording:STANDARD];
             });
         } else {
             NSLog(@"Start time missing");
@@ -351,9 +351,18 @@ static const CommandType observedCommands[] = {
 - (void)handleImpactStartCommand:(NSNotification *)notification {
     if (mode == CAMERA_MODE && !_captureManager.isRecording) {
         if (_timeOffset != INFINITY) {
-            [socketHandler sendCommand:[[Command alloc] init:OK]];
-            impactStart = [NSDate date].timeIntervalSince1970 + _timeOffset;
-            [_captureManager startRecording];
+            Command *command = [Command getCommandFromNotification:notification];
+            if ([command isKindOfClass:[CommandWithValue class]]) {
+                [socketHandler sendCommand:[[Command alloc] init:OK]];
+                [_captureManager startRecording:IMPACT];
+                impactStart = [NSDate date].timeIntervalSince1970;
+                NSString *JSONString = [[NSString alloc] initWithData:command.data encoding:NSUTF8StringEncoding];
+                NSDictionary *json = [CommonUtility getNSDictFromJSONString:JSONString];
+                [_captureManager setTimeAfter:[json[kVVImpactAfterKey] floatValue]];
+                [_captureManager setTimeBefore:[json[kVVImpactBeforeKey] floatValue]];
+            } else {
+                [socketHandler sendCommand:[[Command alloc] init:NOT_OK]];
+            }
         } else {
             NSLog(@"Time offset missing");
             [socketHandler sendCommand:[[Command alloc] init:NOT_OK]];
@@ -372,10 +381,12 @@ static const CommandType observedCommands[] = {
             NSString *time = [[NSString alloc] initWithData:command.data encoding:NSUTF8StringEncoding];
             NSTimeInterval impactTime = time.doubleValue / 1000.f + _timeOffset;
             NSTimeInterval interval = impactTime + _captureManager.timeAfter + 0.5;
+            NSDate *impactDate = [NSDate dateWithTimeIntervalSince1970:interval];
+            interval = impactDate.timeIntervalSinceNow;
             int64_t interval_in_nanos = (int64_t) (interval * NSEC_PER_SEC);
             NSLog(@"Stopping after %f seconds", interval);
             [socketHandler sendCommand:[[Command alloc] init:OK]];
-            _captureManager.impactTime = CMTimeMakeWithSeconds(impactTime - impactStart, USEC_PER_SEC);
+            _captureManager.impactTime = CMTimeMakeWithSeconds(impactTime - impactStart, NSEC_PER_SEC);
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, MAX(interval_in_nanos, 0)), dispatch_get_main_queue(), ^{
                 [_captureManager stopRecording];
             });
@@ -450,8 +461,8 @@ static const CommandType observedCommands[] = {
             kVVYawKey : @(sharedVars.yaw),
             kVVPitchKey : @(sharedVars.pitch),
             kVVMaxFramerateKey : @(sharedVars.maxFramerate),
-                          kVVFramerateKey: @(sharedVars.framerate),
-                          kVVShutterSpeedKey:@(sharedVars.shutterSpeed)};
+            kVVFramerateKey : @(sharedVars.framerate),
+            kVVShutterSpeedKey : @(sharedVars.shutterSpeed)};
     NSString *jsonStr = [CommonUtility convertNSDictToJSONString:pov];
     [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:POSITION :jsonStr]];
 }
@@ -462,12 +473,12 @@ static const CommandType observedCommands[] = {
         NSString *jsonString = ((CommandWithValue *) cmd).dataAsString;
         NSDictionary *dict = [CommonUtility getNSDictFromJSONString:jsonString][@"touch"];
         CFDictionaryRef pointDict = (__bridge_retained CFDictionaryRef) (dict);
-        if(pointDict != nil) {
+        if (pointDict != nil) {
             CGPoint point;
             if (CGPointMakeWithDictionaryRepresentation(pointDict, &point)) {
                 [_captureManager setCameraSettings:point];
             }
-            
+
             CFRelease(pointDict);
         }
     }
