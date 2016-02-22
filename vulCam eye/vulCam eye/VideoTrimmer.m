@@ -35,12 +35,13 @@
                 NSLog(@"AVAssetExportSessionStatusCompleted");
                 [[NSNotificationCenter defaultCenter] postNotificationName:kNNFinishTrimming object:fileURL];
             } else if (AVAssetExportSessionStatusFailed == exportSession.status) {
-                // a failure may happen because of an event out of your control
-                // for example, an interruption like a phone call comming in
-                // make sure and handle this case appropriately
+                [[NSNotificationCenter defaultCenter] postNotificationName:kNNRecordingFailed object:nil];
                 NSLog(@"AVAssetExportSessionStatusFailed");
+                [AVCaptureManager deleteVideo:fileURL];
             } else {
-                NSLog(@"Export Session Status: %ld", (long)exportSession.status);
+                [[NSNotificationCenter defaultCenter] postNotificationName:kNNRecordingFailed object:nil];
+                NSLog(@"Export Session Status: %ld", (long) exportSession.status);
+                [AVCaptureManager deleteVideo:fileURL];
             }
         }];
     }

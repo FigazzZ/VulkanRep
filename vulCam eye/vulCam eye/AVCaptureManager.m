@@ -436,7 +436,8 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
         if (recordingMode == IMPACT) {
             if (![VideoTrimmer trimVideoAtURL:fileURL withImpactTime:_impactTime timeAfter:_timeAfter timeBefore:_timeBefore]) {
                 NSLog(@"Setting up the VideoTrimmer failed");
-                // TODO: Notify server and pad that the recording failed
+                [[NSNotificationCenter defaultCenter] postNotificationName:kNNRecordingFailed object:nil];
+                [AVCaptureManager deleteVideo:fileURL];
             }
         } else {
             NSURL *file = fileURL;

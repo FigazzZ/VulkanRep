@@ -178,6 +178,11 @@ static const CommandType observedCommands[] = {
     [center addObserver:self selector:@selector(receiveStreamNotification:) name:kNNStream object:nil];
     [center addObserver:self selector:@selector(sendStopOKCommand) name:kNNStopOK object:nil];
     [center addObserver:self selector:@selector(sendJsonAndVideo:) name:kNNStopRecording object:nil];
+    [center addObserver:self selector:@selector(sendFailedRecordingCommand) name:kNNRecordingFailed object:nil];
+}
+
+- (void)sendFailedRecordingCommand {
+    [socketHandler sendCommand:[[Command alloc] init:RECORDING_FAILED]];
 }
 
 - (void)receiveStreamNotification:(NSNotification *)notification {
