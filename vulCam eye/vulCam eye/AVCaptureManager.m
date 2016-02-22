@@ -38,6 +38,7 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
     VideoOutput *videoOutput;
     BOOL videoWritingFinished;
     BOOL audioWritingFinished;
+    RecordingMode recordingMode;
     NSURL *fileURL;
     double lux;
 }
@@ -45,8 +46,10 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
 - (instancetype)initWithPreviewView:(UIView *)previewView {
     self = [super init];
     if (self) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setStreamState:) name:kNNStream object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(finishRecording:) name:kNNFinishRecording object:nil];
+        NSNotificationCenter *nCenter = [NSNotificationCenter defaultCenter];
+        [nCenter addObserver:self selector:@selector(setStreamState:) name:kNNStream object:nil];
+        [nCenter addObserver:self selector:@selector(finishRecording:) name:kNNFinishRecording object:nil];
+        [nCenter addObserver:self selector:@selector(finishTrimming:) name:kNNFinishTrimming object:nil];
         //        _writingQueue = dispatch_queue_create("writingQueue", DISPATCH_QUEUE_SERIAL);
         videoWritingFinished = NO;
         audioWritingFinished = NO;
@@ -189,9 +192,22 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
             }];
         }
     }
-    @catch (NSException *exception) { 
+    @catch (NSException *exception) {
         NSLog(@"Closing the assetwriter failed");
     }
+}
+
+- (void)finishTrimming:(NSNotification *)notification {
+    if (notification.object != nil && [notification.object isKindOfClass:[NSURL class]]) {
+        NSURL *videoURL = notification.object;
+        [[NSNotificationCenter defaultCenter] postNotificationName:kNNStopRecording
+                                                            object:self
+                                                          userInfo:@{@"file" : videoURL}];
+        // This fileURL points to the original file
+        [AVCaptureManager deleteVideo:fileURL];
+        [self prepareAssetWriter];
+    }
+
 }
 
 // ====================================================
@@ -310,8 +326,8 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
 
             if (range.minFrameRate <= desiredFPS && desiredFPS <= range.maxFrameRate && width <= 1280) {
                 selectedFormat = format;
-                settings.framerate = desiredFPS;
-                if (videoOutput != nil) {                    
+                settings.framerate = (int) desiredFPS;
+                if (videoOutput != nil) {
                     videoOutput.videoFPS = (int32_t) desiredFPS;
                 }
                 framerateChanged = YES;
@@ -371,22 +387,31 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
     }
 }
 
-- (void)startRecording {
+- (void)startRecording:(RecordingMode)mode {
     [self startAssetWriter];
     videoOutput.isRecording = YES;
 
 #ifdef USE_AUDIO
     audioOutput.isRecording = YES;
 #endif
-    timer = [NSTimer scheduledTimerWithTimeInterval:15.1
-                                             target:self
-                                           selector:@selector(stopRecording)
-                                           userInfo:nil
-                                            repeats:NO];
+    recordingMode = mode;
+    if (mode == STANDARD) {
+        timer = [NSTimer scheduledTimerWithTimeInterval:15.1
+                                                 target:self
+                                               selector:@selector(stopRecording)
+                                               userInfo:nil
+                                                repeats:NO];
+    } else {
+        if (timer != nil) {
+            [timer invalidate];
+        }
+    }
 }
 
 - (void)stopRecording {
-    [timer invalidate];
+    if (timer != nil) {
+        [timer invalidate];
+    }
     [[NSNotificationCenter defaultCenter] postNotificationName:kNNStopOK object:self userInfo:nil];
     videoOutput.isRecording = NO;
 #ifdef USE_AUDIO
@@ -408,19 +433,23 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
     }
 #endif
     [writer finishWritingWithCompletionHandler:^(void) {
-        [[NSNotificationCenter defaultCenter]
-                postNotificationName:kNNStopRecording
-                              object:self
-                            userInfo:@{@"file" : fileURL}];
+        if (recordingMode == IMPACT) {
+            if (![VideoTrimmer trimVideoAtURL:fileURL withImpactTime:_impactTime timeAfter:_timeAfter timeBefore:_timeBefore]) {
+                NSLog(@"Setting up the VideoTrimmer failed");
+                [[NSNotificationCenter defaultCenter] postNotificationName:kNNRecordingFailed object:nil];
+                [AVCaptureManager deleteVideo:fileURL];
+            }
+        } else {
+            NSURL *file = fileURL;
+            [[NSNotificationCenter defaultCenter] postNotificationName:kNNStopRecording object:self userInfo:@{@"file" : file}];
+            [self prepareAssetWriter];
+        }
         videoWritingFinished = NO;
+#ifdef USE_AUDIO
         audioWritingFinished = NO;
-        [self prepareAssetWriter];
+#endif
 
     }];
-}
-
-- (NSURL *)getVideoFile {
-    return fileURL;
 }
 
 + (void)deleteVideo:(NSURL *)file {

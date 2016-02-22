@@ -18,6 +18,7 @@
 		321325851C3BF9D80059BC97 /* ImageUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 321325841C3BF9D80059BC97 /* ImageUtility.m */; };
 		321325881C3BFE970059BC97 /* VideoOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 321325871C3BFE970059BC97 /* VideoOutput.m */; };
 		3213258B1C3C0ABB0059BC97 /* AudioOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 3213258A1C3C0ABB0059BC97 /* AudioOutput.m */; };
+		322E10331C57A661008C7636 /* VideoTrimmer.m in Sources */ = {isa = PBXBuildFile; fileRef = 322E10321C57A661008C7636 /* VideoTrimmer.m */; };
 		323CFABB1BAB0556003BFF22 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 323CFABA1BAB0556003BFF22 /* Foundation.framework */; };
 		323CFABD1BAB05BD003BFF22 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 323CFABC1BAB05BD003BFF22 /* UIKit.framework */; };
 		3256ACAF1BD1379300D06327 /* CamNotificationNames.m in Sources */ = {isa = PBXBuildFile; fileRef = 3256ACAE1BD1379300D06327 /* CamNotificationNames.m */; };
@@ -74,6 +75,8 @@
 		321325871C3BFE970059BC97 /* VideoOutput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoOutput.m; sourceTree = "<group>"; };
 		321325891C3C0ABB0059BC97 /* AudioOutput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioOutput.h; sourceTree = "<group>"; };
 		3213258A1C3C0ABB0059BC97 /* AudioOutput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioOutput.m; sourceTree = "<group>"; };
+		322E10311C57A661008C7636 /* VideoTrimmer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoTrimmer.h; sourceTree = "<group>"; };
+		322E10321C57A661008C7636 /* VideoTrimmer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoTrimmer.m; sourceTree = "<group>"; };
 		323CFABA1BAB0556003BFF22 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		323CFABC1BAB05BD003BFF22 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		3256ACAE1BD1379300D06327 /* CamNotificationNames.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CamNotificationNames.m; sourceTree = "<group>"; };
@@ -241,6 +244,8 @@
 				321325871C3BFE970059BC97 /* VideoOutput.m */,
 				321325891C3C0ABB0059BC97 /* AudioOutput.h */,
 				3213258A1C3C0ABB0059BC97 /* AudioOutput.m */,
+				322E10311C57A661008C7636 /* VideoTrimmer.h */,
+				322E10321C57A661008C7636 /* VideoTrimmer.m */,
 				32DF0F431B95C4E000467255 /* Images.xcassets */,
 				32DF0F361B95C4E000467255 /* Supporting Files */,
 			);
@@ -464,6 +469,7 @@
 				32855AEA1B95C6F0003CC551 /* ProtocolUtility.m in Sources */,
 				321325821C3BD4EE0059BC97 /* SplashScreen.m in Sources */,
 				32855ACF1B95C6BC003CC551 /* CameraSettings.m in Sources */,
+				322E10331C57A661008C7636 /* VideoTrimmer.m in Sources */,
 				32855AE91B95C6F0003CC551 /* VVProtocol.m in Sources */,
 				32DF0F3C1B95C4E000467255 /* AppDelegate.m in Sources */,
 				32AE56301C5B700000844C58 /* CommonJSONKeys.m in Sources */,

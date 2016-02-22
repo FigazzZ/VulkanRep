@@ -24,9 +24,11 @@
     switch (cType) {
         case START:
             // Fall through
-        case VERSION:
+        case IMPACT_START:
             // Fall through
-        case VALUE:
+        case IMPACT_STOP:
+            // Fall through
+        case VERSION:
             // Fall through
         case VIDEO_COMING:
             // Fall through
