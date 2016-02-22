@@ -347,6 +347,7 @@ static const CommandType observedCommands[] = {
 - (void)handleStopCommand:(NSNotification *)notification {
     if (_captureManager.isRecording) {
         [_captureManager stopRecording];
+        [socketHandler sendCommand:[[Command alloc] init:STOP_OK]]; 
     }
     else {
         [socketHandler sendCommand:[[Command alloc] init:NOT_OK]];
@@ -390,7 +391,7 @@ static const CommandType observedCommands[] = {
             interval = impactDate.timeIntervalSinceNow;
             int64_t interval_in_nanos = (int64_t) (interval * NSEC_PER_SEC);
             NSLog(@"Stopping after %f seconds", interval);
-            [socketHandler sendCommand:[[Command alloc] init:OK]];
+            [socketHandler sendCommand:[[Command alloc] init:STOP_OK]];
             _captureManager.impactTime = CMTimeMakeWithSeconds(impactTime - impactStart, NSEC_PER_SEC);
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, MAX(interval_in_nanos, 0)), dispatch_get_main_queue(), ^{
                 [_captureManager stopRecording];
