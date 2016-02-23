@@ -13,3 +13,5 @@ NSString *const kNNStream = @"Stream";
 NSString *const kNNStopOK = @"SendStopOKCommand";
 NSString *const kNNStopRecording = @"StopRecoding";
 NSString *const kNNFinishRecording = @"FinishRecording";
+NSString *const kNNFinishTrimming = @"FinishTrimming";
+NSString *const kNNRecordingFailed = @"RecordingFailed";

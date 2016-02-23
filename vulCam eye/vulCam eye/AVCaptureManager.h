@@ -10,18 +10,26 @@
 #import <AVFoundation/AVFoundation.h>
 #import <UIKit/UIKit.h>
 #import "StreamServer.h"
+#import "VideoTrimmer.h"
 
 typedef NS_ENUM(NSInteger, CameraState) {
     AIM_MODE,
     CAMERA_MODE
 };
 
+typedef NS_ENUM(NSInteger, RecordingMode) {
+    STANDARD,
+    IMPACT
+};
 
 @interface AVCaptureManager : NSObject
 
 @property(NS_NONATOMIC_IOSONLY, getter=isRecording, readonly) BOOL isRecording;
 @property(NS_NONATOMIC_IOSONLY, getter=isStreaming, readonly) BOOL isStreaming;
 @property(nonatomic, setter=setStreamServer:, weak) StreamServer *streamServer;
+@property(nonatomic) CMTime impactTime;
+@property(nonatomic) float timeBefore;
+@property(nonatomic) float timeAfter;
 
 - (instancetype)init NS_UNAVAILABLE;
 
@@ -30,8 +38,6 @@ typedef NS_ENUM(NSInteger, CameraState) {
 - (void)setCameraSettings:(CGPoint)point;
 
 - (void)resetFormat;
-
-@property(NS_NONATOMIC_IOSONLY, getter=getVideoFile, readonly, copy) NSURL *videoFile;
 
 - (void)addPreview:(UIView *)previewView;
 
@@ -47,7 +53,7 @@ typedef NS_ENUM(NSInteger, CameraState) {
 
 - (void)startAssetWriter;
 
-- (void)startRecording;
+- (void)startRecording:(RecordingMode)mode;
 
 - (void)stopRecording;
 
