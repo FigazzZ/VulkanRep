@@ -179,10 +179,15 @@ static const CommandType observedCommands[] = {
     [center addObserver:self selector:@selector(sendStopOKCommand) name:kNNStopOK object:nil];
     [center addObserver:self selector:@selector(sendJsonAndVideo:) name:kNNStopRecording object:nil];
     [center addObserver:self selector:@selector(sendFailedRecordingCommand) name:kNNRecordingFailed object:nil];
+    [center addObserver:self selector:@selector(sendTooShortImpactVidCommand) name:kNNTooShortImpactVid object:nil];
 }
 
 - (void)sendFailedRecordingCommand {
     [socketHandler sendCommand:[[Command alloc] init:RECORDING_FAILED]];
+}
+
+- (void)sendTooShortImpactVidCommand {
+    [socketHandler sendCommand:[Command alloc] init:TOO_SHORT_IMPACT];
 }
 
 - (void)receiveStreamNotification:(NSNotification *)notification {
@@ -347,7 +352,7 @@ static const CommandType observedCommands[] = {
 - (void)handleStopCommand:(NSNotification *)notification {
     if (_captureManager.isRecording) {
         [_captureManager stopRecording];
-        [socketHandler sendCommand:[[Command alloc] init:STOP_OK]]; 
+        [socketHandler sendCommand:[[Command alloc] init:STOP_OK]];
     }
     else {
         [socketHandler sendCommand:[[Command alloc] init:NOT_OK]];

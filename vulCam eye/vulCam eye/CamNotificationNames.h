@@ -15,5 +15,6 @@ extern NSString *const kNNStopRecording;
 extern NSString *const kNNFinishRecording;
 extern NSString *const kNNFinishTrimming;
 extern NSString *const kNNRecordingFailed;
+extern NSString *const kNNTooShortImpactVid;
 
 #endif /* CamNotificationNames_h */
