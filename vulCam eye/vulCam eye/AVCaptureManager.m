@@ -101,7 +101,7 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
         return NO;
     }
     [_captureSession addInput:audioIn];
-    
+
     audioOutput = [[AudioOutput alloc] init];
     if ([_captureSession canAddOutput:audioOutput.dataOutput]) {
         [_captureSession addOutput:audioOutput.dataOutput];
@@ -396,7 +396,15 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
 #endif
     recordingMode = mode;
     if (mode == STANDARD) {
-        timer = [NSTimer scheduledTimerWithTimeInterval:15.1
+        double autoStopTime = 15.1;
+        CameraSettings *sharedVars = [CameraSettings sharedVariables];
+        if(sharedVars.fps == 30) {
+            autoStopTime = 60.1;
+        }
+        else if(sharedVars.fps == 60) {
+            autoStopTime = 30.1;
+        }
+        timer = [NSTimer scheduledTimerWithTimeInterval:autoStopTime
                                                  target:self
                                                selector:@selector(stopRecording)
                                                userInfo:nil
@@ -426,7 +434,7 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
     else {
         audioWritingFinished = YES;
     }
-    
+
     if (!(videoWritingFinished && audioWritingFinished)) {
         return;
     }
