@@ -398,10 +398,10 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
     if (mode == STANDARD) {
         double autoStopTime = 15.1;
         CameraSettings *sharedVars = [CameraSettings sharedVariables];
-        if(sharedVars.fps == 30) {
+        if(sharedVars.framerate == 30) {
             autoStopTime = 60.1;
         }
-        else if(sharedVars.fps == 60) {
+        else if(sharedVars.framerate == 60) {
             autoStopTime = 30.1;
         }
         timer = [NSTimer scheduledTimerWithTimeInterval:autoStopTime
