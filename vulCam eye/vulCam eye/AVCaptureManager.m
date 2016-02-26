@@ -406,7 +406,7 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
         }
         timer = [NSTimer scheduledTimerWithTimeInterval:autoStopTime
                                                  target:self
-                                               selector:@selector(stopRecording)
+                                               selector:@selector(autoStopRecording)
                                                userInfo:nil
                                                 repeats:NO];
     } else {
@@ -420,6 +420,15 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
     if (timer != nil) {
         [timer invalidate];
     }
+    videoOutput.isRecording = NO;
+#ifdef USE_AUDIO
+    audioOutput.isRecording = NO;
+#endif
+}
+
+- (void)autoStopRecording {
+    [timer invalidate];
+    [[NSNotificationCenter defaultCenter] postNotificationName:kNNStopOK object:self userInfo:nil];
     videoOutput.isRecording = NO;
 #ifdef USE_AUDIO
     audioOutput.isRecording = NO;
