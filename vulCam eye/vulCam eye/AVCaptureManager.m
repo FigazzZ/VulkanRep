@@ -427,12 +427,8 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
 }
 
 - (void)autoStopRecording {
-    [timer invalidate];
     [[NSNotificationCenter defaultCenter] postNotificationName:kNNStopOK object:self userInfo:nil];
-    videoOutput.isRecording = NO;
-#ifdef USE_AUDIO
-    audioOutput.isRecording = NO;
-#endif
+    [self stopRecording];
 }
 
 - (void)finishRecording:(NSNotification *)notification {
