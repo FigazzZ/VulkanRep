@@ -15,4 +15,4 @@ NSString *const kNNStopRecording = @"StopRecoding";
 NSString *const kNNFinishRecording = @"FinishRecording";
 NSString *const kNNFinishTrimming = @"FinishTrimming";
 NSString *const kNNRecordingFailed = @"RecordingFailed";
-NSString *const kNNTooShortImpactVid = @"tooShortImpactVid"
+NSString *const kNNTooShortImpactVid = @"TooShortImpactVid";

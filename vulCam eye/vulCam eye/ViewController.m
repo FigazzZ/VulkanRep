@@ -187,7 +187,7 @@ static const CommandType observedCommands[] = {
 }
 
 - (void)sendTooShortImpactVidCommand {
-    [socketHandler sendCommand:[Command alloc] init:TOO_SHORT_IMPACT];
+    [socketHandler sendCommand:[[Command alloc] init:TOO_SHORT_IMPACT]];
 }
 
 - (void)receiveStreamNotification:(NSNotification *)notification {
