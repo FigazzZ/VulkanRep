@@ -101,7 +101,7 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
         return NO;
     }
     [_captureSession addInput:audioIn];
-    
+
     audioOutput = [[AudioOutput alloc] init];
     if ([_captureSession canAddOutput:audioOutput.dataOutput]) {
         [_captureSession addOutput:audioOutput.dataOutput];
@@ -396,9 +396,17 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
 #endif
     recordingMode = mode;
     if (mode == STANDARD) {
-        timer = [NSTimer scheduledTimerWithTimeInterval:15.1
+        double autoStopTime = 15.1;
+        CameraSettings *sharedVars = [CameraSettings sharedVariables];
+        if(sharedVars.framerate == 30) {
+            autoStopTime = 60.1;
+        }
+        else if(sharedVars.framerate == 60) {
+            autoStopTime = 30.1;
+        }
+        timer = [NSTimer scheduledTimerWithTimeInterval:autoStopTime
                                                  target:self
-                                               selector:@selector(stopRecording)
+                                               selector:@selector(autoStopRecording)
                                                userInfo:nil
                                                 repeats:NO];
     } else {
@@ -418,6 +426,11 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
 #endif
 }
 
+- (void)autoStopRecording {
+    [[NSNotificationCenter defaultCenter] postNotificationName:kNNStopOK object:self userInfo:nil];
+    [self stopRecording];
+}
+
 - (void)finishRecording:(NSNotification *)notification {
 #ifdef USE_AUDIO
     if([notification.object isKindOfClass:VideoOutput.class]){
@@ -426,7 +439,7 @@ static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
     else {
         audioWritingFinished = YES;
     }
-    
+
     if (!(videoWritingFinished && audioWritingFinished)) {
         return;
     }
