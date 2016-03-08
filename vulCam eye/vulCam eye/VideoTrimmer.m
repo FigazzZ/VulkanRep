@@ -55,6 +55,9 @@
                          duration:(const CMTime *)duration {
     Float64 secs = CMTimeGetSeconds(*impactTime) - *timeBefore;
     CMTime startDiff = secs > 0.0 ? CMTimeMakeWithSeconds(secs, NSEC_PER_SEC) : kCMTimeZero;
+    if(secs < 0.0){
+      [[NSNotificationCenter defaultCenter] postNotificationName:kNNTooShortImpactVid object:nil];
+    }
     CMTime endDiff = CMTimeMinimum(CMTimeAdd(*impactTime, CMTimeMakeWithSeconds(*timeAfter, NSEC_PER_SEC)), *duration);
     CMTimeRange range = CMTimeRangeFromTimeToTime(startDiff, endDiff);
     NSLog(@"Time Range: %@", [NSValue valueWithCMTimeRange:range]);

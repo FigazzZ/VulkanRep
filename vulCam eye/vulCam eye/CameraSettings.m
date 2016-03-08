@@ -72,6 +72,7 @@
     [defaults setValue:@(pitch) forKey:kVVPitchKey];
     [defaults setValue:@(shutterSpeed) forKey:kVVShutterSpeedKey];
     [defaults setValue:@(maxFramerate) forKey:kVVMaxFramerateKey];
+    [defaults synchronize];
 }
 
 @end
