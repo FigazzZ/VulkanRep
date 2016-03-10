@@ -17,7 +17,7 @@
 //#define USE_AUDIO
 #endif
 
-static const unsigned long kQVCameraSettingDelay = 100000000; // 100ms
+static const unsigned long kQVCameraSettingDelay = 0.3 * NSEC_PER_SEC;
 
 @interface AVCaptureManager () {
     CMTime defaultVideoMaxFrameDuration;
