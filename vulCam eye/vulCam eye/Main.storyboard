@@ -23,27 +23,30 @@
                                 <rect key="frame" x="0.0" y="0.0" width="472" height="320"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             </view>
-                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Wcf-ne-Agx" userLabel="Logo">
+                            <view hidden="YES" contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="Wcf-ne-Agx" userLabel="Logo">
                                 <rect key="frame" x="0.0" y="0.0" width="472" height="320"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="vulcan_logo" translatesAutoresizingMaskIntoConstraints="NO" id="kMS-CX-KVx">
                                         <rect key="frame" x="99" y="66" width="273" height="188"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="kMS-CX-KVx" secondAttribute="height" multiplier="273:188" id="rcO-k3-vkh"/>
+                                        </constraints>
                                     </imageView>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="bottom" secondItem="kMS-CX-KVx" secondAttribute="bottom" constant="66" id="Y8B-dg-P60"/>
+                                    <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="kMS-CX-KVx" secondAttribute="bottom" constant="66" id="Y8B-dg-P60"/>
                                     <constraint firstAttribute="trailing" secondItem="kMS-CX-KVx" secondAttribute="trailing" constant="100" id="aLi-ba-3MJ"/>
                                     <constraint firstItem="kMS-CX-KVx" firstAttribute="leading" secondItem="Wcf-ne-Agx" secondAttribute="leading" constant="99" id="mbc-eK-f7F"/>
-                                    <constraint firstItem="kMS-CX-KVx" firstAttribute="top" secondItem="Wcf-ne-Agx" secondAttribute="top" constant="66" id="tHS-74-ijH"/>
+                                    <constraint firstItem="kMS-CX-KVx" firstAttribute="top" relation="greaterThanOrEqual" secondItem="Wcf-ne-Agx" secondAttribute="top" constant="66" id="tHS-74-ijH"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9Lu-eY-n3Y" userLabel="Controls">
                                 <rect key="frame" x="472" y="0.0" width="96" height="320"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="749" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Phr-Hb-GEM" userLabel="CameraMode">
-                                        <rect key="frame" x="11" y="188" width="73" height="37"/>
+                                        <rect key="frame" x="11" y="188" width="73" height="36.5"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="Phr-Hb-GEM" secondAttribute="height" multiplier="2:1" id="m2Q-Cx-V8g"/>
                                         </constraints>
@@ -61,7 +64,7 @@
                                         </constraints>
                                     </imageView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Rzr-FH-Ton" userLabel="AimMode">
-                                        <rect key="frame" x="11" y="120" width="73" height="37"/>
+                                        <rect key="frame" x="11" y="120" width="73" height="36.5"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="Rzr-FH-Ton" secondAttribute="height" multiplier="2:1" id="DLb-3p-hJV"/>
                                         </constraints>
@@ -91,8 +94,9 @@
                                     <constraint firstAttribute="trailing" secondItem="Rzr-FH-Ton" secondAttribute="trailing" constant="12" id="7Md-Xt-xTn"/>
                                     <constraint firstItem="Rzr-FH-Ton" firstAttribute="height" secondItem="Phr-Hb-GEM" secondAttribute="height" id="8L0-iX-ATy"/>
                                     <constraint firstAttribute="trailing" secondItem="6or-C6-phU" secondAttribute="trailing" constant="12" id="9D1-DG-MXj"/>
+                                    <constraint firstItem="6or-C6-phU" firstAttribute="top" secondItem="Phr-Hb-GEM" secondAttribute="bottom" constant="36" id="AMh-zu-2dH"/>
                                     <constraint firstAttribute="trailing" secondItem="I1J-FG-PzV" secondAttribute="trailing" constant="12" id="CGg-jw-aZ3"/>
-                                    <constraint firstItem="Phr-Hb-GEM" firstAttribute="top" secondItem="Rzr-FH-Ton" secondAttribute="bottom" constant="32" id="HLC-yp-NXv"/>
+                                    <constraint firstItem="Phr-Hb-GEM" firstAttribute="top" relation="greaterThanOrEqual" secondItem="Rzr-FH-Ton" secondAttribute="bottom" constant="32" id="HLC-yp-NXv"/>
                                     <constraint firstItem="I1J-FG-PzV" firstAttribute="leading" secondItem="9Lu-eY-n3Y" secondAttribute="leading" constant="11" id="O66-je-G26"/>
                                     <constraint firstItem="Rzr-FH-Ton" firstAttribute="width" secondItem="Phr-Hb-GEM" secondAttribute="width" id="UsX-Cl-PSa"/>
                                     <constraint firstItem="6or-C6-phU" firstAttribute="width" secondItem="Rzr-FH-Ton" secondAttribute="width" id="i0G-9Q-phR"/>
@@ -143,11 +147,14 @@
                         </subviews>
                         <color key="backgroundColor" red="0.12152777777777779" green="0.12152777777777779" blue="0.12152777777777779" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
+                            <constraint firstAttribute="trailingMargin" secondItem="xl7-Ll-SgN" secondAttribute="trailing" constant="-20" id="4JS-M0-4BX"/>
                             <constraint firstItem="xl7-Ll-SgN" firstAttribute="bottom" secondItem="m6L-Bq-Nd9" secondAttribute="top" id="EYK-Ae-UKi"/>
+                            <constraint firstItem="xl7-Ll-SgN" firstAttribute="top" secondItem="VlZ-jV-slf" secondAttribute="bottom" constant="-20" id="Io1-Hm-C6Y"/>
                             <constraint firstItem="ULR-Ea-F6y" firstAttribute="top" secondItem="ALk-c9-gXC" secondAttribute="top" id="NY0-Mv-gYU"/>
                             <constraint firstItem="Wcf-ne-Agx" firstAttribute="top" secondItem="ALk-c9-gXC" secondAttribute="top" id="Njw-GQ-VfU"/>
                             <constraint firstItem="9Lu-eY-n3Y" firstAttribute="leading" secondItem="ULR-Ea-F6y" secondAttribute="trailing" id="Pqz-HK-jhE"/>
                             <constraint firstAttribute="bottom" secondItem="Wcf-ne-Agx" secondAttribute="bottom" id="QkG-zC-ywY"/>
+                            <constraint firstItem="xl7-Ll-SgN" firstAttribute="leading" secondItem="ALk-c9-gXC" secondAttribute="leadingMargin" constant="-20" id="UFR-l1-2FZ"/>
                             <constraint firstItem="ULR-Ea-F6y" firstAttribute="leading" secondItem="ALk-c9-gXC" secondAttribute="leading" id="Xok-WZ-Feg"/>
                             <constraint firstItem="9Lu-eY-n3Y" firstAttribute="leading" secondItem="Wcf-ne-Agx" secondAttribute="trailing" id="dOs-3i-zan"/>
                             <constraint firstItem="9Lu-eY-n3Y" firstAttribute="top" secondItem="ALk-c9-gXC" secondAttribute="top" id="dTc-sj-jJ6"/>
@@ -155,8 +162,6 @@
                             <constraint firstItem="Wcf-ne-Agx" firstAttribute="leading" secondItem="ALk-c9-gXC" secondAttribute="leading" id="fDo-Jw-VQy"/>
                             <constraint firstAttribute="bottom" secondItem="9Lu-eY-n3Y" secondAttribute="bottom" id="ho4-1T-I68"/>
                             <constraint firstAttribute="bottom" secondItem="ULR-Ea-F6y" secondAttribute="bottom" id="skt-yK-ado"/>
-                            <constraint firstItem="xl7-Ll-SgN" firstAttribute="leading" secondItem="Wcf-ne-Agx" secondAttribute="leading" id="tSy-JT-kmX"/>
-                            <constraint firstItem="xl7-Ll-SgN" firstAttribute="top" secondItem="Wcf-ne-Agx" secondAttribute="top" id="ymR-DE-Ub7"/>
                         </constraints>
                     </view>
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
@@ -185,7 +190,7 @@
     <resources>
         <image name="VulcanVisionWhite" width="1174" height="796"/>
         <image name="aim_mode_selected" width="500" height="250"/>
-        <image name="camera_mode_off" width="166" height="83"/>
+        <image name="camera_mode_off" width="500" height="250"/>
         <image name="vulcan_logo" width="195" height="132"/>
     </resources>
 </document>

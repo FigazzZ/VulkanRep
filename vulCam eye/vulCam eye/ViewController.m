@@ -62,7 +62,7 @@ static const CommandType observedCommands[] = {
     [self drawSplashScreen];
     [UIApplication sharedApplication].idleTimerDisabled = YES;
     [UIScreen mainScreen].brightness = 1;
-    [self drawGrid];
+    //[self drawGrid];
     _streamServer = [[StreamServer alloc] init];
     [_streamServer startAcceptingConnections];
     [self setupCamera];
@@ -83,6 +83,11 @@ static const CommandType observedCommands[] = {
     [self setUpWifiAnimation];
     [_wifiImage startAnimating];
     [self.view bringSubviewToFront:_aboutViewWrapper];
+    
+}
+
+- (void)viewDidLayoutSubviews {
+    [self drawGrid];
 }
 
 - (void)setupCamera {
@@ -123,6 +128,9 @@ static const CommandType observedCommands[] = {
         frame = CGRectMake(origin.x, origin.y, frame.size.height, frame.size.width);
     }
     frame.size.width -= _controls.frame.size.width - 1;
+    NSLog(@"%f", _gridView.frame.size.width);
+    NSLog(@"%f", _controls.frame.origin.x);
+
     CGFloat width = frame.size.width;
     CGFloat height = frame.size.height;
     float yDiv = height / 4.0F;
@@ -139,6 +147,7 @@ static const CommandType observedCommands[] = {
     CAShapeLayer *whiteLayer = [self drawPathOnLayer:path withColor:[UIColor whiteColor] andLineWidth:2.0];
     [_gridView.layer addSublayer:whiteLayer];
     [_gridView.layer addSublayer:blackLayer];
+    _logo.center = _logoView.center;
 }
 
 - (void)drawLineOnPath:(UIBezierPath *)path start:(CGPoint)start end:(CGPoint)end {
