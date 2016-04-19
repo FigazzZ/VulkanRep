@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Z1h-yx-sK9">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Z1h-yx-sK9">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
@@ -72,8 +72,11 @@
                                             <action selector="switchToAimMode:" destination="Z1h-yx-sK9" eventType="touchUpInside" id="lUl-u1-izo"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6or-C6-phU">
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6or-C6-phU">
                                         <rect key="frame" x="11" y="261" width="73" height="49"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="6or-C6-phU" secondAttribute="height" multiplier="73:49" id="qIm-aN-Iwq"/>
+                                        </constraints>
                                         <state key="normal" image="VulcanVisionWhite"/>
                                         <connections>
                                             <action selector="showAboutView:" destination="Z1h-yx-sK9" eventType="touchUpInside" id="Kod-WW-SIB"/>
@@ -84,10 +87,15 @@
                                 <constraints>
                                     <constraint firstItem="Rzr-FH-Ton" firstAttribute="top" secondItem="I1J-FG-PzV" secondAttribute="bottom" constant="37" id="1LE-mh-ObW"/>
                                     <constraint firstAttribute="trailing" secondItem="Phr-Hb-GEM" secondAttribute="trailing" constant="12" id="1em-E3-ydt"/>
+                                    <constraint firstAttribute="bottom" secondItem="6or-C6-phU" secondAttribute="bottom" constant="10" id="2T4-J2-qje"/>
                                     <constraint firstAttribute="trailing" secondItem="Rzr-FH-Ton" secondAttribute="trailing" constant="12" id="7Md-Xt-xTn"/>
+                                    <constraint firstItem="Rzr-FH-Ton" firstAttribute="height" secondItem="Phr-Hb-GEM" secondAttribute="height" id="8L0-iX-ATy"/>
+                                    <constraint firstAttribute="trailing" secondItem="6or-C6-phU" secondAttribute="trailing" constant="12" id="9D1-DG-MXj"/>
                                     <constraint firstAttribute="trailing" secondItem="I1J-FG-PzV" secondAttribute="trailing" constant="12" id="CGg-jw-aZ3"/>
                                     <constraint firstItem="Phr-Hb-GEM" firstAttribute="top" secondItem="Rzr-FH-Ton" secondAttribute="bottom" constant="32" id="HLC-yp-NXv"/>
                                     <constraint firstItem="I1J-FG-PzV" firstAttribute="leading" secondItem="9Lu-eY-n3Y" secondAttribute="leading" constant="11" id="O66-je-G26"/>
+                                    <constraint firstItem="Rzr-FH-Ton" firstAttribute="width" secondItem="Phr-Hb-GEM" secondAttribute="width" id="UsX-Cl-PSa"/>
+                                    <constraint firstItem="6or-C6-phU" firstAttribute="width" secondItem="Rzr-FH-Ton" secondAttribute="width" id="i0G-9Q-phR"/>
                                     <constraint firstAttribute="width" secondItem="9Lu-eY-n3Y" secondAttribute="height" multiplier="41:138" id="jtt-l8-k8R"/>
                                     <constraint firstItem="Rzr-FH-Ton" firstAttribute="leading" secondItem="9Lu-eY-n3Y" secondAttribute="leading" constant="11" id="plZ-xi-fTl"/>
                                     <constraint firstItem="Phr-Hb-GEM" firstAttribute="leading" secondItem="9Lu-eY-n3Y" secondAttribute="leading" constant="11" id="qPx-vM-Ifb"/>
