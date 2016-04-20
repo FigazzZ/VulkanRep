@@ -38,7 +38,9 @@
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstItem="kMS-CX-KVx" firstAttribute="centerY" secondItem="Wcf-ne-Agx" secondAttribute="centerY" id="3Un-7R-HPj"/>
+                                    <constraint firstAttribute="trailing" relation="lessThanOrEqual" secondItem="kMS-CX-KVx" secondAttribute="trailing" constant="73" id="Hv2-y6-mJQ"/>
                                     <constraint firstItem="kMS-CX-KVx" firstAttribute="centerX" secondItem="Wcf-ne-Agx" secondAttribute="centerX" id="LFN-X7-99h"/>
+                                    <constraint firstItem="kMS-CX-KVx" firstAttribute="leading" relation="lessThanOrEqual" secondItem="Wcf-ne-Agx" secondAttribute="leading" constant="73" id="NqO-QX-9OE"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9Lu-eY-n3Y" userLabel="Controls">

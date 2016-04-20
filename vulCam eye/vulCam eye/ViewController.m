@@ -147,7 +147,7 @@ static const CommandType observedCommands[] = {
     CAShapeLayer *whiteLayer = [self drawPathOnLayer:path withColor:[UIColor whiteColor] andLineWidth:2.0];
     [_gridView.layer addSublayer:whiteLayer];
     [_gridView.layer addSublayer:blackLayer];
-    _logo.center = _logoView.center;
+    //_logo.center = _logoView.center;
 }
 
 - (void)drawLineOnPath:(UIBezierPath *)path start:(CGPoint)start end:(CGPoint)end {
