@@ -1,21 +1,21 @@
 //
-//  ViewController.m
+//  VUVViewController.m
 //  vulCam eye
 //
 //  Created by Juuso Kaitila on 11.8.2015.
 //  Copyright (c) 2015 Bitwise Oy. All rights reserved.
 //
 
-#import "ViewController.h"
-#import "AVCaptureManager.h"
+#import "VUVViewController.h"
+#import "VUVAVCaptureManager.h"
 #import "NetworkSocketHandler.h"
-#import "CameraProtocol.h"
+#import "VUVCameraProtocol.h"
 #import "CommandWithValue.h"
-#import "CameraSettings.h"
+#import "VUVCameraSettings.h"
 #import "CommonUtility.h"
 #import "CommonNotificationNames.h"
 #import "CommonJSONKeys.h"
-#import "CamNotificationNames.h"
+#import "VUVCamNotificationNames.h"
 #import "SplashScreen.h"
 #import <ios-ntp/ios-ntp.h>
 
@@ -35,15 +35,15 @@ static const CommandType observedCommands[] = {
         SET_SHUTTERSPEED,
 };
 
-@interface ViewController ()
+@interface VUVViewController ()
 
-@property(nonatomic, strong) AVCaptureManager *captureManager;
-@property(nonatomic, strong) StreamServer *streamServer;
+@property(nonatomic, strong) VUVAVCaptureManager *captureManager;
+@property(nonatomic, strong) VUVStreamServer *streamServer;
 
 @end
 
 
-@implementation ViewController {
+@implementation VUVViewController {
     NetworkSocketHandler *socketHandler;
     NSNumber *delay;
     CameraState mode;
@@ -63,7 +63,7 @@ static const CommandType observedCommands[] = {
     [UIApplication sharedApplication].idleTimerDisabled = YES;
     [UIScreen mainScreen].brightness = 1;
     //[self drawGrid];
-    _streamServer = [[StreamServer alloc] init];
+    _streamServer = [[VUVStreamServer alloc] init];
     [_streamServer startAcceptingConnections];
     [self setupCamera];
 
@@ -74,7 +74,7 @@ static const CommandType observedCommands[] = {
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(queue, ^{
         socketHandler = [[NetworkSocketHandler alloc] init:1111
-                                                  protocol:[[CameraProtocol alloc] init]
+                                                  protocol:[[VUVCameraProtocol alloc] init]
                                               minServerVer:kMinServerVersion];
     });
     [self registerToNotifications];
@@ -91,7 +91,7 @@ static const CommandType observedCommands[] = {
 }
 
 - (void)setupCamera {
-    _captureManager = [[AVCaptureManager alloc] initWithPreviewView:self.view];
+    _captureManager = [[VUVAVCaptureManager alloc] initWithPreviewView:self.view];
     [self setCameraFramerate];
     _captureManager.streamServer = _streamServer;
 }
@@ -299,7 +299,7 @@ static const CommandType observedCommands[] = {
 - (void)setCameraFramerate {
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(queue, ^{
-        CameraSettings *sharedVars = [CameraSettings sharedVariables];
+        VUVCameraSettings *sharedVars = [VUVCameraSettings sharedVariables];
         if ([_captureManager switchFormatWithDesiredFPS:240.0]) {
             sharedVars.maxFramerate = 240;
         }
@@ -326,7 +326,7 @@ static const CommandType observedCommands[] = {
 }
 
 - (void)setFPS:(NSInteger)framerate {
-    CameraSettings *settings = [CameraSettings sharedVariables];
+    VUVCameraSettings *settings = [VUVCameraSettings sharedVariables];
     if (framerate <= settings.maxFramerate && framerate != settings.framerate && !_captureManager.isRecording) {
         [_captureManager switchFormatWithDesiredFPS:framerate];
     }
@@ -427,7 +427,7 @@ static const CommandType observedCommands[] = {
 - (void)sendJsonAndVideo:(NSNotification *)notification {
     NSDictionary *dict = notification.userInfo;
     NSMutableDictionary *json = [[NSMutableDictionary alloc] init];
-    CameraSettings *sharedVars = [CameraSettings sharedVariables];
+    VUVCameraSettings *sharedVars = [VUVCameraSettings sharedVariables];
     json[kVVFramerateKey] = @(sharedVars.framerate);
     json[kVVPointOfViewKey] = sharedVars.positionJson;
     json[kVVDelayKey] = delay;
@@ -449,7 +449,7 @@ static const CommandType observedCommands[] = {
     Command *command = [Command getCommandFromNotification:notification];
     assert(command != nil);
     if ([command isKindOfClass:[CommandWithValue class]]) {
-        CameraSettings *sharedVars = [CameraSettings sharedVariables];
+        VUVCameraSettings *sharedVars = [VUVCameraSettings sharedVariables];
         NSString *JSONString = [[NSString alloc] initWithData:command.data encoding:NSUTF8StringEncoding];
         NSDictionary *json = [CommonUtility getNSDictFromJSONString:JSONString];
         sharedVars.dist = [json[kVVDistanceKey] doubleValue];
@@ -468,7 +468,7 @@ static const CommandType observedCommands[] = {
 }
 
 - (void)setShutterSpeed:(int)shutterSpeed {
-    CameraSettings *sharedVars = [CameraSettings sharedVariables];
+    VUVCameraSettings *sharedVars = [VUVCameraSettings sharedVariables];
     if (shutterSpeed != sharedVars.shutterSpeed && !_captureManager.isRecording) {
         sharedVars.shutterSpeed = shutterSpeed;
         [_captureManager setShutterSpeed];
@@ -476,7 +476,7 @@ static const CommandType observedCommands[] = {
 }
 
 - (void)handleGetPositionCommand:(NSNotification *)notification {
-    CameraSettings *sharedVars = [CameraSettings sharedVariables];
+    VUVCameraSettings *sharedVars = [VUVCameraSettings sharedVariables];
     NSDictionary *pov = @{kVVDistanceKey : @(sharedVars.dist),
             kVVYawKey : @(sharedVars.yaw),
             kVVPitchKey : @(sharedVars.pitch),
@@ -505,7 +505,7 @@ static const CommandType observedCommands[] = {
 }
 
 - (void)handleDeleteCommand:(NSNotification *)notification {
-    [AVCaptureManager deleteVideo:file];
+    [VUVAVCaptureManager deleteVideo:file];
 }
 
 // =============================================================================

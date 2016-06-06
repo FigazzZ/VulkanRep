@@ -1,5 +1,5 @@
 //
-//  VideoTrimmer.h
+//  VUVVideoTrimmer.h
 //  vulCam eye
 //
 //  Created by Juuso Kaitila on 26/01/16.
@@ -10,7 +10,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import <UIKit/UIKit.h>
 
-@interface VideoTrimmer : NSObject
+@interface VUVVideoTrimmer : NSObject
 
 + (BOOL)trimVideoAtURL:(NSURL *)videoURL
         withImpactTime:(CMTime)impactTime

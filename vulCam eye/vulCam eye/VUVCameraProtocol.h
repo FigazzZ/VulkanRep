@@ -1,5 +1,5 @@
 //
-//  CameraProtocol.h
+//  VUVCameraProtocol.h
 //  vulCam eye
 //
 //  Created by Juuso Kaitila on 13.8.2015.
@@ -8,7 +8,7 @@
 
 #import "VVProtocol.h"
 
-@interface CameraProtocol : VVProtocol <CommandHandlingDelegate>
+@interface VUVCameraProtocol : VVProtocol <CommandHandlingDelegate>
 
 @end
 

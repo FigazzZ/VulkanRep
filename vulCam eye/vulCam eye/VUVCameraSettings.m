@@ -1,16 +1,16 @@
 //
-//  CameraSettings.m
+//  VUVCameraSettings.m
 //  vulCam eye
 //
 //  Created by Juuso Kaitila on 13.8.2015.
 //  Copyright (c) 2015 Bitwise Oy. All rights reserved.
 //
 
-#import "CameraSettings.h"
+#import "VUVCameraSettings.h"
 #import "CommonJSONKeys.h"
 #import <UIKit/UIKit.h>
 
-@implementation CameraSettings
+@implementation VUVCameraSettings
 
 @synthesize framerate;
 @synthesize maxFramerate;
@@ -26,7 +26,7 @@
 @synthesize wbMode;
 
 + (id)sharedVariables {	
-    static CameraSettings *sharedVariables = nil;
+    static VUVCameraSettings *sharedVariables = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         sharedVariables = [[self alloc] init];

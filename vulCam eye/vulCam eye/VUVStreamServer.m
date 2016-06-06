@@ -1,17 +1,17 @@
 //
-//  StreamServer.m
+//  VUVStreamServer.m
 //  vulCam eye
 //
 //  Created by Juuso Kaitila on 18/08/15.
 //  Copyright (c) 2015 Bitwise Oy. All rights reserved.
 //
 
-#import "StreamServer.h"
-#import "CamNotificationNames.h"
+#import "VUVStreamServer.h"
+#import "VUVCamNotificationNames.h"
 
 NSString *const kQVStreamBoundary = @"boundary";
 
-@implementation StreamServer {
+@implementation VUVStreamServer {
     dispatch_queue_t socketQueue;
     NSString *msg;
 }

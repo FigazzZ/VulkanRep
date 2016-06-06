@@ -1,5 +1,5 @@
 //
-//  StreamServer.h
+//  VUVStreamServer.h
 //  vulCam eye
 //
 //  Created by Juuso Kaitila on 18/08/15.
@@ -12,7 +12,7 @@
 
 extern NSString *const kQVStreamBoundary;
 
-@interface StreamServer : NSObject
+@interface VUVStreamServer : NSObject
 
 @property(strong) GCDAsyncSocket *connectedSocket;
 @property(nonatomic, strong) GCDAsyncSocket *serverSocket;

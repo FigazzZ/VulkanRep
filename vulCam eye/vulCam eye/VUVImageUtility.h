@@ -1,5 +1,5 @@
 //
-//  ImageUtility.h
+//  VUVImageUtility.h
 //  vulCam eye
 //
 //  Created by Juuso Kaitila on 05/01/16.
@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 
-@interface ImageUtility : NSObject
+@interface VUVImageUtility : NSObject
 
 + (UIImage *)scaleImage:(UIImage *)image toSize:(CGSize)newSize;
 

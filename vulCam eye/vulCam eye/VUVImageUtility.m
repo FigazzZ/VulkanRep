@@ -1,14 +1,14 @@
 //
-//  ImageUtility.m
+//  VUVImageUtility.m
 //  vulCam eye
 //
 //  Created by Juuso Kaitila on 05/01/16.
 //  Copyright © 2016 Bitwise Oy. All rights reserved.
 //
 
-#import "ImageUtility.h"
+#import "VUVImageUtility.h"
 
-@implementation ImageUtility
+@implementation VUVImageUtility
 
 + (UIImage *)scaleImage:(UIImage *)image toSize:(CGSize)newSize {
     // In next line, pass 0.0 to use the current device's pixel scaling factor (and thus account for Retina resolution).

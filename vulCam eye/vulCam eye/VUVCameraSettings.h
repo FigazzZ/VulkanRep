@@ -1,5 +1,5 @@
 //
-//  CameraSettings.h
+//  VUVCameraSettings.h
 //  vulCam eye
 //
 //  Created by Juuso Kaitila on 13.8.2015.
@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 
-@interface CameraSettings : NSObject {
+@interface VUVCameraSettings : NSObject {
     int framerate;
     int yaw;
     double dist;

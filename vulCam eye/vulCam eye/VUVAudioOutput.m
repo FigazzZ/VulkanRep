@@ -1,21 +1,21 @@
 //
-//  AudioOutput.m
+//  VUVAudioOutput.m
 //  vulCam eye
 //
 //  Created by Juuso Kaitila on 05/01/16.
 //  Copyright © 2016 Bitwise Oy. All rights reserved.
 //
 
-#import "AudioOutput.h"
-#import "CamNotificationNames.h"
+#import "VUVAudioOutput.h"
+#import "VUVCamNotificationNames.h"
 
-@interface AudioOutput () <AVCaptureAudioDataOutputSampleBufferDelegate>
+@interface VUVAudioOutput () <AVCaptureAudioDataOutputSampleBufferDelegate>
 
 @property(nonatomic, strong) dispatch_queue_t audioDataQueue;
 
 @end
 
-@implementation AudioOutput {
+@implementation VUVAudioOutput {
     BOOL finishRecording;
 }
 

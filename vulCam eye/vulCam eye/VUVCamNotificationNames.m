@@ -1,5 +1,5 @@
 //
-//  CamNotificationNames.m
+//  VUVCamNotificationNames.m
 //  vulCam eye
 //
 //  Created by Juuso Kaitila on 16/10/15.

@@ -1,5 +1,5 @@
 //
-//  AVCaptureManager.m
+//  VUVAVCaptureManager.m
 //  vulCam eye
 //
 //  Created by Juuso Kaitila on 23.8.2015.
@@ -7,11 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "AVCaptureManager.h"
-#import "CameraSettings.h"
-#import "CamNotificationNames.h"
-#import "VideoOutput.h"
-#import "AudioOutput.h"
+#import "VUVAVCaptureManager.h"
+#import "VUVCameraSettings.h"
+#import "VUVCamNotificationNames.h"
+#import "VUVVideoOutput.h"
+#import "VUVAudioOutput.h"
 
 #ifndef USE_AUDIO
 //#define USE_AUDIO
@@ -19,7 +19,7 @@
 
 static const unsigned long kQVCameraSettingDelay = 0.3 * NSEC_PER_SEC;
 
-@interface AVCaptureManager () {
+@interface VUVAVCaptureManager () {
     CMTime defaultVideoMaxFrameDuration;
 }
 
@@ -31,11 +31,11 @@ static const unsigned long kQVCameraSettingDelay = 0.3 * NSEC_PER_SEC;
 
 @end
 
-@implementation AVCaptureManager {
+@implementation VUVAVCaptureManager {
     NSTimer *timer;
     AVAssetWriter *writer;
-    AudioOutput *audioOutput;
-    VideoOutput *videoOutput;
+    VUVAudioOutput *audioOutput;
+    VUVVideoOutput *videoOutput;
     BOOL videoWritingFinished;
     BOOL audioWritingFinished;
     RecordingMode recordingMode;
@@ -87,7 +87,7 @@ static const unsigned long kQVCameraSettingDelay = 0.3 * NSEC_PER_SEC;
     _defaultFormat = videoDevice.activeFormat;
     defaultVideoMaxFrameDuration = videoDevice.activeVideoMaxFrameDuration;
 
-    videoOutput = [[VideoOutput alloc] initWithInput:videoIn];
+    videoOutput = [[VUVVideoOutput alloc] initWithInput:videoIn];
     if ([_captureSession canAddOutput:videoOutput.dataOutput]) {
         [_captureSession addOutputWithNoConnections:videoOutput.dataOutput];
         [_captureSession addConnection:videoOutput.connection];
@@ -126,7 +126,7 @@ static const unsigned long kQVCameraSettingDelay = 0.3 * NSEC_PER_SEC;
     _previewLayer.videoGravity = AVLayerVideoGravityResizeAspect;
     [previewView.layer insertSublayer:_previewLayer atIndex:0];
     AVCaptureConnection *connection = (_previewLayer).connection;
-    [VideoOutput configureVideoConnection:connection];
+    [VUVVideoOutput configureVideoConnection:connection];
 }
 
 - (void)addPreview:(UIView *)previewView {
@@ -147,7 +147,7 @@ static const unsigned long kQVCameraSettingDelay = 0.3 * NSEC_PER_SEC;
     [_captureSession startRunning];
 }
 
-- (void)setStreamServer:(StreamServer *)server {
+- (void)setStreamServer:(VUVStreamServer *)server {
     _streamServer = server;
     if (videoOutput != nil) {
         videoOutput.streamServer = server;
@@ -168,7 +168,7 @@ static const unsigned long kQVCameraSettingDelay = 0.3 * NSEC_PER_SEC;
 
 
 - (void)prepareAssetWriter {
-    fileURL = [AVCaptureManager generateFilePath];
+    fileURL = [VUVAVCaptureManager generateFilePath];
     NSError *err;
     writer = [[AVAssetWriter alloc] initWithURL:fileURL fileType:AVFileTypeMPEG4 error:&err];
     [videoOutput setupVideoAssetWriterInput];
@@ -188,7 +188,7 @@ static const unsigned long kQVCameraSettingDelay = 0.3 * NSEC_PER_SEC;
     @try {
         if (writer.status == AVAssetWriterStatusWriting) {
             [writer finishWritingWithCompletionHandler:^{
-                [AVCaptureManager deleteVideo:fileURL];
+                [VUVAVCaptureManager deleteVideo:fileURL];
             }];
         }
     }
@@ -204,7 +204,7 @@ static const unsigned long kQVCameraSettingDelay = 0.3 * NSEC_PER_SEC;
                                                             object:self
                                                           userInfo:@{@"file" : videoURL}];
         // This fileURL points to the original file
-        [AVCaptureManager deleteVideo:fileURL];
+        [VUVAVCaptureManager deleteVideo:fileURL];
         [self prepareAssetWriter];
     }
 
@@ -236,7 +236,7 @@ static const unsigned long kQVCameraSettingDelay = 0.3 * NSEC_PER_SEC;
     AVCaptureDevice *videoDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
     NSError *error;
     if ([videoDevice lockForConfiguration:&error]) {
-        CameraSettings *sharedVars = [CameraSettings sharedVariables];
+        VUVCameraSettings *sharedVars = [VUVCameraSettings sharedVariables];
         if ([videoDevice isExposureModeSupported:sharedVars.exposureMode]) {
             if (videoDevice.exposurePointOfInterestSupported) {
                 videoDevice.exposurePointOfInterest = point;
@@ -277,7 +277,7 @@ static const unsigned long kQVCameraSettingDelay = 0.3 * NSEC_PER_SEC;
     NSError *error;
 
     if ([videoDevice lockForConfiguration:&error]) {
-        CameraSettings *sharedVars = [CameraSettings sharedVariables];
+        VUVCameraSettings *sharedVars = [VUVCameraSettings sharedVariables];
         CMTime newSpeed = CMTimeMake(1, (int32_t) sharedVars.shutterSpeed);
         double nISO = pow(videoDevice.lensAperture, 2) / (CMTimeGetSeconds(newSpeed) * lux);
         double setISO = MIN(MAX(nISO, videoDevice.activeFormat.minISO), videoDevice.activeFormat.maxISO);
@@ -318,7 +318,7 @@ static const unsigned long kQVCameraSettingDelay = 0.3 * NSEC_PER_SEC;
     AVCaptureDevice *videoDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
     AVCaptureDeviceFormat *selectedFormat = nil;
     BOOL framerateChanged = NO;
-    CameraSettings *settings = [CameraSettings sharedVariables];
+    VUVCameraSettings *settings = [VUVCameraSettings sharedVariables];
     for (AVCaptureDeviceFormat *format in videoDevice.formats) {
         for (AVFrameRateRange *range in format.videoSupportedFrameRateRanges) {
             CMFormatDescriptionRef desc = format.formatDescription;
@@ -397,7 +397,7 @@ static const unsigned long kQVCameraSettingDelay = 0.3 * NSEC_PER_SEC;
     recordingMode = mode;
     if (mode == STANDARD) {
         double autoStopTime = 15;
-        CameraSettings *sharedVars = [CameraSettings sharedVariables];
+        VUVCameraSettings *sharedVars = [VUVCameraSettings sharedVariables];
         if(sharedVars.framerate == 30) {
             autoStopTime = 60;
         }
@@ -446,10 +446,10 @@ static const unsigned long kQVCameraSettingDelay = 0.3 * NSEC_PER_SEC;
 #endif
     [writer finishWritingWithCompletionHandler:^(void) {
         if (recordingMode == IMPACT) {
-            if (![VideoTrimmer trimVideoAtURL:fileURL withImpactTime:_impactTime timeAfter:_timeAfter timeBefore:_timeBefore]) {
+            if (![VUVVideoTrimmer trimVideoAtURL:fileURL withImpactTime:_impactTime timeAfter:_timeAfter timeBefore:_timeBefore]) {
                 NSLog(@"Setting up the VideoTrimmer failed");
                 [[NSNotificationCenter defaultCenter] postNotificationName:kNNRecordingFailed object:nil];
-                [AVCaptureManager deleteVideo:fileURL];
+                [VUVAVCaptureManager deleteVideo:fileURL];
             }
         } else {
             NSURL *file = fileURL;
