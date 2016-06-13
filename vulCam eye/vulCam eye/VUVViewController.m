@@ -596,10 +596,17 @@ static const CommandType observedCommands[] = {
 #pragma mark delegates
 
 - (void)reportFromDelegate {
+    // Don't sync while recording
+    if([_captureManager isRecording]) {
+        return;
+    }
+    
+    static const int timeQueryIntervalInSeconds = 10 * 60;
+    
     _timeOffset = netAssociation.offset;
-    if (_timeOffset != INFINITY && ntpTimer != nil && ntpTimer.timeInterval < 1800) {
+    if (_timeOffset != INFINITY && ntpTimer != nil && ntpTimer.timeInterval != timeQueryIntervalInSeconds) {
         [ntpTimer invalidate];
-        ntpTimer = [NSTimer scheduledTimerWithTimeInterval:1800
+        ntpTimer = [NSTimer scheduledTimerWithTimeInterval:timeQueryIntervalInSeconds
                                                     target:netAssociation
                                                   selector:@selector(sendTimeQuery)
                                                   userInfo:nil
