@@ -1,21 +1,21 @@
 //
-//  AppDelegate.m
+//  VUVAppDelegate.m
 //  vulCam eye
 //
 //  Created by Juuso Kaitila on 11.8.2015.
 //  Copyright (c) 2015 Bitwise Oy. All rights reserved.
 //
 
-#import "AppDelegate.h"
-#import "CameraSettings.h"
+#import "VUVAppDelegate.h"
+#import "VUVCameraSettings.h"
 #import "CommonNotificationNames.h"
 #import "CommonJSONKeys.h"
 
-@interface AppDelegate ()
+@interface VUVAppDelegate ()
 
 @end
 
-@implementation AppDelegate
+@implementation VUVAppDelegate
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
@@ -41,7 +41,7 @@
 - (void)applicationDidEnterBackground:(UIApplication *)application {
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-    [[CameraSettings sharedVariables] saveSettings];
+    [[VUVCameraSettings sharedVariables] saveSettings];
     [[NSNotificationCenter defaultCenter] postNotificationName:kNNCloseAll object:self];
 }
 

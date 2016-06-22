@@ -1,5 +1,5 @@
 //
-//  AboutView.h
+//  VUVAboutView.h
 //  vulCam eye
 //
 //  Created by Juuso Kaitila on 04/01/16.
@@ -8,7 +8,7 @@
 
 #import <WebKit/WebKit.h>
 
-@interface AboutView : UIView
+@interface VUVAboutView : UIView
 
 - (void)showAboutView;
 

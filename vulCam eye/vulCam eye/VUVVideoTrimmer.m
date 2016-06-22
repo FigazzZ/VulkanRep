@@ -1,16 +1,16 @@
 //
-//  VideoTrimmer.m
+//  VUVVideoTrimmer.m
 //  vulCam eye
 //
 //  Created by Juuso Kaitila on 26/01/16.
 //  Copyright © 2016 Bitwise Oy. All rights reserved.
 //
 
-#import "VideoTrimmer.h"
-#import "AVCaptureManager.h"
-#import "CamNotificationNames.h"
+#import "VUVVideoTrimmer.h"
+#import "VUVAVCaptureManager.h"
+#import "VUVCamNotificationNames.h"
 
-@implementation VideoTrimmer
+@implementation VUVVideoTrimmer
 
 + (BOOL)trimVideoAtURL:(NSURL *)videoURL
         withImpactTime:(CMTime)impactTime
@@ -24,7 +24,7 @@
     if (success) {
         CMTime duration = CMTimeMakeWithSeconds(CMTimeGetSeconds(asset.duration), NSEC_PER_SEC);
         CMTimeRange range = [self calculateTimeRange:&impactTime timeAfter:&timeAfter timeBefore:&timeBefore duration:&duration];
-        NSURL *fileURL = [AVCaptureManager generateFilePath];
+        NSURL *fileURL = [VUVAVCaptureManager generateFilePath];
         exportSession.outputURL = fileURL;
         exportSession.outputFileType = AVFileTypeMPEG4;
         exportSession.timeRange = range;
@@ -37,11 +37,11 @@
             } else if (AVAssetExportSessionStatusFailed == exportSession.status) {
                 [[NSNotificationCenter defaultCenter] postNotificationName:kNNRecordingFailed object:nil];
                 NSLog(@"AVAssetExportSessionStatusFailed");
-                [AVCaptureManager deleteVideo:fileURL];
+                [VUVAVCaptureManager deleteVideo:fileURL];
             } else {
                 [[NSNotificationCenter defaultCenter] postNotificationName:kNNRecordingFailed object:nil];
                 NSLog(@"Export Session Status: %ld", (long) exportSession.status);
-                [AVCaptureManager deleteVideo:fileURL];
+                [VUVAVCaptureManager deleteVideo:fileURL];
             }
         }];
     }

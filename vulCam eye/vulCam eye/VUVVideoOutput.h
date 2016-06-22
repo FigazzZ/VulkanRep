@@ -1,5 +1,5 @@
 //
-//  VideoOutput.h
+//  VUVVideoOutput.h
 //  vulCam eye
 //
 //  Created by Juuso Kaitila on 05/01/16.
@@ -8,9 +8,9 @@
 
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
-#import "StreamServer.h"
+#import "VUVStreamServer.h"
 
-@interface VideoOutput : NSObject
+@interface VUVVideoOutput : NSObject
 
 @property(nonatomic) AVCaptureVideoDataOutput *dataOutput;
 @property(nonatomic) AVCaptureConnection *connection;
@@ -18,7 +18,7 @@
 @property(nonatomic) int32_t videoFPS;
 @property(nonatomic) BOOL isRecording;
 @property(nonatomic) BOOL isStreaming;
-@property(nonatomic, weak) StreamServer *streamServer;
+@property(nonatomic, weak) VUVStreamServer *streamServer;
 
 - (instancetype)init NS_UNAVAILABLE;
 

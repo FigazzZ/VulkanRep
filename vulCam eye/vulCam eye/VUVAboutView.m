@@ -1,12 +1,12 @@
 //
-//  AboutView.m
+//  VUVAboutView.m
 //  vulCam eye
 //
 //  Created by Juuso Kaitila on 04/01/16.
 //  Copyright © 2016 Bitwise. All rights reserved.
 //
 
-#import "AboutView.h"
+#import "VUVAboutView.h"
 #import "CommonUtility.h"
 
 @implementation WKWebView (Scrolling)
@@ -45,7 +45,7 @@
 
 @end
 
-@implementation AboutView {
+@implementation VUVAboutView {
     NSString *htmlString;
     WKWebView *webView;
 }

@@ -1,5 +1,5 @@
 //
-//  AudioOutput.h
+//  VUVAudioOutput.h
 //  vulCam eye
 //
 //  Created by Juuso Kaitila on 05/01/16.
@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 
-@interface AudioOutput : NSObject
+@interface VUVAudioOutput : NSObject
 
 @property(nonatomic) AVCaptureAudioDataOutput *dataOutput;
 @property(nonatomic) AVAssetWriterInput *audioWriterInput;

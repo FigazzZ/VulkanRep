@@ -1,5 +1,5 @@
 //
-//  CameraProtocol.m
+//  VUVCameraProtocol.m
 //  vulCam eye
 //
 //  Created by Juuso Kaitila on 12.8.2015.
@@ -7,9 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "CameraProtocol.h"
+#import "VUVCameraProtocol.h"
 
-@implementation CameraProtocol
+@implementation VUVCameraProtocol
 
 - (instancetype)init {
     self = [super init];

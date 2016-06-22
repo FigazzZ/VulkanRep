@@ -1,15 +1,15 @@
 //
-//  VideoOutput.m
+//  VUVVideoOutput.m
 //  vulCam eye
 //
 //  Created by Juuso Kaitila on 05/01/16.
 //  Copyright © 2016 Bitwise Oy. All rights reserved.
 //
 
-#import "VideoOutput.h"
-#import "ImageUtility.h"
-#import "CameraSettings.h"
-#import "CamNotificationNames.h"
+#import "VUVVideoOutput.h"
+#import "VUVImageUtility.h"
+#import "VUVCameraSettings.h"
+#import "VUVCamNotificationNames.h"
 
 
 static const CGSize kQVStreamSize = (CGSize) {
@@ -17,14 +17,14 @@ static const CGSize kQVStreamSize = (CGSize) {
         .height = 180
 };
 
-@interface VideoOutput () <AVCaptureVideoDataOutputSampleBufferDelegate>
+@interface VUVVideoOutput () <AVCaptureVideoDataOutputSampleBufferDelegate>
 
 @property(nonatomic, strong) dispatch_queue_t videoDataQueue;
 @property(nonatomic, strong) dispatch_queue_t streamQueue;
 
 @end
 
-@implementation VideoOutput {
+@implementation VUVVideoOutput {
     AVAssetWriterInputPixelBufferAdaptor *pixelBufferAdaptor;
     BOOL finishRecording;
     int64_t frameNumber;
@@ -73,7 +73,7 @@ static const CGSize kQVStreamSize = (CGSize) {
 
 - (AVCaptureConnection *)createVideoConnectionForOutput:(AVCaptureOutput *)output andInput:(AVCaptureDeviceInput *)videoIn {
     AVCaptureConnection *connection = [[AVCaptureConnection alloc] initWithInputPorts:videoIn.ports output:output];
-    [VideoOutput configureVideoConnection:connection];
+    [VUVVideoOutput configureVideoConnection:connection];
     return connection;
 }
 
@@ -83,7 +83,7 @@ static const CGSize kQVStreamSize = (CGSize) {
         connection.videoOrientation = orientation;
     }
     if (connection.supportsVideoStabilization) {
-        connection.preferredVideoStabilizationMode = [[CameraSettings sharedVariables] stabilizationMode];
+        connection.preferredVideoStabilizationMode = [[VUVCameraSettings sharedVariables] stabilizationMode];
     }
 }
 
@@ -139,9 +139,9 @@ static const CGSize kQVStreamSize = (CGSize) {
         if (streamFrame >= streamFrameSkip) {
             CVImageBufferRef buf = (CVImageBufferRef) CFRetain(imageBuffer);
             dispatch_async(_streamQueue, ^(void) {
-                UIImage *image = [ImageUtility imageFromSampleBuffer:buf];
+                UIImage *image = [VUVImageUtility imageFromSampleBuffer:buf];
                 NSTimeInterval timestamp = [NSDate date].timeIntervalSince1970;
-                image = [ImageUtility scaleImage:image toSize:kQVStreamSize];
+                image = [VUVImageUtility scaleImage:image toSize:kQVStreamSize];
                 [_streamServer writeImageToSocket:image withTimestamp:timestamp];
                 if (buf != nil) {
                     CFRelease(buf);

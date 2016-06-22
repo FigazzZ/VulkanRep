@@ -1,5 +1,5 @@
 //
-//  AppDelegate.h
+//  VUVAppDelegate.h
 //  vulCam eye
 //
 //  Created by Juuso Kaitila on 11.8.2015.
@@ -12,7 +12,7 @@
 #define UBIQVUE_CAM
 #endif
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
+@interface VUVAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property(strong, nonatomic) UIWindow *window;
 

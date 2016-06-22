@@ -1,14 +1,14 @@
 //
-//  ViewController.h
+//  VUVViewController.h
 //  vulCam eye
 //
 //  Created by Juuso Kaitila on 11.8.2015.
 //  Copyright (c) 2015 Bitwise Oy. All rights reserved.
 
 #import <UIKit/UIKit.h>
-#import "AboutView.h"
+#import "VUVAboutView.h"
 
-@interface ViewController : UIViewController
+@interface VUVViewController : UIViewController
 
 @property(weak, nonatomic) IBOutlet UIImageView *wifiImage;
 @property(weak, nonatomic) IBOutlet UIView *gridView;
@@ -18,7 +18,7 @@
 @property(weak, nonatomic) IBOutlet UIButton *cameraMode;
 @property(weak, nonatomic) IBOutlet UIImageView *logo;
 @property(weak, nonatomic) IBOutlet UIView *aboutViewWrapper;
-@property(weak, nonatomic) IBOutlet AboutView *aboutView;
+@property(weak, nonatomic) IBOutlet VUVAboutView *aboutView;
 @property(weak, nonatomic) IBOutlet UIButton *closeButton;
 @property(nonatomic, readonly) double timeOffset;
 

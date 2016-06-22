@@ -1,5 +1,5 @@
 //
-//  AVCaptureManager.h
+//  VUVAVCaptureManager.h
 //  vulCam eye
 //
 //  Created by Juuso Kaitila on 23.8.2015.
@@ -9,8 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 #import <UIKit/UIKit.h>
-#import "StreamServer.h"
-#import "VideoTrimmer.h"
+#import "VUVStreamServer.h"
+#import "VUVVideoTrimmer.h"
 
 typedef NS_ENUM(NSInteger, CameraState) {
     AIM_MODE,
@@ -22,11 +22,11 @@ typedef NS_ENUM(NSInteger, RecordingMode) {
     IMPACT
 };
 
-@interface AVCaptureManager : NSObject
+@interface VUVAVCaptureManager : NSObject
 
 @property(NS_NONATOMIC_IOSONLY, getter=isRecording, readonly) BOOL isRecording;
 @property(NS_NONATOMIC_IOSONLY, getter=isStreaming, readonly) BOOL isStreaming;
-@property(nonatomic, setter=setStreamServer:, weak) StreamServer *streamServer;
+@property(nonatomic, setter=setStreamServer:, weak) VUVStreamServer *streamServer;
 @property(nonatomic) CMTime impactTime;
 @property(nonatomic) float timeBefore;
 @property(nonatomic) float timeAfter;
