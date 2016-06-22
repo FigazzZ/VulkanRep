@@ -112,3 +112,6 @@ xcuserdata
 *.xccheckout
 Pods/
 */Podfile.lock
+
+
+.idea
