@@ -446,15 +446,24 @@ static const unsigned long kQVCameraSettingDelay = 0.3 * NSEC_PER_SEC;
 #endif
     [writer finishWritingWithCompletionHandler:^(void) {
         if (recordingMode == IMPACT) {
-            if (![VUVVideoTrimmer trimVideoAtURL:fileURL withImpactTime:_impactTime timeAfter:_timeAfter timeBefore:_timeBefore]) {
+            if (![VUVVideoTrimmer trimImpactVideoAtURL:fileURL withImpactTime:_impactTime timeAfter:_timeAfter timeBefore:_timeBefore]) {
                 NSLog(@"Setting up the VideoTrimmer failed");
                 [[NSNotificationCenter defaultCenter] postNotificationName:kNNRecordingFailed object:nil];
                 [VUVAVCaptureManager deleteVideo:fileURL];
             }
         } else {
-            NSURL *file = fileURL;
-            [[NSNotificationCenter defaultCenter] postNotificationName:kNNStopRecording object:self userInfo:@{@"file" : file}];
-            [self prepareAssetWriter];
+            if (![VUVVideoTrimmer trimVideoBeginningAtUrl:fileURL withSecondsToTrim:_normalStartTimeDiff])
+            {
+                NSLog(@"Setting up the VideoTrimmer failed");
+                [[NSNotificationCenter defaultCenter] postNotificationName:kNNRecordingFailed object:nil];
+                [VUVAVCaptureManager deleteVideo:fileURL];
+            }
+            else
+            {
+                NSURL *file = fileURL;
+                [[NSNotificationCenter defaultCenter] postNotificationName:kNNStopRecording object:self userInfo:@{@"file" : file}];
+                [self prepareAssetWriter];
+            }
         }
         videoWritingFinished = NO;
 #ifdef USE_AUDIO

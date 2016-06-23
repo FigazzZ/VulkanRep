@@ -332,27 +332,35 @@ static const CommandType observedCommands[] = {
     }
 }
 
-- (void)handleStartCommand:(NSNotification *)notification {
-    if (mode == CAMERA_MODE && !_captureManager.isRecording) {
+- (void)handleStartCommand:(NSNotification *)notification
+{
+    if (mode == CAMERA_MODE && !_captureManager.isRecording)
+    {
         Command *command = [Command getCommandFromNotification:notification];
-        if ([command isKindOfClass:[CommandWithValue class]] && _timeOffset != INFINITY) {
-            NSString *time = [[NSString alloc] initWithData:command.data encoding:NSUTF8StringEncoding];
-            NSTimeInterval startTime = time.doubleValue / 1000.f + _timeOffset;
-            NSDate *startDate = [NSDate dateWithTimeIntervalSince1970:startTime];
-            NSTimeInterval interval = startDate.timeIntervalSinceNow;
-            int64_t interval_in_nanos = (int64_t) (interval * NSEC_PER_SEC);
-            NSLog(@"Starting after %f seconds", interval);
+        if ([command isKindOfClass:[CommandWithValue class]] && _timeOffsetInSeconds != INFINITY)
+        {
+            NSString *serverStartTimeMillis = [[NSString alloc] initWithData:command.data encoding:NSUTF8StringEncoding];
+            NSTimeInterval serverStartTime = serverStartTimeMillis.doubleValue / 1000.f + _timeOffsetInSeconds;
+            NSDate *serverStartDate = [NSDate dateWithTimeIntervalSince1970:serverStartTime];
+            
             [socketHandler sendCommand:[[Command alloc] init:OK]];
             [_captureManager startAssetWriter];
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, MAX(interval_in_nanos, 0)), dispatch_get_main_queue(), ^{
-                [_captureManager startRecording:STANDARD];
-            });
-        } else {
+
+            NSDate *now = [NSDate date];
+            NSTimeInterval localStartTimeDiff = [serverStartDate timeIntervalSinceDate:now];
+
+            _captureManager.normalStartTimeDiff = localStartTimeDiff;
+            [_captureManager startRecording:STANDARD];
+            NSLog(@"Start time difference: %fs", localStartTimeDiff);
+        }
+        else
+        {
             NSLog(@"Start time missing");
             [socketHandler sendCommand:[[Command alloc] init:NOT_OK]];
         }
     }
-    else {
+    else
+    {
         NSLog(@"was already recording");
         [socketHandler sendCommand:[[Command alloc] init:NOT_OK]];
     }
@@ -370,7 +378,7 @@ static const CommandType observedCommands[] = {
 
 - (void)handleImpactStartCommand:(NSNotification *)notification {
     if (mode == CAMERA_MODE && !_captureManager.isRecording) {
-        if (_timeOffset != INFINITY) {
+        if (_timeOffsetInSeconds != INFINITY) {
             Command *command = [Command getCommandFromNotification:notification];
             if ([command isKindOfClass:[CommandWithValue class]]) {
                 [socketHandler sendCommand:[[Command alloc] init:OK]];
@@ -397,9 +405,9 @@ static const CommandType observedCommands[] = {
 - (void)handleImpactStopCommand:(NSNotification *)notification {
     if (_captureManager.isRecording) {
         Command *command = [Command getCommandFromNotification:notification];
-        if ([command isKindOfClass:[CommandWithValue class]] && _timeOffset != INFINITY) {
+        if ([command isKindOfClass:[CommandWithValue class]] && _timeOffsetInSeconds != INFINITY) {
             NSString *time = [[NSString alloc] initWithData:command.data encoding:NSUTF8StringEncoding];
-            NSTimeInterval impactTime = time.doubleValue / 1000.f + _timeOffset;
+            NSTimeInterval impactTime = time.doubleValue / 1000.f + _timeOffsetInSeconds;
             NSTimeInterval interval = impactTime + _captureManager.timeAfter + 0.5;
             NSDate *impactDate = [NSDate dateWithTimeIntervalSince1970:interval];
             interval = impactDate.timeIntervalSinceNow;
@@ -603,8 +611,8 @@ static const CommandType observedCommands[] = {
     
     static const int timeQueryIntervalInSeconds = 10 * 60;
     
-    _timeOffset = netAssociation.offset;
-    if (_timeOffset != INFINITY && ntpTimer != nil && ntpTimer.timeInterval != timeQueryIntervalInSeconds) {
+    _timeOffsetInSeconds = netAssociation.offset;
+    if (_timeOffsetInSeconds != INFINITY && ntpTimer != nil && ntpTimer.timeInterval != timeQueryIntervalInSeconds) {
         [ntpTimer invalidate];
         ntpTimer = [NSTimer scheduledTimerWithTimeInterval:timeQueryIntervalInSeconds
                                                     target:netAssociation

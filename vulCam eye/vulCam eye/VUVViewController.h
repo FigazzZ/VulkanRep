@@ -20,7 +20,7 @@
 @property(weak, nonatomic) IBOutlet UIView *aboutViewWrapper;
 @property(weak, nonatomic) IBOutlet VUVAboutView *aboutView;
 @property(weak, nonatomic) IBOutlet UIButton *closeButton;
-@property(nonatomic, readonly) double timeOffset;
+@property(nonatomic, readonly) double timeOffsetInSeconds;
 
 - (IBAction)switchToAimMode:(id)sender;
 

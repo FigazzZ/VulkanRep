@@ -30,6 +30,7 @@ typedef NS_ENUM(NSInteger, RecordingMode) {
 @property(nonatomic) CMTime impactTime;
 @property(nonatomic) float timeBefore;
 @property(nonatomic) float timeAfter;
+@property(nonatomic) NSTimeInterval normalStartTimeDiff;
 
 - (instancetype)init NS_UNAVAILABLE;
 
