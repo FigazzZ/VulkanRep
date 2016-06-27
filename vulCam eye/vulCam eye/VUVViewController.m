@@ -344,7 +344,6 @@ static const CommandType observedCommands[] = {
             NSDate *serverStartDate = [NSDate dateWithTimeIntervalSince1970:serverStartTime];
             
             [socketHandler sendCommand:[[Command alloc] init:OK]];
-            [_captureManager startAssetWriter];
 
             NSDate *now = [NSDate date];
             NSTimeInterval localStartTimeDiff = [serverStartDate timeIntervalSinceDate:now];
