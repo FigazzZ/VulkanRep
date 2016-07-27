@@ -54,6 +54,7 @@ static const CommandType observedCommands[] = {
     NetAssociation *netAssociation;
     UITapGestureRecognizer *tapGesture;
     NSTimeInterval impactStart;
+    NSArray<NSNumber *> *NTPOffsetReadings;
 }
 
 - (void)viewDidLoad {
@@ -84,6 +85,7 @@ static const CommandType observedCommands[] = {
     [_wifiImage startAnimating];
     [self.view bringSubviewToFront:_aboutViewWrapper];
     
+    NTPOffsetReadings = [NSArray array];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -350,7 +352,7 @@ static const CommandType observedCommands[] = {
 
             _captureManager.normalStartTimeDiff = localStartTimeDiff;
             [_captureManager startRecording:STANDARD];
-            NSLog(@"Start time difference: %fs", localStartTimeDiff);
+            NSLog(@"Start time difference: %+fs", localStartTimeDiff);
         }
         else
         {
@@ -609,17 +611,47 @@ static const CommandType observedCommands[] = {
     }
     
     static const int timeQueryIntervalInSeconds = 10 * 60;
+    static const long delayInSeconds = 1;
+    static const NSUInteger numberOfReadings = 5;
     
-    _timeOffsetInSeconds = netAssociation.offset;
-    if (_timeOffsetInSeconds != INFINITY && ntpTimer != nil && ntpTimer.timeInterval != timeQueryIntervalInSeconds) {
-        [ntpTimer invalidate];
-        ntpTimer = [NSTimer scheduledTimerWithTimeInterval:timeQueryIntervalInSeconds
-                                                    target:netAssociation
-                                                  selector:@selector(sendTimeQuery)
-                                                  userInfo:nil
-                                                   repeats:YES];
+    NTPOffsetReadings = [NTPOffsetReadings arrayByAddingObject:[NSNumber numberWithDouble:netAssociation.offset]];
+    
+    NSLog(@"NTP offset reading #%lu: %+f", (unsigned long)NTPOffsetReadings.count, netAssociation.offset);
+    
+    if (NTPOffsetReadings.count <= numberOfReadings)
+    {
+        if (ntpTimer.timeInterval != delayInSeconds)
+        {
+            [ntpTimer invalidate];
+            ntpTimer = [NSTimer scheduledTimerWithTimeInterval:delayInSeconds
+                                                        target:netAssociation
+                                                      selector:@selector(sendTimeQuery)
+                                                      userInfo:nil
+                                                       repeats:YES];
+        }
+    }
+    else
+    {
+        if (_timeOffsetInSeconds != INFINITY && ntpTimer != nil && ntpTimer.timeInterval != timeQueryIntervalInSeconds)
+        {
+            [ntpTimer invalidate];
+            ntpTimer = [NSTimer scheduledTimerWithTimeInterval:timeQueryIntervalInSeconds
+                                                        target:netAssociation
+                                                      selector:@selector(sendTimeQuery)
+                                                      userInfo:nil
+                                                       repeats:YES];
+        }
+        
+        NSArray *sorted = [NTPOffsetReadings sortedArrayUsingSelector:@selector(compare:)];
+        NSUInteger middle = [sorted count] / 2;
+        NSNumber *median = [sorted objectAtIndex:middle];
+        
+        _timeOffsetInSeconds = [median doubleValue];
+        NTPOffsetReadings = [NSArray array];
     }
 }
 
 
+
 @end
+
