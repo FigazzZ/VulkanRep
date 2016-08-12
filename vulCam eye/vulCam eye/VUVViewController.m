@@ -349,6 +349,7 @@ static const CommandType observedCommands[] = {
 
             NSDate *now = [NSDate date];
             NSTimeInterval localStartTimeDiff = [serverStartDate timeIntervalSinceDate:now];
+            delay = [NSNumber numberWithDouble:localStartTimeDiff];
 
             _captureManager.normalStartTimeDiff = localStartTimeDiff;
             [_captureManager startRecording:STANDARD];
@@ -636,6 +637,16 @@ static const CommandType observedCommands[] = {
         {
             [ntpTimer invalidate];
             ntpTimer = [NSTimer scheduledTimerWithTimeInterval:timeQueryIntervalInSeconds
+                                                        target:netAssociation
+                                                      selector:@selector(sendTimeQuery)
+                                                      userInfo:nil
+                                                       repeats:YES];
+        }
+        else
+        {
+            // Faulty ntp offset; Continue asking the server for ntp time
+            [ntpTimer invalidate];
+            ntpTimer = [NSTimer scheduledTimerWithTimeInterval:15
                                                         target:netAssociation
                                                       selector:@selector(sendTimeQuery)
                                                       userInfo:nil
