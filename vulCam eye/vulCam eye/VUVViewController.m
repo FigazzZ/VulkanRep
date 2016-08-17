@@ -18,6 +18,7 @@
 #import "VUVCamNotificationNames.h"
 #import "SplashScreen.h"
 #import <ios-ntp/ios-ntp.h>
+#import "Common/FileLogger.h"
 
 static NSString *const kMinServerVersion = @"0.4.3.0";
 
@@ -52,9 +53,10 @@ static const CommandType observedCommands[] = {
     NSTimer *dimTimer;
     NSTimer *ntpTimer;
     NetAssociation *netAssociation;
+    NSDate *serverStartDate;
     UITapGestureRecognizer *tapGesture;
     NSTimeInterval impactStart;
-    NSArray<NSNumber *> *NTPOffsetReadings;
+    NSMutableArray<NSNumber *> *NTPOffsetReadings;
 }
 
 - (void)viewDidLoad {
@@ -85,7 +87,7 @@ static const CommandType observedCommands[] = {
     [_wifiImage startAnimating];
     [self.view bringSubviewToFront:_aboutViewWrapper];
     
-    NTPOffsetReadings = [NSArray array];
+    NTPOffsetReadings = [NSMutableArray array];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -191,6 +193,7 @@ static const CommandType observedCommands[] = {
     [center addObserver:self selector:@selector(sendJsonAndVideo:) name:kNNStopRecording object:nil];
     [center addObserver:self selector:@selector(sendFailedRecordingCommand) name:kNNRecordingFailed object:nil];
     [center addObserver:self selector:@selector(sendTooShortImpactVidCommand) name:kNNTooShortImpactVid object:nil];
+    [center addObserver:self selector:@selector(calculateDelayFromNotificationStartTime:) name:kNNFirstFrame object:nil];
 }
 
 - (void)sendFailedRecordingCommand {
@@ -216,14 +219,12 @@ static const CommandType observedCommands[] = {
     _wifiImage.image = [UIImage imageNamed:@"wifi_connected"];
     netAssociation = [[NetAssociation alloc] initWithServerName:socketHandler.hostIP];
     netAssociation.delegate = self;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [netAssociation sendTimeQuery];
-    });
-    ntpTimer = [NSTimer scheduledTimerWithTimeInterval:15
+    ntpTimer = [NSTimer scheduledTimerWithTimeInterval:1
                                                 target:netAssociation
                                               selector:@selector(sendTimeQuery)
                                               userInfo:nil
                                                repeats:YES];
+    
     NSString *ID = [[NSUserDefaults standardUserDefaults] stringForKey:@"uuid"];
     [[NSUserDefaults standardUserDefaults] setValue:ID forKey:@"uuid"];
 
@@ -336,34 +337,30 @@ static const CommandType observedCommands[] = {
 
 - (void)handleStartCommand:(NSNotification *)notification
 {
+    delay = 0;
+    
     if (mode == CAMERA_MODE && !_captureManager.isRecording)
     {
         Command *command = [Command getCommandFromNotification:notification];
         if ([command isKindOfClass:[CommandWithValue class]] && _timeOffsetInSeconds != INFINITY)
         {
-            NSString *serverStartTimeMillis = [[NSString alloc] initWithData:command.data encoding:NSUTF8StringEncoding];
-            NSTimeInterval serverStartTime = serverStartTimeMillis.doubleValue / 1000.f + _timeOffsetInSeconds;
-            NSDate *serverStartDate = [NSDate dateWithTimeIntervalSince1970:serverStartTime];
+            serverStartDate = [VUVViewController getServerStartDateFromCommand:command withTimeOffsetInSec:@(_timeOffsetInSeconds)];
+            
+            [_captureManager startRecording:STANDARD];
             
             [socketHandler sendCommand:[[Command alloc] init:OK]];
 
-            NSDate *now = [NSDate date];
-            NSTimeInterval localStartTimeDiff = [serverStartDate timeIntervalSinceDate:now];
-            delay = [NSNumber numberWithDouble:localStartTimeDiff];
-
-            _captureManager.normalStartTimeDiff = localStartTimeDiff;
-            [_captureManager startRecording:STANDARD];
-            NSLog(@"Start time difference: %+fs", localStartTimeDiff);
+//            _captureManager.normalStartTimeDiff = localStartTimeDiff; // Only needed for trimming
         }
         else
         {
-            NSLog(@"Start time missing");
+            NSLog(@"Start time missing or time offset too big");
             [socketHandler sendCommand:[[Command alloc] init:NOT_OK]];
         }
     }
     else
     {
-        NSLog(@"was already recording");
+        NSLog(@"was already recording or isn't in camera mode");
         [socketHandler sendCommand:[[Command alloc] init:NOT_OK]];
     }
 }
@@ -378,54 +375,74 @@ static const CommandType observedCommands[] = {
     }
 }
 
-- (void)handleImpactStartCommand:(NSNotification *)notification {
-    if (mode == CAMERA_MODE && !_captureManager.isRecording) {
-        if (_timeOffsetInSeconds != INFINITY) {
+- (void)handleImpactStartCommand:(NSNotification *)notification
+{
+    if (mode == CAMERA_MODE && !_captureManager.isRecording)
+    {
+        if (_timeOffsetInSeconds != INFINITY)
+        {
             Command *command = [Command getCommandFromNotification:notification];
-            if ([command isKindOfClass:[CommandWithValue class]]) {
+            if ([command isKindOfClass:[CommandWithValue class]])
+            {
                 [socketHandler sendCommand:[[Command alloc] init:OK]];
                 [_captureManager startRecording:IMPACT];
+                
                 impactStart = [NSDate date].timeIntervalSince1970;
                 NSString *JSONString = [[NSString alloc] initWithData:command.data encoding:NSUTF8StringEncoding];
                 NSDictionary *json = [CommonUtility getNSDictFromJSONString:JSONString];
+                
                 [_captureManager setTimeAfter:[json[kVVImpactAfterKey] floatValue]];
                 [_captureManager setTimeBefore:[json[kVVImpactBeforeKey] floatValue]];
-            } else {
+    
+                NSString *logMsg = [NSString stringWithFormat:@"Camera IMPACT_START timestamp (s): %f", impactStart];
+                [FileLogger logToFile:logMsg];
+            }
+            else
+            {
                 [socketHandler sendCommand:[[Command alloc] init:NOT_OK]];
             }
-        } else {
+        }
+        else
+        {
             NSLog(@"Time offset missing");
             [socketHandler sendCommand:[[Command alloc] init:NOT_OK]];
         }
     }
-    else {
+    else
+    {
         NSLog(@"was already recording");
         [socketHandler sendCommand:[[Command alloc] init:NOT_OK]];
     }
 }
 
 - (void)handleImpactStopCommand:(NSNotification *)notification {
-    if (_captureManager.isRecording) {
+    delay = 0;
+    
+    if (_captureManager.isRecording)
+    {
         Command *command = [Command getCommandFromNotification:notification];
-        if ([command isKindOfClass:[CommandWithValue class]] && _timeOffsetInSeconds != INFINITY) {
+        if ([command isKindOfClass:[CommandWithValue class]] && _timeOffsetInSeconds != INFINITY)
+        {
             NSString *time = [[NSString alloc] initWithData:command.data encoding:NSUTF8StringEncoding];
             NSTimeInterval impactTime = time.doubleValue / 1000.f + _timeOffsetInSeconds;
-            NSTimeInterval interval = impactTime + _captureManager.timeAfter + 0.5;
-            NSDate *impactDate = [NSDate dateWithTimeIntervalSince1970:interval];
-            interval = impactDate.timeIntervalSinceNow;
-            int64_t interval_in_nanos = (int64_t) (interval * NSEC_PER_SEC);
-            NSLog(@"Stopping after %f seconds", interval);
+            
             [socketHandler sendCommand:[[Command alloc] init:STOP_OK]];
             _captureManager.impactTime = CMTimeMakeWithSeconds(impactTime - impactStart, NSEC_PER_SEC);
+            
+            int64_t interval_in_nanos = (int64_t) ((_captureManager.timeAfter + 0.5) * NSEC_PER_SEC);
+            
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, MAX(interval_in_nanos, 0)), dispatch_get_main_queue(), ^{
                 [_captureManager stopRecording];
             });
-        } else {
+        }
+        else
+        {
             NSLog(@"Impact time missing");
             [socketHandler sendCommand:[[Command alloc] init:NOT_OK]];
         }
     }
-    else {
+    else
+    {
         [socketHandler sendCommand:[[Command alloc] init:NOT_OK]];
     }
 }
@@ -441,6 +458,17 @@ static const CommandType observedCommands[] = {
     json[kVVFramerateKey] = @(sharedVars.framerate);
     json[kVVPointOfViewKey] = sharedVars.positionJson;
     json[kVVDelayKey] = delay;
+    
+    // TODO: maybe get the mode in a smarter way
+    if (delay == 0)
+    {
+        json[kVVRecordingModeKey] = @"IMPACT";
+    }
+    else
+    {
+        json[kVVRecordingModeKey] = @"NORMAL";
+    }
+    
     file = dict[@"file"];
     AVURLAsset *sourceAsset = [AVURLAsset URLAssetWithURL:file options:nil];
     CMTime duration = sourceAsset.duration;
@@ -488,11 +516,11 @@ static const CommandType observedCommands[] = {
 - (void)handleGetPositionCommand:(NSNotification *)notification {
     VUVCameraSettings *sharedVars = [VUVCameraSettings sharedVariables];
     NSDictionary *pov = @{kVVDistanceKey : @(sharedVars.dist),
-            kVVYawKey : @(sharedVars.yaw),
-            kVVPitchKey : @(sharedVars.pitch),
-            kVVMaxFramerateKey : @(sharedVars.maxFramerate),
-            kVVFramerateKey : @(sharedVars.framerate),
-            kVVShutterSpeedKey : @(sharedVars.shutterSpeed)};
+                          kVVYawKey : @(sharedVars.yaw),
+                          kVVPitchKey : @(sharedVars.pitch),
+                          kVVMaxFramerateKey : @(sharedVars.maxFramerate),
+                          kVVFramerateKey : @(sharedVars.framerate),
+                          kVVShutterSpeedKey : @(sharedVars.shutterSpeed)};
     NSString *jsonStr = [CommonUtility convertNSDictToJSONString:pov];
     [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:POSITION :jsonStr]];
 }
@@ -508,7 +536,7 @@ static const CommandType observedCommands[] = {
             if (CGPointMakeWithDictionaryRepresentation(pointDict, &point)) {
                 [_captureManager setCameraSettings:point];
             }
-
+            
             CFRelease(pointDict);
         }
     }
@@ -611,32 +639,25 @@ static const CommandType observedCommands[] = {
         return;
     }
     
-    static const int timeQueryIntervalInSeconds = 10 * 60;
-    static const long delayInSeconds = 1;
-    static const NSUInteger numberOfReadings = 5;
+    const int timeQueryIntervalInSeconds = 10 * 60;
+    const long delayInSeconds = 1;
+    const NSUInteger numberOfReadings = 5;
     
-    NTPOffsetReadings = [NTPOffsetReadings arrayByAddingObject:[NSNumber numberWithDouble:netAssociation.offset]];
-    
-    NSLog(@"NTP offset reading #%lu: %+f", (unsigned long)NTPOffsetReadings.count, netAssociation.offset);
-    
-    if (NTPOffsetReadings.count <= numberOfReadings)
+    if (netAssociation.offset != INFINITY)
     {
-        if (ntpTimer.timeInterval != delayInSeconds)
+        [ntpTimer invalidate];
+        
+        NSNumber *offset = @(netAssociation.offset);
+        
+        [NTPOffsetReadings addObject:offset];
+        
+        NSString *logMsg = [NSString stringWithFormat:@"NTP offset reading (s) #%lu: %@", (unsigned long)NTPOffsetReadings.count, offset];
+        NSLog(logMsg, nil);
+        [FileLogger logToFile:logMsg];
+        
+        if (NTPOffsetReadings.count <= numberOfReadings)
         {
-            [ntpTimer invalidate];
             ntpTimer = [NSTimer scheduledTimerWithTimeInterval:delayInSeconds
-                                                        target:netAssociation
-                                                      selector:@selector(sendTimeQuery)
-                                                      userInfo:nil
-                                                       repeats:YES];
-        }
-    }
-    else
-    {
-        if (_timeOffsetInSeconds != INFINITY && ntpTimer != nil && ntpTimer.timeInterval != timeQueryIntervalInSeconds)
-        {
-            [ntpTimer invalidate];
-            ntpTimer = [NSTimer scheduledTimerWithTimeInterval:timeQueryIntervalInSeconds
                                                         target:netAssociation
                                                       selector:@selector(sendTimeQuery)
                                                       userInfo:nil
@@ -644,25 +665,54 @@ static const CommandType observedCommands[] = {
         }
         else
         {
-            // Faulty ntp offset; Continue asking the server for ntp time
-            [ntpTimer invalidate];
-            ntpTimer = [NSTimer scheduledTimerWithTimeInterval:15
+            ntpTimer = [NSTimer scheduledTimerWithTimeInterval:timeQueryIntervalInSeconds
                                                         target:netAssociation
                                                       selector:@selector(sendTimeQuery)
                                                       userInfo:nil
                                                        repeats:YES];
+            
+            NSArray *sorted = [NTPOffsetReadings sortedArrayUsingSelector:@selector(compare:)];
+            NSUInteger middle = [sorted count] / 2;
+            NSNumber *median = [sorted objectAtIndex:middle];
+            
+            _timeOffsetInSeconds = [median doubleValue];
+            [NTPOffsetReadings removeAllObjects];
+            
+            NSString *logMsg = [NSString stringWithFormat:@"Camera NTP time offset (s): %f", _timeOffsetInSeconds];
+            NSLog(logMsg, nil);
+            [FileLogger logToFile:logMsg];
         }
+    }
+    else
+    {
+        NSString *logMsg = [NSString stringWithFormat:@"NTP offset reading #%lu: %f, clearing array", (unsigned long)NTPOffsetReadings.count, netAssociation.offset];
+        NSLog(logMsg, nil);
+        [FileLogger logToFile:logMsg];
         
-        NSArray *sorted = [NTPOffsetReadings sortedArrayUsingSelector:@selector(compare:)];
-        NSUInteger middle = [sorted count] / 2;
-        NSNumber *median = [sorted objectAtIndex:middle];
-        
-        _timeOffsetInSeconds = [median doubleValue];
-        NTPOffsetReadings = [NSArray array];
+        [NTPOffsetReadings removeAllObjects];
     }
 }
 
+- (void)calculateDelayFromNotificationStartTime:(NSNotification *)notification
+{
+    NSDate *localStartDate = (NSDate *) notification.userInfo[@"localStartDate"];
+    
+    delay = @([localStartDate timeIntervalSinceDate:serverStartDate]);
+    
+    NSLog(@"Recording start delay %@", delay);
+}
 
++ (NSDate *)getServerStartDateFromCommand:(Command *)command withTimeOffsetInSec:(NSNumber *)offsetInSec
+{
+    NSString *serverStartTimeMillis = [[NSString alloc] initWithData:command.data encoding:NSUTF8StringEncoding];
+    NSTimeInterval serverStartTime = serverStartTimeMillis.doubleValue / 1000.f + offsetInSec.doubleValue;
+    NSDate *serverStartDate = [NSDate dateWithTimeIntervalSince1970:serverStartTime];
+    
+    NSString *logMsg = [NSString stringWithFormat:@"Server START timestamp (ms): %@", serverStartTimeMillis];
+    [FileLogger logToFile:logMsg];
+    
+    return serverStartDate;
+}
 
 @end
 

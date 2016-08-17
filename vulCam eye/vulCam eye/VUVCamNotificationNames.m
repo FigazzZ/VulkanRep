@@ -16,3 +16,4 @@ NSString *const kNNFinishRecording = @"FinishRecording";
 NSString *const kNNFinishTrimming = @"FinishTrimming";
 NSString *const kNNRecordingFailed = @"RecordingFailed";
 NSString *const kNNTooShortImpactVid = @"TooShortImpactVid";
+NSString *const kNNFirstFrame = @"FirstFrame";

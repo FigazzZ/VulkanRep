@@ -11,6 +11,7 @@
 
 extern NSString *const kNNStream;
 extern NSString *const kNNStopOK;
+extern NSString *const kNNFirstFrame;
 extern NSString *const kNNStopRecording;
 extern NSString *const kNNFinishRecording;
 extern NSString *const kNNFinishTrimming;

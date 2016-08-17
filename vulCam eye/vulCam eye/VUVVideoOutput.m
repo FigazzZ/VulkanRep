@@ -123,6 +123,14 @@ static const CGSize kQVStreamSize = (CGSize) {
     CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
     if (_isRecording && _videoWriterInput.readyForMoreMediaData) {
         if ([pixelBufferAdaptor appendPixelBuffer:imageBuffer withPresentationTime:CMTimeMake(frameNumber, _videoFPS)]) {
+            
+            if (frameNumber == 0)
+            {
+                NSDate *localStartDate = [NSDate date];
+                NSDictionary *userInfo = [NSDictionary dictionaryWithObject:localStartDate forKey:@"localStartDate"];
+                [[NSNotificationCenter defaultCenter] postNotificationName:kNNFirstFrame object:self userInfo:userInfo];
+            }
+            
             frameNumber++;
         }
         else {
@@ -133,7 +141,7 @@ static const CGSize kQVStreamSize = (CGSize) {
         finishRecording = NO;
         [[NSNotificationCenter defaultCenter] postNotificationName:kNNFinishRecording object:self];
     }
-
+    
     if (_isStreaming) {
         streamFrame++;
         if (streamFrame >= streamFrameSkip) {
@@ -149,7 +157,7 @@ static const CGSize kQVStreamSize = (CGSize) {
             });
             streamFrame = 0;
         }
-
+        
     }
 }
 
