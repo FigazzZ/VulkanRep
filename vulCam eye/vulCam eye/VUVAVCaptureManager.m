@@ -452,18 +452,18 @@ static const unsigned long kQVCameraSettingDelay = 0.3 * NSEC_PER_SEC;
                 [VUVAVCaptureManager deleteVideo:fileURL];
             }
         } else {
-            if (![VUVVideoTrimmer trimVideoBeginningAtUrl:fileURL withSecondsToTrim:_normalStartTimeDiff])
-            {
-                NSLog(@"Setting up the VideoTrimmer failed");
-                [[NSNotificationCenter defaultCenter] postNotificationName:kNNRecordingFailed object:nil];
-                [VUVAVCaptureManager deleteVideo:fileURL];
-            }
-            else
-            {
+//            if (![VUVVideoTrimmer trimVideoBeginningAtUrl:fileURL withSecondsToTrim:_normalStartTimeDiff])
+//            {
+//                NSLog(@"Setting up the VideoTrimmer failed");
+//                [[NSNotificationCenter defaultCenter] postNotificationName:kNNRecordingFailed object:nil];
+//                [VUVAVCaptureManager deleteVideo:fileURL];
+//            }
+//            else
+//            {
                 NSURL *file = fileURL;
                 [[NSNotificationCenter defaultCenter] postNotificationName:kNNStopRecording object:self userInfo:@{@"file" : file}];
                 [self prepareAssetWriter];
-            }
+//            }
         }
         videoWritingFinished = NO;
 #ifdef USE_AUDIO
