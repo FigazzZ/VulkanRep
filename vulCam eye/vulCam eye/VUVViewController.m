@@ -218,8 +218,7 @@ static const CommandType observedCommands[] = {
 - (void)connectedToServer {
     [_wifiImage stopAnimating];
     _wifiImage.image = [UIImage imageNamed:@"wifi_connected"];
-    netAssociation = [[NetAssociation alloc] initWithServerName:socketHandler.hostIP];
-    netAssociation.delegate = self;
+    [self resetNetAssociation];
     
     NSString *ID = [[NSUserDefaults standardUserDefaults] stringForKey:@"uuid"];
     [[NSUserDefaults standardUserDefaults] setValue:ID forKey:@"uuid"];
@@ -642,19 +641,26 @@ static const CommandType observedCommands[] = {
 
 - (void)reportFromDelegate
 {
+    // TODO: refactor
+    [ntpTimer invalidate];
+    const long longerDelayInSeconds = 30;
+    
     // Don't sync while recording
-    if([_captureManager isRecording]) {
+    if([_captureManager isRecording])
+    {
+        ntpTimer = [NSTimer scheduledTimerWithTimeInterval:longerDelayInSeconds
+                                                    target:netAssociation
+                                                  selector:@selector(sendTimeQuery)
+                                                  userInfo:nil
+                                                   repeats:NO];
         return;
     }
     
-    const int timeQueryIntervalInSeconds = 10 * 60;
-    const long delayInSeconds = 1;
+    const long timeQueryIntervalInSeconds = 1;
     const NSUInteger numberOfReadings = 5;
     
     if (netAssociation.offset != INFINITY)
     {
-        [ntpTimer invalidate];
-        
         NSNumber *offset = @(netAssociation.offset);
         
         [NTPOffsetReadings addObject:offset];
@@ -665,11 +671,11 @@ static const CommandType observedCommands[] = {
         
         if (NTPOffsetReadings.count < numberOfReadings)
         {
-            ntpTimer = [NSTimer scheduledTimerWithTimeInterval:delayInSeconds
+            ntpTimer = [NSTimer scheduledTimerWithTimeInterval:timeQueryIntervalInSeconds
                                                         target:netAssociation
                                                       selector:@selector(sendTimeQuery)
                                                       userInfo:nil
-                                                       repeats:YES];
+                                                       repeats:NO];
         }
         else if (NTPOffsetReadings.count == numberOfReadings)
         {
@@ -683,6 +689,11 @@ static const CommandType observedCommands[] = {
             NSLog(logMsg, nil);
             [FileLogger logToFile:logMsg];
         }
+        else if (NTPOffsetReadings.count > 10)
+        {
+            // Too many NTP offsets taken, reset netassociation to prevent looping
+            [self resetNetAssociation];
+        }
     }
     else
     {
@@ -691,6 +702,12 @@ static const CommandType observedCommands[] = {
         [FileLogger logToFile:logMsg];
         
         [NTPOffsetReadings removeAllObjects];
+        
+        ntpTimer = [NSTimer scheduledTimerWithTimeInterval:longerDelayInSeconds
+                                                    target:netAssociation
+                                                  selector:@selector(sendTimeQuery)
+                                                  userInfo:nil
+                                                   repeats:NO];
     }
 }
 
@@ -701,6 +718,19 @@ static const CommandType observedCommands[] = {
     delay = @([localStartDate timeIntervalSinceDate:serverStartDate]);
     
     NSLog(@"Recording start delay %@", delay);
+}
+
+- (void)resetNetAssociation
+{
+    if (socketHandler.isConnectedToTCP)
+    {
+        netAssociation = [[NetAssociation alloc] initWithServerName:socketHandler.hostIP];
+        netAssociation.delegate = self;
+    }
+    else
+    {
+        netAssociation = nil;
+    }
 }
 
 + (NSDate *)getServerStartDateFromCommand:(Command *)command withTimeOffsetInSec:(NSNumber *)offsetInSec
