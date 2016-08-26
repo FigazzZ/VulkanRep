@@ -703,6 +703,8 @@ static const CommandType observedCommands[] = {
         
         [NTPOffsetReadings removeAllObjects];
         
+        [self resetNetAssociation];
+        
         ntpTimer = [NSTimer scheduledTimerWithTimeInterval:longerDelayInSeconds
                                                     target:netAssociation
                                                   selector:@selector(sendTimeQuery)
