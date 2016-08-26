@@ -545,7 +545,12 @@ static const CommandType observedCommands[] = {
 - (void)handleUpdateCommand:(NSNotification *)notification
 {
     [NTPOffsetReadings removeAllObjects];
-    [netAssociation sendTimeQuery];
+    
+    ntpTimer = [NSTimer scheduledTimerWithTimeInterval:1
+                                                target:netAssociation
+                                              selector:@selector(sendTimeQuery)
+                                              userInfo:nil
+                                               repeats:YES];
 }
 
 // =============================================================================
