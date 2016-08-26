@@ -34,6 +34,7 @@ static const CommandType observedCommands[] = {
         CAMERA_SETTINGS,
         SET_FPS,
         SET_SHUTTERSPEED,
+        UPDATE,
 };
 
 @interface VUVViewController ()
@@ -219,11 +220,6 @@ static const CommandType observedCommands[] = {
     _wifiImage.image = [UIImage imageNamed:@"wifi_connected"];
     netAssociation = [[NetAssociation alloc] initWithServerName:socketHandler.hostIP];
     netAssociation.delegate = self;
-    ntpTimer = [NSTimer scheduledTimerWithTimeInterval:1
-                                                target:netAssociation
-                                              selector:@selector(sendTimeQuery)
-                                              userInfo:nil
-                                               repeats:YES];
     
     NSString *ID = [[NSUserDefaults standardUserDefaults] stringForKey:@"uuid"];
     [[NSUserDefaults standardUserDefaults] setValue:ID forKey:@"uuid"];
@@ -546,6 +542,12 @@ static const CommandType observedCommands[] = {
     [VUVAVCaptureManager deleteVideo:file];
 }
 
+- (void)handleUpdateCommand:(NSNotification *)notification
+{
+    [NTPOffsetReadings removeAllObjects];
+    [netAssociation sendTimeQuery];
+}
+
 // =============================================================================
 #pragma mark - Gesture Handler
 
@@ -633,7 +635,8 @@ static const CommandType observedCommands[] = {
 
 #pragma mark delegates
 
-- (void)reportFromDelegate {
+- (void)reportFromDelegate
+{
     // Don't sync while recording
     if([_captureManager isRecording]) {
         return;
@@ -655,7 +658,7 @@ static const CommandType observedCommands[] = {
         NSLog(logMsg, nil);
         [FileLogger logToFile:logMsg];
         
-        if (NTPOffsetReadings.count <= numberOfReadings)
+        if (NTPOffsetReadings.count < numberOfReadings)
         {
             ntpTimer = [NSTimer scheduledTimerWithTimeInterval:delayInSeconds
                                                         target:netAssociation
@@ -663,20 +666,13 @@ static const CommandType observedCommands[] = {
                                                       userInfo:nil
                                                        repeats:YES];
         }
-        else
+        else if (NTPOffsetReadings.count == numberOfReadings)
         {
-            ntpTimer = [NSTimer scheduledTimerWithTimeInterval:timeQueryIntervalInSeconds
-                                                        target:netAssociation
-                                                      selector:@selector(sendTimeQuery)
-                                                      userInfo:nil
-                                                       repeats:YES];
-            
             NSArray *sorted = [NTPOffsetReadings sortedArrayUsingSelector:@selector(compare:)];
             NSUInteger middle = [sorted count] / 2;
             NSNumber *median = [sorted objectAtIndex:middle];
             
             _timeOffsetInSeconds = [median doubleValue];
-            [NTPOffsetReadings removeAllObjects];
             
             NSString *logMsg = [NSString stringWithFormat:@"Camera NTP time offset (s): %f", _timeOffsetInSeconds];
             NSLog(logMsg, nil);
