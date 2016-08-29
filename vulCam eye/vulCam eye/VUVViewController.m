@@ -390,7 +390,7 @@ static const CommandType observedCommands[] = {
                 [_captureManager setTimeBefore:[json[kVVImpactBeforeKey] floatValue]];
     
                 NSString *logMsg = [NSString stringWithFormat:@"Camera IMPACT_START timestamp (s): %f", impactStart];
-                [FileLogger logToFile:logMsg];
+                [FileLogger printAndLogToFile:logMsg];
             }
             else
             {
@@ -666,8 +666,7 @@ static const CommandType observedCommands[] = {
         [NTPOffsetReadings addObject:offset];
         
         NSString *logMsg = [NSString stringWithFormat:@"NTP offset reading (s) #%lu: %@", (unsigned long)NTPOffsetReadings.count, offset];
-        NSLog(logMsg, nil);
-        [FileLogger logToFile:logMsg];
+        [FileLogger printAndLogToFile:logMsg];
         
         if (NTPOffsetReadings.count < numberOfReadings)
         {
@@ -686,8 +685,7 @@ static const CommandType observedCommands[] = {
             _timeOffsetInSeconds = [median doubleValue];
             
             NSString *logMsg = [NSString stringWithFormat:@"Camera NTP time offset (s): %f", _timeOffsetInSeconds];
-            NSLog(logMsg, nil);
-            [FileLogger logToFile:logMsg];
+            [FileLogger printAndLogToFile:logMsg];
         }
         else if (NTPOffsetReadings.count > 10)
         {
@@ -698,8 +696,7 @@ static const CommandType observedCommands[] = {
     else
     {
         NSString *logMsg = [NSString stringWithFormat:@"NTP offset reading #%lu: %f, clearing array", (unsigned long)NTPOffsetReadings.count, netAssociation.offset];
-        NSLog(logMsg, nil);
-        [FileLogger logToFile:logMsg];
+        [FileLogger printAndLogToFile:logMsg];
         
         [NTPOffsetReadings removeAllObjects];
         
@@ -742,7 +739,7 @@ static const CommandType observedCommands[] = {
     NSDate *serverStartDate = [NSDate dateWithTimeIntervalSince1970:serverStartTime];
     
     NSString *logMsg = [NSString stringWithFormat:@"Server START timestamp (ms): %@", serverStartTimeMillis];
-    [FileLogger logToFile:logMsg];
+    [FileLogger printAndLogToFile:logMsg];
     
     return serverStartDate;
 }
