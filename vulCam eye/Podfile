@@ -2,12 +2,12 @@ platform :ios, "7.0"
 
 source 'https://github.com/CocoaPods/Specs.git'
 
-xcodeproj 'vulCam eye.xcodeproj'
+xcodeproj 'VULCAM eye.xcodeproj'
 
 pod 'CocoaAsyncSocket', :git => 'git@github.com:BitKaitsu/CocoaAsyncSocket', :branch => 'master'
 pod 'ios-ntp', :git => 'git@github.com:BitKaitsu/ios-ntp', :branch => 'master'
 
-#target "vulCam eye" do
+#target "VULCAM eye" do
 #
 #end
 #
