@@ -86,7 +86,7 @@ static const CommandType observedCommands[] = {
 
     [self setUpWifiAnimation];
     [_wifiImage startAnimating];
-    [self.view bringSubviewToFront:_aboutViewWrapper];
+    _aboutViewController = [UIStoryboard storyboardWithName:@"VUVAboutView" bundle:nil].instantiateInitialViewController;
     
     NTPOffsetReadings = [NSMutableArray array];
 }
@@ -270,16 +270,9 @@ static const CommandType observedCommands[] = {
 }
 
 
-- (IBAction)hideAboutView:(id)sender {
-    _aboutViewWrapper.hidden = YES;
-    [_aboutView closeAboutView];
-    [self.view addGestureRecognizer:tapGesture];
-}
-
 - (IBAction)showAboutView:(id)sender {
-    _aboutViewWrapper.hidden = NO;
-    [_aboutView showAboutView];
     [self.view removeGestureRecognizer:tapGesture];
+    [self presentViewController:_aboutViewController animated:YES completion:nil];
 }
 
 - (BOOL)prefersStatusBarHidden {

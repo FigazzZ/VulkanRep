@@ -1,6 +1,6 @@
 //
-//  VUVAboutView.h
-//  vulCam eye
+//  VUVLicensesView.h
+//  VULCAM eye
 //
 //  Created by Juuso Kaitila on 04/01/16.
 //  Copyright © 2016 Bitwise. All rights reserved.
@@ -8,10 +8,10 @@
 
 #import <WebKit/WebKit.h>
 
-@interface VUVAboutView : UIView
+@interface VUVLicensesView : UIView
 
-- (void)showAboutView;
+- (void)showLicensesView;
 
-- (void)closeAboutView;
+- (void)closeLicensesView;
 
 @end

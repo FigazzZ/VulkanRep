@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Z1h-yx-sK9">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15G1004" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Z1h-yx-sK9">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -26,7 +25,7 @@
                             <view hidden="YES" contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="Wcf-ne-Agx" userLabel="Logo">
                                 <rect key="frame" x="0.0" y="0.0" width="421" height="600"/>
                                 <subviews>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="vulcan_logo" translatesAutoresizingMaskIntoConstraints="NO" id="kMS-CX-KVx">
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="vulcan_logo" translatesAutoresizingMaskIntoConstraints="NO" id="kMS-CX-KVx">
                                         <rect key="frame" x="73" y="209" width="275" height="182"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
@@ -123,55 +122,20 @@
                                     </mask>
                                 </variation>
                             </view>
-                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xl7-Ll-SgN" userLabel="About View Wrapper">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                                <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="85q-q0-rIk" customClass="VUVAboutView">
-                                        <rect key="frame" x="0.0" y="64" width="600" height="582"/>
-                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    </view>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="W8L-WW-j1d">
-                                        <rect key="frame" x="514" y="26" width="46" height="30"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="46" id="enT-9C-PZX"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
-                                        <state key="normal" title="Close">
-                                            <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                        <connections>
-                                            <action selector="hideAboutView:" destination="Z1h-yx-sK9" eventType="touchUpInside" id="aKE-Ia-uQz"/>
-                                        </connections>
-                                    </button>
-                                </subviews>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="85q-q0-rIk" secondAttribute="trailing" id="5R4-HJ-Tn1"/>
-                                    <constraint firstItem="85q-q0-rIk" firstAttribute="top" secondItem="xl7-Ll-SgN" secondAttribute="top" constant="64" id="DpY-L9-cg9"/>
-                                    <constraint firstItem="85q-q0-rIk" firstAttribute="leading" secondItem="xl7-Ll-SgN" secondAttribute="leading" id="EOO-Ar-x74"/>
-                                    <constraint firstItem="W8L-WW-j1d" firstAttribute="top" secondItem="85q-q0-rIk" secondAttribute="top" constant="-38" id="PAX-ML-kA2"/>
-                                    <constraint firstItem="W8L-WW-j1d" firstAttribute="trailing" secondItem="85q-q0-rIk" secondAttribute="trailing" constant="-40" id="equ-ks-xxk"/>
-                                    <constraint firstAttribute="bottom" secondItem="85q-q0-rIk" secondAttribute="bottom" constant="-46" id="w9Z-FX-sUz"/>
-                                </constraints>
-                            </view>
                         </subviews>
                         <color key="backgroundColor" red="0.12152777777777779" green="0.12152777777777779" blue="0.12152777777777779" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
-                            <constraint firstItem="xl7-Ll-SgN" firstAttribute="top" secondItem="VlZ-jV-slf" secondAttribute="bottom" constant="-20" id="DLE-FG-02p"/>
-                            <constraint firstItem="xl7-Ll-SgN" firstAttribute="leading" secondItem="ALk-c9-gXC" secondAttribute="leadingMargin" constant="-20" id="Kaf-nh-58S"/>
                             <constraint firstItem="ULR-Ea-F6y" firstAttribute="top" secondItem="ALk-c9-gXC" secondAttribute="top" id="NY0-Mv-gYU"/>
                             <constraint firstItem="Wcf-ne-Agx" firstAttribute="top" secondItem="ALk-c9-gXC" secondAttribute="top" id="Njw-GQ-VfU"/>
                             <constraint firstItem="9Lu-eY-n3Y" firstAttribute="leading" secondItem="ULR-Ea-F6y" secondAttribute="trailing" id="Pqz-HK-jhE"/>
                             <constraint firstAttribute="bottom" secondItem="Wcf-ne-Agx" secondAttribute="bottom" id="QkG-zC-ywY"/>
                             <constraint firstItem="ULR-Ea-F6y" firstAttribute="leading" secondItem="ALk-c9-gXC" secondAttribute="leading" id="Xok-WZ-Feg"/>
-                            <constraint firstItem="m6L-Bq-Nd9" firstAttribute="top" secondItem="xl7-Ll-SgN" secondAttribute="bottom" id="ble-xp-hEG"/>
                             <constraint firstItem="9Lu-eY-n3Y" firstAttribute="leading" secondItem="Wcf-ne-Agx" secondAttribute="trailing" id="dOs-3i-zan"/>
                             <constraint firstItem="9Lu-eY-n3Y" firstAttribute="top" secondItem="ALk-c9-gXC" secondAttribute="top" id="dTc-sj-jJ6"/>
                             <constraint firstAttribute="trailing" secondItem="9Lu-eY-n3Y" secondAttribute="trailing" id="f8k-yl-YHk"/>
                             <constraint firstItem="Wcf-ne-Agx" firstAttribute="leading" secondItem="ALk-c9-gXC" secondAttribute="leading" id="fDo-Jw-VQy"/>
                             <constraint firstAttribute="bottom" secondItem="9Lu-eY-n3Y" secondAttribute="bottom" id="ho4-1T-I68"/>
                             <constraint firstAttribute="bottom" secondItem="ULR-Ea-F6y" secondAttribute="bottom" id="skt-yK-ado"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="xl7-Ll-SgN" secondAttribute="trailing" constant="-20" id="yKY-b4-QFv"/>
                         </constraints>
                     </view>
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
@@ -179,11 +143,8 @@
                     <nil key="simulatedBottomBarMetrics"/>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <connections>
-                        <outlet property="aboutView" destination="85q-q0-rIk" id="U7n-Fv-9P5"/>
-                        <outlet property="aboutViewWrapper" destination="xl7-Ll-SgN" id="j2P-x9-z5m"/>
                         <outlet property="aimMode" destination="Rzr-FH-Ton" id="tYa-LI-w0F"/>
                         <outlet property="cameraMode" destination="Phr-Hb-GEM" id="bdP-Wg-j3p"/>
-                        <outlet property="closeButton" destination="W8L-WW-j1d" id="ZC9-UV-W6Z"/>
                         <outlet property="controls" destination="9Lu-eY-n3Y" id="2M5-Xp-kU4"/>
                         <outlet property="gridView" destination="ULR-Ea-F6y" id="Vnn-XR-Zcs"/>
                         <outlet property="logo" destination="kMS-CX-KVx" id="Cm2-ZQ-qtM"/>
