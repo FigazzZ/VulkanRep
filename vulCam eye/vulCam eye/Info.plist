@@ -19,11 +19,13 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>250</string>
+	<string>251</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Taking video for the VULCAM app</string>
 	<key>UILaunchStoryboardName</key>
 	<string>VUVMain</string>
 	<key>UIMainStoryboardFile</key>
