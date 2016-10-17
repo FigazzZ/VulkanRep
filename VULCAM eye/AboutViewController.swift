@@ -1,5 +1,5 @@
 //
-//  VUVAboutViewController.swift
+//  AboutViewController.swift
 //  VULCAM eye
 //
 //  Created by Jonas Nikula on 20/09/16.
@@ -10,32 +10,32 @@ import Foundation
 import UIKit
 
 
-class VUVAboutViewController: UIViewController
+class AboutViewController: UIViewController
 {
     @IBOutlet weak var vulcamVersion: UILabel!
     @IBOutlet weak var vulcamCopyright: UILabel!
     @IBOutlet weak var licensesView: VUVLicensesView!
     
-    @IBAction func showLibLicenses(sender: AnyObject)
+    @IBAction func showLibLicenses(_ sender: AnyObject)
     {
-        licensesView.showLicensesView();
+        licensesView.show();
     }
     
-    @IBAction func exitAboutView(sender: AnyObject)
+    @IBAction func exitAboutView(_ sender: AnyObject)
     {
-        if licensesView.hidden
+        if licensesView.isHidden
         {
-            self.dismissViewControllerAnimated(true, completion:nil)
+            self.dismiss(animated: true, completion:nil)
         }
         else
         {
-            licensesView.closeLicensesView();
+            licensesView.close();
         }
     }
     
     override func viewDidLoad()
     {
-        let version = NSBundle.mainBundle().infoDictionary!["CFBundleShortVersionString"] as! String
+        let version = Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String
         let copyrightText = "© 2015-2016 Vulcan Vision Corporation. All rights reserved."
         
         vulcamVersion.text = version

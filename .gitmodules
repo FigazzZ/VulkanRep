@@ -1,3 +1,3 @@
-[submodule "vulCam eye/vulCam eye/Common"]
-	path = vulCam eye/vulCam eye/Common
-	url = git@git.intra.bitwise.fi:vv011/ios-common.git
+[submodule "VULCAM eye/Common"]
+	path = VULCAM eye/Common
+	url = git@github.com:vulcanvisioncorp/ios-common.git

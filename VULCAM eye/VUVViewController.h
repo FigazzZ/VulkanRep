@@ -18,7 +18,7 @@
 @property(weak, nonatomic) IBOutlet UIButton *cameraMode;
 @property(weak, nonatomic) IBOutlet UIImageView *logo;
 @property(nonatomic, readonly) double timeOffsetInSeconds;
-@property VUVAboutViewController *aboutViewController;
+@property AboutViewController *aboutViewController;
 
 - (IBAction)switchToAimMode:(id)sender;
 

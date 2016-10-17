@@ -11,7 +11,6 @@
 		320685831BBD468000FAAC56 /* CommonNotificationNames.m in Sources */ = {isa = PBXBuildFile; fileRef = 3206857E1BBD468000FAAC56 /* CommonNotificationNames.m */; };
 		320685841BBD468000FAAC56 /* CommonUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 320685801BBD468000FAAC56 /* CommonUtility.m */; };
 		320685851BBD468000FAAC56 /* NetworkSocketHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 320685821BBD468000FAAC56 /* NetworkSocketHandler.m */; };
-		320DF26C1C4E6A5E0086E340 /* AppIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 320DF26B1C4E6A5E0086E340 /* AppIcon.png */; };
 		321325731C3AB5440059BC97 /* VUVLicensesView.m in Sources */ = {isa = PBXBuildFile; fileRef = 321325721C3AB5440059BC97 /* VUVLicensesView.m */; };
 		3213257F1C3BD41E0059BC97 /* SplashScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3213257E1C3BD41E0059BC97 /* SplashScreen.xib */; };
 		321325821C3BD4EE0059BC97 /* SplashScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 321325811C3BD4EE0059BC97 /* SplashScreen.m */; };
@@ -21,12 +20,13 @@
 		322E10331C57A661008C7636 /* VUVVideoTrimmer.m in Sources */ = {isa = PBXBuildFile; fileRef = 322E10321C57A661008C7636 /* VUVVideoTrimmer.m */; };
 		323CFABB1BAB0556003BFF22 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 323CFABA1BAB0556003BFF22 /* Foundation.framework */; };
 		323CFABD1BAB05BD003BFF22 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 323CFABC1BAB05BD003BFF22 /* UIKit.framework */; };
+		324CB1951DB50E070011B32B /* VULCAM_eyeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324CB1941DB50E070011B32B /* VULCAM_eyeTests.swift */; };
 		3256ACAF1BD1379300D06327 /* VUVCamNotificationNames.m in Sources */ = {isa = PBXBuildFile; fileRef = 3256ACAE1BD1379300D06327 /* VUVCamNotificationNames.m */; };
 		325E862F1BAB0A610051C4DA /* CommandType.m in Sources */ = {isa = PBXBuildFile; fileRef = 325E862C1BAB0A610051C4DA /* CommandType.m */; };
 		32855ACC1B95C6BC003CC551 /* VUVAVCaptureManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 32855AC21B95C6BC003CC551 /* VUVAVCaptureManager.m */; };
 		32855ACE1B95C6BC003CC551 /* VUVCameraProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 32855AC61B95C6BC003CC551 /* VUVCameraProtocol.m */; };
 		32855ACF1B95C6BC003CC551 /* VUVCameraSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 32855AC81B95C6BC003CC551 /* VUVCameraSettings.m */; };
-		32855AD01B95C6BC003CC551 /* VUVMain.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 32855AC91B95C6BC003CC551 /* VUVMain.storyboard */; };
+		32855AD01B95C6BC003CC551 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 32855AC91B95C6BC003CC551 /* Main.storyboard */; };
 		32855AD11B95C6BC003CC551 /* VUVStreamServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 32855ACB1B95C6BC003CC551 /* VUVStreamServer.m */; };
 		32855AE71B95C6F0003CC551 /* Command.m in Sources */ = {isa = PBXBuildFile; fileRef = 32855AD31B95C6F0003CC551 /* Command.m */; };
 		32855AE81B95C6F0003CC551 /* Packet.m in Sources */ = {isa = PBXBuildFile; fileRef = 32855ADA1B95C6F0003CC551 /* Packet.m */; };
@@ -39,24 +39,24 @@
 		32DF0F3C1B95C4E000467255 /* VUVAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 32DF0F3B1B95C4E000467255 /* VUVAppDelegate.m */; };
 		32DF0F3F1B95C4E000467255 /* VUVViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 32DF0F3E1B95C4E000467255 /* VUVViewController.m */; };
 		32DF0F441B95C4E000467255 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 32DF0F431B95C4E000467255 /* Images.xcassets */; };
-		32DF0F531B95C4E000467255 /* ubiQVue_CamTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 32DF0F521B95C4E000467255 /* ubiQVue_CamTests.m */; };
-		AA9FB3B8F54D115B5737BD14 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 40D10F2B7CB5532A6B712E60 /* libPods.a */; };
-		E0E244531D915BCB00438F74 /* VUVAboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0E244521D915BCB00438F74 /* VUVAboutViewController.swift */; };
-		E0E244551D915C2800438F74 /* VUVAboutView.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E0E244541D915C2800438F74 /* VUVAboutView.storyboard */; };
+		34683A0E7FB6FEC744FE05E4 /* libPods-VULCAM eye.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 429884979BEE1C52F58369C2 /* libPods-VULCAM eye.a */; };
+		E0E244531D915BCB00438F74 /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0E244521D915BCB00438F74 /* AboutViewController.swift */; };
+		E0E244551D915C2800438F74 /* AboutView.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E0E244541D915C2800438F74 /* AboutView.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		32DF0F4D1B95C4E000467255 /* PBXContainerItemProxy */ = {
+		324CB1971DB50E070011B32B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 32DF0F2B1B95C4E000467255 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 32DF0F321B95C4E000467255;
-			remoteInfo = "ubiQVue Cam";
+			remoteInfo = "VULCAM eye";
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		0574276F78C5040100A8F126 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
+		16E60DD7E757A37E8CCF78B1 /* Pods-VULCAM eye.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VULCAM eye.release.xcconfig"; path = "Pods/Target Support Files/Pods-VULCAM eye/Pods-VULCAM eye.release.xcconfig"; sourceTree = "<group>"; };
 		320568041C71F96900351D24 /* FileLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileLogger.h; sourceTree = "<group>"; };
 		320568051C71F96900351D24 /* FileLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileLogger.m; sourceTree = "<group>"; };
 		3206857D1BBD468000FAAC56 /* CommonNotificationNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonNotificationNames.h; sourceTree = "<group>"; };
@@ -65,7 +65,6 @@
 		320685801BBD468000FAAC56 /* CommonUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommonUtility.m; sourceTree = "<group>"; };
 		320685811BBD468000FAAC56 /* NetworkSocketHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkSocketHandler.h; sourceTree = "<group>"; };
 		320685821BBD468000FAAC56 /* NetworkSocketHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetworkSocketHandler.m; sourceTree = "<group>"; };
-		320DF26B1C4E6A5E0086E340 /* AppIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = AppIcon.png; path = "vulCam eye/AppIcon.png"; sourceTree = "<group>"; };
 		321325711C3AB5440059BC97 /* VUVLicensesView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VUVLicensesView.h; sourceTree = "<group>"; };
 		321325721C3AB5440059BC97 /* VUVLicensesView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VUVLicensesView.m; sourceTree = "<group>"; };
 		3213257E1C3BD41E0059BC97 /* SplashScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SplashScreen.xib; sourceTree = "<group>"; };
@@ -81,6 +80,9 @@
 		322E10321C57A661008C7636 /* VUVVideoTrimmer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VUVVideoTrimmer.m; sourceTree = "<group>"; };
 		323CFABA1BAB0556003BFF22 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		323CFABC1BAB05BD003BFF22 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		324CB1921DB50E070011B32B /* VULCAM eyeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "VULCAM eyeTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		324CB1941DB50E070011B32B /* VULCAM_eyeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VULCAM_eyeTests.swift; sourceTree = "<group>"; };
+		324CB1961DB50E070011B32B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3256ACAE1BD1379300D06327 /* VUVCamNotificationNames.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VUVCamNotificationNames.m; sourceTree = "<group>"; };
 		3256ACB01BD137AA00D06327 /* VUVCamNotificationNames.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VUVCamNotificationNames.h; sourceTree = "<group>"; };
 		325E862C1BAB0A610051C4DA /* CommandType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommandType.m; sourceTree = "<group>"; };
@@ -91,7 +93,7 @@
 		32855AC61B95C6BC003CC551 /* VUVCameraProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VUVCameraProtocol.m; sourceTree = "<group>"; };
 		32855AC71B95C6BC003CC551 /* VUVCameraSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VUVCameraSettings.h; sourceTree = "<group>"; };
 		32855AC81B95C6BC003CC551 /* VUVCameraSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VUVCameraSettings.m; sourceTree = "<group>"; };
-		32855AC91B95C6BC003CC551 /* VUVMain.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = VUVMain.storyboard; sourceTree = "<group>"; };
+		32855AC91B95C6BC003CC551 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		32855ACA1B95C6BC003CC551 /* VUVStreamServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VUVStreamServer.h; sourceTree = "<group>"; };
 		32855ACB1B95C6BC003CC551 /* VUVStreamServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VUVStreamServer.m; sourceTree = "<group>"; };
 		32855AD31B95C6F0003CC551 /* Command.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Command.m; sourceTree = "<group>"; };
@@ -117,31 +119,30 @@
 		32DF0F3D1B95C4E000467255 /* VUVViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VUVViewController.h; sourceTree = "<group>"; };
 		32DF0F3E1B95C4E000467255 /* VUVViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VUVViewController.m; sourceTree = "<group>"; };
 		32DF0F431B95C4E000467255 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		32DF0F4C1B95C4E000467255 /* VULCAM eye.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "VULCAM eye.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		32DF0F511B95C4E000467255 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		32DF0F521B95C4E000467255 /* ubiQVue_CamTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ubiQVue_CamTests.m; sourceTree = "<group>"; };
 		40D10F2B7CB5532A6B712E60 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		429884979BEE1C52F58369C2 /* libPods-VULCAM eye.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-VULCAM eye.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B406DE5C4F63B2085A0427F8 /* Pods-VULCAM eye.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VULCAM eye.debug.xcconfig"; path = "Pods/Target Support Files/Pods-VULCAM eye/Pods-VULCAM eye.debug.xcconfig"; sourceTree = "<group>"; };
 		E0E244511D915BCB00438F74 /* VULCAM eye-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "VULCAM eye-Bridging-Header.h"; sourceTree = "<group>"; };
-		E0E244521D915BCB00438F74 /* VUVAboutViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VUVAboutViewController.swift; path = "VULCAM eye/VUVAboutViewController.swift"; sourceTree = SOURCE_ROOT; };
-		E0E244541D915C2800438F74 /* VUVAboutView.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = VUVAboutView.storyboard; path = "VULCAM eye/VUVAboutView.storyboard"; sourceTree = SOURCE_ROOT; };
+		E0E244521D915BCB00438F74 /* AboutViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AboutViewController.swift; path = "VULCAM eye/AboutViewController.swift"; sourceTree = SOURCE_ROOT; };
+		E0E244541D915C2800438F74 /* AboutView.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = AboutView.storyboard; path = "VULCAM eye/AboutView.storyboard"; sourceTree = SOURCE_ROOT; };
 		E0F3FE66C916650BC3DEC008 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		324CB18F1DB50E070011B32B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		32DF0F301B95C4E000467255 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				323CFABD1BAB05BD003BFF22 /* UIKit.framework in Frameworks */,
 				323CFABB1BAB0556003BFF22 /* Foundation.framework in Frameworks */,
-				AA9FB3B8F54D115B5737BD14 /* libPods.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		32DF0F491B95C4E000467255 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
+				34683A0E7FB6FEC744FE05E4 /* libPods-VULCAM eye.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -154,6 +155,7 @@
 				323CFABC1BAB05BD003BFF22 /* UIKit.framework */,
 				323CFABA1BAB0556003BFF22 /* Foundation.framework */,
 				40D10F2B7CB5532A6B712E60 /* libPods.a */,
+				429884979BEE1C52F58369C2 /* libPods-VULCAM eye.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -163,8 +165,19 @@
 			children = (
 				0574276F78C5040100A8F126 /* Pods.debug.xcconfig */,
 				E0F3FE66C916650BC3DEC008 /* Pods.release.xcconfig */,
+				B406DE5C4F63B2085A0427F8 /* Pods-VULCAM eye.debug.xcconfig */,
+				16E60DD7E757A37E8CCF78B1 /* Pods-VULCAM eye.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		324CB1931DB50E070011B32B /* VULCAM eyeTests */ = {
+			isa = PBXGroup;
+			children = (
+				324CB1941DB50E070011B32B /* VULCAM_eyeTests.swift */,
+				324CB1961DB50E070011B32B /* Info.plist */,
+			);
+			path = "VULCAM eyeTests";
 			sourceTree = "<group>";
 		};
 		32855AD21B95C6F0003CC551 /* Common */ = {
@@ -203,9 +216,8 @@
 		32DF0F2A1B95C4E000467255 = {
 			isa = PBXGroup;
 			children = (
-				320DF26B1C4E6A5E0086E340 /* AppIcon.png */,
 				32DF0F351B95C4E000467255 /* VULCAM eye */,
-				32DF0F4F1B95C4E000467255 /* vulCam eyeTests */,
+				324CB1931DB50E070011B32B /* VULCAM eyeTests */,
 				32DF0F341B95C4E000467255 /* Products */,
 				168C38C7C373001856A71E59 /* Pods */,
 				0D9B06C1738086AF76B66B05 /* Frameworks */,
@@ -216,7 +228,7 @@
 			isa = PBXGroup;
 			children = (
 				32DF0F331B95C4E000467255 /* VULCAM eye.app */,
-				32DF0F4C1B95C4E000467255 /* VULCAM eye.xctest */,
+				324CB1921DB50E070011B32B /* VULCAM eyeTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -231,7 +243,7 @@
 				32855AC61B95C6BC003CC551 /* VUVCameraProtocol.m */,
 				32855AC71B95C6BC003CC551 /* VUVCameraSettings.h */,
 				32855AC81B95C6BC003CC551 /* VUVCameraSettings.m */,
-				32855AC91B95C6BC003CC551 /* VUVMain.storyboard */,
+				32855AC91B95C6BC003CC551 /* Main.storyboard */,
 				32855ACA1B95C6BC003CC551 /* VUVStreamServer.h */,
 				32855ACB1B95C6BC003CC551 /* VUVStreamServer.m */,
 				32DF0F3A1B95C4E000467255 /* VUVAppDelegate.h */,
@@ -239,8 +251,8 @@
 				32DF0F3D1B95C4E000467255 /* VUVViewController.h */,
 				32DF0F3E1B95C4E000467255 /* VUVViewController.m */,
 				321325711C3AB5440059BC97 /* VUVLicensesView.h */,
-				E0E244521D915BCB00438F74 /* VUVAboutViewController.swift */,
-				E0E244541D915C2800438F74 /* VUVAboutView.storyboard */,
+				E0E244521D915BCB00438F74 /* AboutViewController.swift */,
+				E0E244541D915C2800438F74 /* AboutView.storyboard */,
 				321325721C3AB5440059BC97 /* VUVLicensesView.m */,
 				3256ACB01BD137AA00D06327 /* VUVCamNotificationNames.h */,
 				3256ACAE1BD1379300D06327 /* VUVCamNotificationNames.m */,
@@ -271,38 +283,39 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		32DF0F4F1B95C4E000467255 /* vulCam eyeTests */ = {
-			isa = PBXGroup;
-			children = (
-				32DF0F521B95C4E000467255 /* ubiQVue_CamTests.m */,
-				32DF0F501B95C4E000467255 /* Supporting Files */,
-			);
-			path = "vulCam eyeTests";
-			sourceTree = "<group>";
-		};
-		32DF0F501B95C4E000467255 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				32DF0F511B95C4E000467255 /* Info.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		324CB1911DB50E070011B32B /* VULCAM eyeTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 324CB1991DB50E070011B32B /* Build configuration list for PBXNativeTarget "VULCAM eyeTests" */;
+			buildPhases = (
+				324CB18E1DB50E070011B32B /* Sources */,
+				324CB18F1DB50E070011B32B /* Frameworks */,
+				324CB1901DB50E070011B32B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				324CB1981DB50E070011B32B /* PBXTargetDependency */,
+			);
+			name = "VULCAM eyeTests";
+			productName = "VULCAM eyeTests";
+			productReference = 324CB1921DB50E070011B32B /* VULCAM eyeTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		32DF0F321B95C4E000467255 /* VULCAM eye */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 32DF0F561B95C4E000467255 /* Build configuration list for PBXNativeTarget "VULCAM eye" */;
 			buildPhases = (
-				F2DD8C832C38BBDCF43E6B37 /* Check Pods Manifest.lock */,
+				F2DD8C832C38BBDCF43E6B37 /* [CP] Check Pods Manifest.lock */,
 				32DF0F2F1B95C4E000467255 /* Sources */,
 				32DF0F301B95C4E000467255 /* Frameworks */,
 				32855AF51B95D569003CC551 /* ShellScript */,
 				32DF0F311B95C4E000467255 /* Resources */,
-				F2C353BC0A7737013211D891 /* Copy Pods Resources */,
+				F2C353BC0A7737013211D891 /* [CP] Copy Pods Resources */,
 				32855AF41B95D4DA003CC551 /* Set Build Number */,
-				4F682504FEAA2B6A45C1DBE8 /* Embed Pods Frameworks */,
+				4F682504FEAA2B6A45C1DBE8 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -313,41 +326,27 @@
 			productReference = 32DF0F331B95C4E000467255 /* VULCAM eye.app */;
 			productType = "com.apple.product-type.application";
 		};
-		32DF0F4B1B95C4E000467255 /* vulCam eyeTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 32DF0F591B95C4E000467255 /* Build configuration list for PBXNativeTarget "vulCam eyeTests" */;
-			buildPhases = (
-				32DF0F481B95C4E000467255 /* Sources */,
-				32DF0F491B95C4E000467255 /* Frameworks */,
-				32DF0F4A1B95C4E000467255 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				32DF0F4E1B95C4E000467255 /* PBXTargetDependency */,
-			);
-			name = "vulCam eyeTests";
-			productName = "ubiQVue CamTests";
-			productReference = 32DF0F4C1B95C4E000467255 /* VULCAM eye.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		32DF0F2B1B95C4E000467255 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0700;
+				LastSwiftUpdateCheck = 0800;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "Bitwise Oy";
 				TargetAttributes = {
+					324CB1911DB50E070011B32B = {
+						CreatedOnToolsVersion = 8.0;
+						DevelopmentTeam = DGW49RWNU5;
+						LastSwiftMigration = 0800;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 32DF0F321B95C4E000467255;
+					};
 					32DF0F321B95C4E000467255 = {
 						CreatedOnToolsVersion = 6.4;
 						DevelopmentTeam = DGW49RWNU5;
-					};
-					32DF0F4B1B95C4E000467255 = {
-						CreatedOnToolsVersion = 6.4;
-						TestTargetID = 32DF0F321B95C4E000467255;
+						LastSwiftMigration = 0800;
 					};
 				};
 			};
@@ -365,28 +364,27 @@
 			projectRoot = "";
 			targets = (
 				32DF0F321B95C4E000467255 /* VULCAM eye */,
-				32DF0F4B1B95C4E000467255 /* vulCam eyeTests */,
+				324CB1911DB50E070011B32B /* VULCAM eyeTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		324CB1901DB50E070011B32B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		32DF0F311B95C4E000467255 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				320DF26C1C4E6A5E0086E340 /* AppIcon.png in Resources */,
-				E0E244551D915C2800438F74 /* VUVAboutView.storyboard in Resources */,
-				32855AD01B95C6BC003CC551 /* VUVMain.storyboard in Resources */,
+				E0E244551D915C2800438F74 /* AboutView.storyboard in Resources */,
+				32855AD01B95C6BC003CC551 /* Main.storyboard in Resources */,
 				32DF0F441B95C4E000467255 /* Images.xcassets in Resources */,
 				3213257F1C3BD41E0059BC97 /* SplashScreen.xib in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		32DF0F4A1B95C4E000467255 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -420,44 +418,44 @@
 			shellPath = /bin/sh;
 			shellScript = "buildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"$INFOPLIST_FILE\")\nbuildNumber=$(($buildNumber + 1))\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"$INFOPLIST_FILE\"\n";
 		};
-		4F682504FEAA2B6A45C1DBE8 /* Embed Pods Frameworks */ = {
+		4F682504FEAA2B6A45C1DBE8 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Embed Pods Frameworks";
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-VULCAM eye/Pods-VULCAM eye-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		F2C353BC0A7737013211D891 /* Copy Pods Resources */ = {
+		F2C353BC0A7737013211D891 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-VULCAM eye/Pods-VULCAM eye-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		F2DD8C832C38BBDCF43E6B37 /* Check Pods Manifest.lock */ = {
+		F2DD8C832C38BBDCF43E6B37 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Pods Manifest.lock";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -468,6 +466,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		324CB18E1DB50E070011B32B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				324CB1951DB50E070011B32B /* VULCAM_eyeTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		32DF0F2F1B95C4E000467255 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -488,7 +494,7 @@
 				320685841BBD468000FAAC56 /* CommonUtility.m in Sources */,
 				32855AD11B95C6BC003CC551 /* VUVStreamServer.m in Sources */,
 				325E862F1BAB0A610051C4DA /* CommandType.m in Sources */,
-				E0E244531D915BCB00438F74 /* VUVAboutViewController.swift in Sources */,
+				E0E244531D915BCB00438F74 /* AboutViewController.swift in Sources */,
 				3256ACAF1BD1379300D06327 /* VUVCamNotificationNames.m in Sources */,
 				32855AE81B95C6F0003CC551 /* Packet.m in Sources */,
 				32DF0F391B95C4E000467255 /* main.m in Sources */,
@@ -502,25 +508,56 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		32DF0F481B95C4E000467255 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				32DF0F531B95C4E000467255 /* ubiQVue_CamTests.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		32DF0F4E1B95C4E000467255 /* PBXTargetDependency */ = {
+		324CB1981DB50E070011B32B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 32DF0F321B95C4E000467255 /* VULCAM eye */;
-			targetProxy = 32DF0F4D1B95C4E000467255 /* PBXContainerItemProxy */;
+			targetProxy = 324CB1971DB50E070011B32B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		324CB19A1DB50E070011B32B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = DGW49RWNU5;
+				INFOPLIST_FILE = "VULCAM eyeTests/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.vulcanvision.VULCAM-eyeTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VULCAM eye.app/VULCAM eye";
+			};
+			name = Debug;
+		};
+		324CB19B1DB50E070011B32B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				DEVELOPMENT_TEAM = DGW49RWNU5;
+				INFOPLIST_FILE = "VULCAM eyeTests/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.vulcanvision.VULCAM-eyeTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VULCAM eye.app/VULCAM eye";
+			};
+			name = Release;
+		};
 		32DF0F541B95C4E000467255 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -534,8 +571,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -581,8 +620,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -603,6 +644,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(PROJECT_NAME)";
 				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -610,74 +652,57 @@
 		};
 		32DF0F571B95C4E000467255 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0574276F78C5040100A8F126 /* Pods.debug.xcconfig */;
+			baseConfigurationReference = B406DE5C4F63B2085A0427F8 /* Pods-VULCAM eye.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PREFIX_HEADER = "vulCam eye/vulCam-eye-Prefix.pch";
 				INFOPLIST_FILE = "vulCam eye/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.vulcanvision.ubiQVue-Cam";
 				PRODUCT_NAME = "VULCAM eye";
 				SWIFT_OBJC_BRIDGING_HEADER = "vulCam eye/VULCAM eye-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
 		32DF0F581B95C4E000467255 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E0F3FE66C916650BC3DEC008 /* Pods.release.xcconfig */;
+			baseConfigurationReference = 16E60DD7E757A37E8CCF78B1 /* Pods-VULCAM eye.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PREFIX_HEADER = "vulCam eye/vulCam-eye-Prefix.pch";
 				INFOPLIST_FILE = "vulCam eye/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.vulcanvision.ubiQVue-Cam";
 				PRODUCT_NAME = "VULCAM eye";
 				SWIFT_OBJC_BRIDGING_HEADER = "vulCam eye/VULCAM eye-Bridging-Header.h";
-			};
-			name = Release;
-		};
-		32DF0F5A1B95C4E000467255 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CLANG_ENABLE_MODULES = NO;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = "vulCam eyeTests/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.vulcanvision.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "VULCAM eye";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VULCAM eye.app/VULCAM eye";
-			};
-			name = Debug;
-		};
-		32DF0F5B1B95C4E000467255 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CLANG_ENABLE_MODULES = NO;
-				INFOPLIST_FILE = "vulCam eyeTests/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.vulcanvision.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "VULCAM eye";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VULCAM eye.app/VULCAM eye";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		324CB1991DB50E070011B32B /* Build configuration list for PBXNativeTarget "VULCAM eyeTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				324CB19A1DB50E070011B32B /* Debug */,
+				324CB19B1DB50E070011B32B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		32DF0F2E1B95C4E000467255 /* Build configuration list for PBXProject "VULCAM eye" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -692,15 +717,6 @@
 			buildConfigurations = (
 				32DF0F571B95C4E000467255 /* Debug */,
 				32DF0F581B95C4E000467255 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		32DF0F591B95C4E000467255 /* Build configuration list for PBXNativeTarget "vulCam eyeTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				32DF0F5A1B95C4E000467255 /* Debug */,
-				32DF0F5B1B95C4E000467255 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

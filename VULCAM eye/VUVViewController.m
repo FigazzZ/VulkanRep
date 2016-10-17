@@ -86,7 +86,7 @@ static const CommandType observedCommands[] = {
 
     [self setUpWifiAnimation];
     [_wifiImage startAnimating];
-    _aboutViewController = [UIStoryboard storyboardWithName:@"VUVAboutView" bundle:nil].instantiateInitialViewController;
+    _aboutViewController = [UIStoryboard storyboardWithName:@"AboutView" bundle:nil].instantiateInitialViewController;
     
     NTPOffsetReadings = [NSMutableArray array];
 }
