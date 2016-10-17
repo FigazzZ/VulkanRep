@@ -16,7 +16,7 @@ This is the camera software for the VULCAM system.
         pod install
 Some of the pods used require adding an SSH key to Github. You can add one [here](https://github.com/settings/keys). This is due to the pods having been forked.
 
-4. Open the project using the VULCAM.xcworkspace file.
+4. Open the project using the VULCAM eye.xcworkspace file.
 
 # Uploading the app to TestFlight and AppStore
 
