@@ -4,6 +4,7 @@ This is the camera software for the VULCAM system.
 # Setting up the project
 
 1. Install Homebrew with the following command
+
         /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 2. Install CocoaPods
         # Xcode 7 + 8
@@ -13,6 +14,7 @@ This is the camera software for the VULCAM system.
         sudo gem install activesupport -v 4.2.6
         sudo gem install cocoapods
 3. Install dependencies using CocoaPods with the command
+
         pod install
 Some of the pods used require adding an SSH key to Github. You can add one [here](https://github.com/settings/keys). This is due to the pods having been forked.
 
