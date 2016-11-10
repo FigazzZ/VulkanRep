@@ -57,6 +57,9 @@ static const CommandType observedCommands[] = {
     NSDate *serverStartDate;
     UITapGestureRecognizer *tapGesture;
     NSTimeInterval impactStart;
+    NSTimeInterval impactTime;
+    NSTimeInterval impactEnd;
+    NSNumber *frameCount;
     NSMutableArray<NSNumber *> *NTPOffsetReadings;
 }
 
@@ -194,7 +197,8 @@ static const CommandType observedCommands[] = {
     [center addObserver:self selector:@selector(sendJsonAndVideo:) name:kNNStopRecording object:nil];
     [center addObserver:self selector:@selector(sendFailedRecordingCommand) name:kNNRecordingFailed object:nil];
     [center addObserver:self selector:@selector(sendTooShortImpactVidCommand) name:kNNTooShortImpactVid object:nil];
-    [center addObserver:self selector:@selector(calculateDelayFromNotificationStartTime:) name:kNNFirstFrame object:nil];
+    [center addObserver:self selector:@selector(processStartTimeFromNotification:) name:kNNFirstFrame object:nil];
+    [center addObserver:self selector:@selector(processEndTimeFromNotification:) name:kNNFinishRecording object:nil];
 }
 
 - (void)sendFailedRecordingCommand {
@@ -332,7 +336,7 @@ static const CommandType observedCommands[] = {
         Command *command = [Command getCommandFromNotification:notification];
         if ([command isKindOfClass:[CommandWithValue class]] && _timeOffsetInSeconds != INFINITY)
         {
-            serverStartDate = [VUVViewController getServerStartDateFromCommand:command withTimeOffsetInSec:@(_timeOffsetInSeconds)];
+            serverStartDate = [VUVViewController getLocalizedServerDateFromCommand:command withTimeOffsetInSec:@(_timeOffsetInSeconds)];
             
             [_captureManager startRecording:STANDARD];
             
@@ -375,15 +379,11 @@ static const CommandType observedCommands[] = {
                 [socketHandler sendCommand:[[Command alloc] init:OK]];
                 [_captureManager startRecording:IMPACT];
                 
-                impactStart = [NSDate date].timeIntervalSince1970;
                 NSString *JSONString = [[NSString alloc] initWithData:command.data encoding:NSUTF8StringEncoding];
                 NSDictionary *json = [CommonUtility getNSDictFromJSONString:JSONString];
-                
+
                 [_captureManager setTimeAfter:[json[kVVImpactAfterKey] floatValue]];
                 [_captureManager setTimeBefore:[json[kVVImpactBeforeKey] floatValue]];
-    
-                NSString *logMsg = [NSString stringWithFormat:@"Camera IMPACT_START timestamp (s): %f", impactStart];
-                [FileLogger printAndLogToFile:logMsg];
             }
             else
             {
@@ -405,17 +405,19 @@ static const CommandType observedCommands[] = {
 
 - (void)handleImpactStopCommand:(NSNotification *)notification {
     delay = 0;
-    
+
     if (_captureManager.isRecording)
     {
         Command *command = [Command getCommandFromNotification:notification];
         if ([command isKindOfClass:[CommandWithValue class]] && _timeOffsetInSeconds != INFINITY)
         {
-            NSString *time = [[NSString alloc] initWithData:command.data encoding:NSUTF8StringEncoding];
-            NSTimeInterval impactTime = time.doubleValue / 1000.f + _timeOffsetInSeconds;
-            
+            NSDate *serverImpactDate = [VUVViewController getLocalizedServerDateFromCommand:command
+                                                                        withTimeOffsetInSec:@(_timeOffsetInSeconds)];
+            impactTime = [serverImpactDate timeIntervalSince1970];
+            [FileLogger printAndLogToFile:[NSString stringWithFormat:@"Camera IMPACT timestamp (s): %f", impactTime]];
+
             [socketHandler sendCommand:[[Command alloc] init:STOP_OK]];
-            _captureManager.impactTime = CMTimeMakeWithSeconds(impactTime - impactStart, NSEC_PER_SEC);
+            _captureManager.impactTime = impactTime;
             
             int64_t interval_in_nanos = (int64_t) ((_captureManager.timeAfter + 0.5) * NSEC_PER_SEC);
             
@@ -459,8 +461,10 @@ static const CommandType observedCommands[] = {
     
     file = dict[@"file"];
     AVURLAsset *sourceAsset = [AVURLAsset URLAssetWithURL:file options:nil];
-    CMTime duration = sourceAsset.duration;
-    json[kVVDurationKey] = @(CMTimeGetSeconds(duration));
+    NSNumber *durationInSecs = @(CMTimeGetSeconds(sourceAsset.duration));
+    json[kVVDurationKey] = durationInSecs;
+    [FileLogger printAndLogToFile:[@"Sent video duration in seconds: " stringByAppendingString:[durationInSecs stringValue]]];
+
     NSString *jsonStr = [CommonUtility convertNSDictToJSONString:json];
     [socketHandler sendCommand:[[CommandWithValue alloc] initWithString:VIDEO_COMING :jsonStr]];
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -703,13 +707,34 @@ static const CommandType observedCommands[] = {
     }
 }
 
-- (void)calculateDelayFromNotificationStartTime:(NSNotification *)notification
+- (void)processStartTimeFromNotification:(NSNotification *)notification
 {
     NSDate *localStartDate = (NSDate *) notification.userInfo[@"localStartDate"];
-    
+
+    impactStart = localStartDate.timeIntervalSince1970;
+    NSString *logMsg = [NSString stringWithFormat:@"Camera IMPACT_START timestamp (s): %f", impactStart];
+    [FileLogger printAndLogToFile:logMsg];
+    _captureManager.impactStart = impactStart;
+
     delay = @([localStartDate timeIntervalSinceDate:serverStartDate]);
-    
+
     NSLog(@"Recording start delay %@", delay);
+}
+
+- (void)processEndTimeFromNotification:(NSNotification *)notification
+{
+    NSDate *localEndDate = (NSDate *) notification.userInfo[@"localEndDate"];
+
+    impactEnd = localEndDate.timeIntervalSince1970;
+    frameCount = notification.userInfo[@"fullFrameCount"];
+    _captureManager.impactEnd = impactEnd;
+    _captureManager.frameCount = frameCount;
+
+    NSString *logMsg = [NSString stringWithFormat:@"Camera IMPACT_END timestamp (s): %f", impactEnd];
+    [FileLogger printAndLogToFile:logMsg];
+
+    logMsg = [NSString stringWithFormat:@"Full framecount: %@", frameCount];
+    [FileLogger printAndLogToFile:logMsg];
 }
 
 - (void)resetNetAssociation
@@ -725,16 +750,16 @@ static const CommandType observedCommands[] = {
     }
 }
 
-+ (NSDate *)getServerStartDateFromCommand:(Command *)command withTimeOffsetInSec:(NSNumber *)offsetInSec
++ (NSDate *)getLocalizedServerDateFromCommand:(Command *)command withTimeOffsetInSec:(NSNumber *)offsetInSec
 {
-    NSString *serverStartTimeMillis = [[NSString alloc] initWithData:command.data encoding:NSUTF8StringEncoding];
-    NSTimeInterval serverStartTime = serverStartTimeMillis.doubleValue / 1000.f + offsetInSec.doubleValue;
-    NSDate *serverStartDate = [NSDate dateWithTimeIntervalSince1970:serverStartTime];
+    NSString *serverTimeMillis = [[NSString alloc] initWithData:command.data encoding:NSUTF8StringEncoding];
+    NSTimeInterval serverTime = serverTimeMillis.doubleValue / 1000.f + offsetInSec.doubleValue;
+    NSDate *serverDate = [NSDate dateWithTimeIntervalSince1970:serverTime];
     
-    NSString *logMsg = [NSString stringWithFormat:@"Server START timestamp (ms): %@", serverStartTimeMillis];
+    NSString *logMsg = [NSString stringWithFormat:@"Server START timestamp (ms): %@", serverTimeMillis];
     [FileLogger printAndLogToFile:logMsg];
     
-    return serverStartDate;
+    return serverDate;
 }
 
 @end

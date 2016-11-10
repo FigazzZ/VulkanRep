@@ -127,7 +127,7 @@ static const CGSize kQVStreamSize = (CGSize) {
             if (frameNumber == 0)
             {
                 NSDate *localStartDate = [NSDate date];
-                NSDictionary *userInfo = [NSDictionary dictionaryWithObject:localStartDate forKey:@"localStartDate"];
+                NSDictionary *userInfo = @{@"localStartDate": localStartDate};
                 [[NSNotificationCenter defaultCenter] postNotificationName:kNNFirstFrame object:self userInfo:userInfo];
             }
             
@@ -139,7 +139,12 @@ static const CGSize kQVStreamSize = (CGSize) {
     }
     else if (!_isRecording && finishRecording) {
         finishRecording = NO;
-        [[NSNotificationCenter defaultCenter] postNotificationName:kNNFinishRecording object:self];
+        NSDate *localEndDate = [NSDate date];
+        NSDictionary *userInfo = @{
+                @"localEndDate": localEndDate,
+                @"fullFrameCount": @(frameNumber)
+        };
+        [[NSNotificationCenter defaultCenter] postNotificationName:kNNFinishRecording object:self userInfo:userInfo];
     }
     
     if (_isStreaming) {

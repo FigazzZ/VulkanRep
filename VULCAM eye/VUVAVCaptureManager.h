@@ -27,10 +27,13 @@ typedef NS_ENUM(NSInteger, RecordingMode) {
 @property(NS_NONATOMIC_IOSONLY, getter=isRecording, readonly) BOOL isRecording;
 @property(NS_NONATOMIC_IOSONLY, getter=isStreaming, readonly) BOOL isStreaming;
 @property(nonatomic, setter=setStreamServer:, weak) VUVStreamServer *streamServer;
-@property(nonatomic) CMTime impactTime;
+@property(nonatomic) NSTimeInterval impactTime;
+@property(nonatomic) NSTimeInterval impactStart;
+@property(nonatomic) NSTimeInterval impactEnd;
+@property(nonatomic) NSNumber *frameCount;
+@property(nonatomic) NSNumber *framerate;
 @property(nonatomic) float timeBefore;
 @property(nonatomic) float timeAfter;
-@property(nonatomic) NSTimeInterval normalStartTimeDiff;
 
 - (instancetype)init NS_UNAVAILABLE;
 

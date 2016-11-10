@@ -9,53 +9,165 @@
 #import "VUVVideoTrimmer.h"
 #import "VUVAVCaptureManager.h"
 #import "VUVCamNotificationNames.h"
+#import "FileLogger.h"
 
 @implementation VUVVideoTrimmer
 
 
-+ (BOOL)trimImpactVideoAtURL:(NSURL *)videoURL
-              withImpactTime:(CMTime)impactTime
++ (BOOL)trimImpactVideoAtURL:(NSURL *)sourceURL
+              withFrameCount:(NSNumber *)frameCount
+                   framerate:(NSNumber *)framerate
+                 impactStart:(NSTimeInterval)impactStart
+                  impactTime:(NSTimeInterval)impactTime
+                   impactEnd:(NSTimeInterval)impactEnd
+                  timeBefore:(float)timeBefore
                    timeAfter:(float)timeAfter
-                  timeBefore:(float)timeBefore {
-    AVURLAsset *asset = [AVURLAsset URLAssetWithURL:videoURL
-                                            options:@{AVURLAssetPreferPreciseDurationAndTimingKey : @(YES)}];
-    AVAssetExportSession *exportSession = [AVAssetExportSession exportSessionWithAsset:asset presetName:AVAssetExportPresetPassthrough];
-    BOOL success = exportSession != nil;
+{
+    BOOL success = YES;
+    NSURL *destinationURL = [VUVAVCaptureManager generateFilePath];
+    AVURLAsset *asset = [AVURLAsset URLAssetWithURL:sourceURL
+                                            options:@{AVURLAssetPreferPreciseDurationAndTimingKey: @(YES)}];
+    __block AVAssetReader *videoReader;
+    NSNumber *impactFrame = @([frameCount intValue]*((impactTime-impactStart)/(impactEnd-impactStart)));
+    NSNumber *framesBefore = @([framerate intValue]*timeBefore);
+    NSNumber *framesAfter = @([framerate intValue]*timeAfter);
 
-    if (success) {
-        CMTime duration = CMTimeMakeWithSeconds(CMTimeGetSeconds(asset.duration), NSEC_PER_SEC);
-        CMTimeRange range = [self calculateTimeRange:&impactTime timeAfter:&timeAfter timeBefore:&timeBefore duration:&duration];
+    __block NSNumber *startingFrame = @([impactFrame intValue]-[framesBefore intValue]);
+    __block NSNumber *endingFrame = @([impactFrame intValue]+[framesAfter intValue]);
 
-        [self exportVideoWithExportSession:exportSession withRange:range];
-    }
+    [asset loadValuesAsynchronouslyForKeys:@[@"tracks"] completionHandler:
+            ^{
+                dispatch_async(dispatch_get_main_queue(),
+                        ^{
+                            AVAssetTrack *videoTrack = nil;
+                            NSArray *tracks = [asset tracksWithMediaType:AVMediaTypeVideo];
+                            if ([tracks count] == 1) {
+                                videoTrack = tracks[0];
+                                NSError *error = nil;
 
+                                videoReader = [[AVAssetReader alloc] initWithAsset:asset error:&error];
+                                if (error)
+                                    [FileLogger printAndLogToFile:[NSString stringWithFormat:@"%@", error.localizedDescription]];
+
+                                NSString *key = (NSString *) kCVPixelBufferPixelFormatTypeKey;
+                                NSNumber *value = @(kCVPixelFormatType_32BGRA);
+                                NSDictionary *videoSettings = @{key: value};
+                                [videoReader addOutput:[AVAssetReaderTrackOutput assetReaderTrackOutputWithTrack:videoTrack outputSettings:videoSettings]];
+                                [videoReader startReading];
+
+                                [VUVVideoTrimmer readFrames:videoReader
+                                          withStartingFrame:startingFrame
+                                                endingFrame:endingFrame
+                                               andFramerate:framerate
+                                           toDestinationURL:destinationURL];
+                            }
+                        });
+            }];
     return success;
 }
 
-+ (BOOL)trimVideoBeginningAtUrl:(NSURL *)videoURL withSecondsToTrim:(NSTimeInterval)secondsToTrim {
-
-    if (secondsToTrim < 0)
++(void)readFrames:(AVAssetReader *)videoReader
+withStartingFrame:(NSNumber *)startingFrame
+      endingFrame:(NSNumber *)endingFrame
+     andFramerate:(NSNumber *)framerate
+ toDestinationURL:(NSURL *)destinationURL
+{
+    NSError *err;
+    AVAssetWriter *videoWriter = [[AVAssetWriter alloc] initWithURL:destinationURL fileType:AVFileTypeMPEG4 error:&err];
+    NSDictionary *settings = @{
+            AVVideoCodecKey : AVVideoCodecH264,
+            AVVideoHeightKey : @720,
+            AVVideoWidthKey : @1280
+    };
+    AVAssetWriterInput *videoWriterInput = [[AVAssetWriterInput alloc] initWithMediaType:AVMediaTypeVideo outputSettings:settings];
+    videoWriterInput.expectsMediaDataInRealTime = YES;
+    NSDictionary *pxlBufAttrs = @{(NSString *) kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA)};
+    AVAssetWriterInputPixelBufferAdaptor *pixelBufferAdaptor = [[AVAssetWriterInputPixelBufferAdaptor alloc] initWithAssetWriterInput:videoWriterInput
+                                                                                                          sourcePixelBufferAttributes:pxlBufAttrs];
+    if ([videoWriter canAddInput:videoWriterInput])
     {
-        // TODO: handle too short videos
-        return YES;
+        [videoWriter addInput:videoWriterInput];
+    }
+    else
+    {
+        [FileLogger printAndLogToFile:[NSString stringWithFormat:@"%@", err.localizedDescription]];
+        [VUVVideoTrimmer postStatusNotification:videoReader.status andDestinationURL:destinationURL];
+        return;
     }
 
-    AVURLAsset *asset = [AVURLAsset URLAssetWithURL:videoURL
-                                            options:@{AVURLAssetPreferPreciseDurationAndTimingKey : @(YES)}];
-    AVAssetExportSession *exportSession = [AVAssetExportSession exportSessionWithAsset:asset presetName:AVAssetExportPresetPassthrough];
-    BOOL success = exportSession != nil;
+    NSUInteger currentFrame = 0;
+    AVAssetReaderTrackOutput * output = (AVAssetReaderTrackOutput *) [videoReader.outputs objectAtIndex:0];
 
-    if (success)
+    if (videoWriter.status != AVAssetWriterStatusWriting)
     {
-        CMTime duration = CMTimeMakeWithSeconds(CMTimeGetSeconds(asset.duration), NSEC_PER_SEC);
-        CMTime actualStart = CMTimeMakeWithSeconds(secondsToTrim, NSEC_PER_SEC);
-        CMTimeRange range = CMTimeRangeFromTimeToTime(actualStart, duration);
-
-        [self exportVideoWithExportSession:exportSession withRange:range];
+        [videoWriter startWriting];
+        [videoWriter startSessionAtSourceTime:kCMTimeZero];
     }
 
-    return success;
+    while (videoReader.status == AVAssetReaderStatusReading)
+    {
+        if (videoWriterInput.readyForMoreMediaData)
+        {
+            CMSampleBufferRef sampleBuffer = [output copyNextSampleBuffer];
+            if (sampleBuffer)
+            {
+                CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
+                
+                if (currentFrame >= [startingFrame integerValue] && currentFrame <= [endingFrame integerValue])
+                {
+                    CMTime presentationTime = CMTimeMake(currentFrame - [startingFrame integerValue], [framerate intValue]);
+
+                    if (![pixelBufferAdaptor appendPixelBuffer:imageBuffer
+                                         withPresentationTime:presentationTime])
+                    {
+                        [FileLogger printAndLogToFile:[NSString stringWithFormat:@"Rewriting video failed"]];
+                    }
+                }
+
+                // Here the frames can be processed at some point in the future, if the need arises
+//            // Lock the image buffer
+//            CVPixelBufferLockBaseAddress(imageBuffer,0);
+//            // Get information of the image
+//            uint8_t *baseAddress = (uint8_t *)CVPixelBufferGetBaseAddress(imageBuffer);
+//            size_t bytesPerRow = CVPixelBufferGetBytesPerRow(imageBuffer);
+//            size_t width = CVPixelBufferGetWidth(imageBuffer);
+//            size_t height = CVPixelBufferGetHeight(imageBuffer);
+                //
+                // Here's where you can process the buffer!
+                // (your code goes here)
+                // Finish processing the buffer!
+                // Unlock the image buffer
+                // CVPixelBufferUnlockBaseAddress(imageBuffer,0);
+
+
+                // sampleBuffer has to be released to free up memory
+                CFRelease(sampleBuffer);
+            }
+            currentFrame++;
+        }
+    }
+
+    [videoWriter finishWritingWithCompletionHandler:^{}];
+
+    [VUVVideoTrimmer postStatusNotification:videoReader.status andDestinationURL:destinationURL];
+
 }
+
++ (void)postStatusNotification:(AVAssetReaderStatus)status andDestinationURL:(NSURL *)destinationURL
+{
+    if (status == AVAssetReaderStatusCompleted)
+    {
+        [FileLogger printAndLogToFile:[NSString stringWithFormat:@"AVAssetExportSessionStatusCompleted"]];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kNNFinishTrimming object:destinationURL];
+    }
+    else
+    {
+        [[NSNotificationCenter defaultCenter] postNotificationName:kNNRecordingFailed object:nil];
+        [FileLogger printAndLogToFile:[NSString stringWithFormat:@"Export Session Status: %ld", (long) status]];
+        [VUVAVCaptureManager deleteVideo:destinationURL];
+    }
+}
+
 
 + (void)exportVideoWithExportSession:(AVAssetExportSession *)exportSession
                            withRange:(CMTimeRange)range
@@ -69,19 +181,19 @@
 
         if (AVAssetExportSessionStatusCompleted == exportSession.status)
         {
-            NSLog(@"AVAssetExportSessionStatusCompleted");
+            [FileLogger printAndLogToFile:[NSString stringWithFormat:@"AVAssetExportSessionStatusCompleted"]];
             [[NSNotificationCenter defaultCenter] postNotificationName:kNNFinishTrimming object:fileURL];
         }
         else if (AVAssetExportSessionStatusFailed == exportSession.status)
         {
             [[NSNotificationCenter defaultCenter] postNotificationName:kNNRecordingFailed object:nil];
-            NSLog(@"AVAssetExportSessionStatusFailed");
+            [FileLogger printAndLogToFile:[NSString stringWithFormat:@"AVAssetExportSessionStatusFailed"]];
             [VUVAVCaptureManager deleteVideo:fileURL];
         }
         else
         {
             [[NSNotificationCenter defaultCenter] postNotificationName:kNNRecordingFailed object:nil];
-            NSLog(@"Export Session Status: %ld", (long) exportSession.status);
+            [FileLogger printAndLogToFile:[NSString stringWithFormat:@"Export Session Status: %ld", (long) exportSession.status]];
             [VUVAVCaptureManager deleteVideo:fileURL];
         }
     }];
@@ -95,11 +207,11 @@
     Float64 secs = CMTimeGetSeconds(*impactTime) - *timeBefore;
     CMTime startDiff = secs > 0.0 ? CMTimeMakeWithSeconds(secs, NSEC_PER_SEC) : kCMTimeZero;
     if(secs < 0.0){
-      [[NSNotificationCenter defaultCenter] postNotificationName:kNNTooShortImpactVid object:nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kNNTooShortImpactVid object:nil];
     }
     CMTime endDiff = CMTimeMinimum(CMTimeAdd(*impactTime, CMTimeMakeWithSeconds(*timeAfter, NSEC_PER_SEC)), *duration);
     CMTimeRange range = CMTimeRangeFromTimeToTime(startDiff, endDiff);
-    NSLog(@"Time Range: %@", [NSValue valueWithCMTimeRange:range]);
+    [FileLogger printAndLogToFile:[NSString stringWithFormat:@"Time Range: %@", [NSValue valueWithCMTimeRange:range]]];
     return range;
 }
 
