@@ -116,3 +116,9 @@ Pods/
 
 .idea
 Podfile.lock
+
+# fastlane ignores
+fastlane/report.xml
+*.ipa
+*.app.dSYM.zip
+
