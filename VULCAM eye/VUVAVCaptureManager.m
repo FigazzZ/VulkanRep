@@ -343,6 +343,7 @@ static const unsigned long kQVCameraSettingDelay = 0.3 * NSEC_PER_SEC;
             videoDevice.activeVideoMinFrameDuration = CMTimeMake(1, (int32_t) desiredFPS);
             videoDevice.activeVideoMaxFrameDuration = CMTimeMake(1, (int32_t) desiredFPS);
             [videoDevice unlockForConfiguration];
+            _framerate = @(desiredFPS);
         }
         else {
             NSLog(@"%@", error.localizedDescription);
@@ -446,7 +447,8 @@ static const unsigned long kQVCameraSettingDelay = 0.3 * NSEC_PER_SEC;
 #endif
     [writer finishWritingWithCompletionHandler:^(void) {
         if (recordingMode == IMPACT) {
-            if (![VUVVideoTrimmer trimImpactVideoAtURL:fileURL withImpactTime:_impactTime timeAfter:_timeAfter timeBefore:_timeBefore]) {
+            if (![VUVVideoTrimmer trimImpactVideoAtURL:fileURL withFrameCount:_frameCount framerate:_framerate impactStart:_impactStart impactTime:_impactTime impactEnd:_impactEnd timeBefore:_timeBefore timeAfter:_timeAfter])
+            {
                 NSLog(@"Setting up the VideoTrimmer failed");
                 [[NSNotificationCenter defaultCenter] postNotificationName:kNNRecordingFailed object:nil];
                 [VUVAVCaptureManager deleteVideo:fileURL];

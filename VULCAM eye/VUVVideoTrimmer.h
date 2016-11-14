@@ -12,12 +12,14 @@
 
 @interface VUVVideoTrimmer : NSObject
 
-+ (BOOL)trimImpactVideoAtURL:(NSURL *)videoURL
-              withImpactTime:(CMTime)impactTime
-                   timeAfter:(float)timeAfter
-                  timeBefore:(float)timeBefore;
++ (BOOL)trimImpactVideoAtURL:(NSURL *)sourceURL
+              withFrameCount:(NSNumber *)frameCount
+                   framerate:(NSNumber *)framerate
+                 impactStart:(NSTimeInterval)impactStart
+                  impactTime:(NSTimeInterval)impactTime
+                   impactEnd:(NSTimeInterval)impactEnd
+                  timeBefore:(float)timeBefore
+                   timeAfter:(float)timeAfter;
 
-+ (BOOL)trimVideoBeginningAtUrl:(NSURL *)videoURL
-              withSecondsToTrim:(NSTimeInterval)secondsToTrim;
 
 @end
