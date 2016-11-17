@@ -14,7 +14,7 @@
 @implementation VUVVideoTrimmer
 
 
-+ (BOOL)trimImpactVideoAtURL:(NSURL *)sourceURL
++ (void)trimImpactVideoAtURL:(NSURL *)sourceURL
               withFrameCount:(NSNumber *)frameCount
                    framerate:(NSNumber *)framerate
                  impactStart:(NSTimeInterval)impactStart
@@ -23,7 +23,8 @@
                   timeBefore:(float)timeBefore
                    timeAfter:(float)timeAfter
 {
-    BOOL success = YES;
+    dispatch_queue_t trimmingQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
+
     NSURL *destinationURL = [VUVAVCaptureManager generateFilePath];
     AVURLAsset *asset = [AVURLAsset URLAssetWithURL:sourceURL
                                             options:@{AVURLAssetPreferPreciseDurationAndTimingKey: @(YES)}];
@@ -37,7 +38,7 @@
 
     [asset loadValuesAsynchronouslyForKeys:@[@"tracks"] completionHandler:
             ^{
-                dispatch_async(dispatch_get_main_queue(),
+                dispatch_async(trimmingQueue,
                         ^{
                             AVAssetTrack *videoTrack = nil;
                             NSArray *tracks = [asset tracksWithMediaType:AVMediaTypeVideo];
@@ -53,7 +54,6 @@
                                 NSNumber *value = @(kCVPixelFormatType_32BGRA);
                                 NSDictionary *videoSettings = @{key: value};
                                 [videoReader addOutput:[AVAssetReaderTrackOutput assetReaderTrackOutputWithTrack:videoTrack outputSettings:videoSettings]];
-                                [videoReader startReading];
 
                                 [VUVVideoTrimmer readFrames:videoReader
                                           withStartingFrame:startingFrame
@@ -63,7 +63,6 @@
                             }
                         });
             }];
-    return success;
 }
 
 +(void)readFrames:(AVAssetReader *)videoReader
@@ -72,18 +71,37 @@ withStartingFrame:(NSNumber *)startingFrame
      andFramerate:(NSNumber *)framerate
  toDestinationURL:(NSURL *)destinationURL
 {
+    [videoReader startReading];
+
+    if ([startingFrame integerValue] < 0)
+    {
+        startingFrame = @0;
+        [[NSNotificationCenter defaultCenter] postNotificationName:kNNTooShortImpactVid object:nil];
+        [FileLogger printAndLogToFile:@"Not enough buffer in impact video"];
+    }
+
     NSError *err;
     AVAssetWriter *videoWriter = [[AVAssetWriter alloc] initWithURL:destinationURL fileType:AVFileTypeMPEG4 error:&err];
+
     NSDictionary *settings = @{
             AVVideoCodecKey : AVVideoCodecH264,
             AVVideoHeightKey : @720,
             AVVideoWidthKey : @1280
     };
     AVAssetWriterInput *videoWriterInput = [[AVAssetWriterInput alloc] initWithMediaType:AVMediaTypeVideo outputSettings:settings];
+
+    // Using these settings instead of the ones above results in an empty video. Apparently the output has to be re-encoded
+    /*
+    CMFormatDescriptionRef formatDescription;
+    CMVideoFormatDescriptionCreate(kCFAllocatorDefault, kCMVideoCodecType_H264, 1280, 720, nil, &formatDescription);
+    AVAssetWriterInput *videoWriterInput = [[AVAssetWriterInput alloc] initWithMediaType:AVMediaTypeVideo outputSettings:nil sourceFormatHint:formatDescription];
+    */
+
     videoWriterInput.expectsMediaDataInRealTime = YES;
     NSDictionary *pxlBufAttrs = @{(NSString *) kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA)};
     AVAssetWriterInputPixelBufferAdaptor *pixelBufferAdaptor = [[AVAssetWriterInputPixelBufferAdaptor alloc] initWithAssetWriterInput:videoWriterInput
                                                                                                           sourcePixelBufferAttributes:pxlBufAttrs];
+
     if ([videoWriter canAddInput:videoWriterInput])
     {
         [videoWriter addInput:videoWriterInput];
@@ -92,6 +110,13 @@ withStartingFrame:(NSNumber *)startingFrame
     {
         [FileLogger printAndLogToFile:[NSString stringWithFormat:@"%@", err.localizedDescription]];
         [VUVVideoTrimmer postStatusNotification:videoReader.status andDestinationURL:destinationURL];
+        return;
+    }
+
+    if (videoReader.outputs.count < 1)
+    {
+        [FileLogger printAndLogToFile:@"VideoReader outputs are 0!"];
+        [VUVVideoTrimmer postStatusNotification:AVAssetReaderStatusFailed andDestinationURL:destinationURL];
         return;
     }
 
@@ -104,7 +129,7 @@ withStartingFrame:(NSNumber *)startingFrame
         [videoWriter startSessionAtSourceTime:kCMTimeZero];
     }
 
-    while (videoReader.status == AVAssetReaderStatusReading)
+    while (videoReader.status == AVAssetReaderStatusReading && videoWriter.status == AVAssetWriterStatusWriting)
     {
         if (videoWriterInput.readyForMoreMediaData)
         {
@@ -112,13 +137,13 @@ withStartingFrame:(NSNumber *)startingFrame
             if (sampleBuffer)
             {
                 CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
-                
+
                 if (currentFrame >= [startingFrame integerValue] && currentFrame <= [endingFrame integerValue])
                 {
                     CMTime presentationTime = CMTimeMake(currentFrame - [startingFrame integerValue], [framerate intValue]);
 
                     if (![pixelBufferAdaptor appendPixelBuffer:imageBuffer
-                                         withPresentationTime:presentationTime])
+                                          withPresentationTime:presentationTime])
                     {
                         [FileLogger printAndLogToFile:[NSString stringWithFormat:@"Rewriting video failed"]];
                     }
@@ -147,10 +172,9 @@ withStartingFrame:(NSNumber *)startingFrame
         }
     }
 
-    [videoWriter finishWritingWithCompletionHandler:^{}];
-
-    [VUVVideoTrimmer postStatusNotification:videoReader.status andDestinationURL:destinationURL];
-
+    [videoWriter finishWritingWithCompletionHandler:^{
+        [VUVVideoTrimmer postStatusNotification:videoReader.status andDestinationURL:destinationURL];
+    }];
 }
 
 + (void)postStatusNotification:(AVAssetReaderStatus)status andDestinationURL:(NSURL *)destinationURL

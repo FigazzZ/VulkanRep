@@ -30,9 +30,11 @@ platform :ios do
   desc "Submit a new Beta Build to Apple TestFlight"
   desc "This will also make sure the profile is up to date"
   lane :beta do
+    cert
+    sigh
     # match(type: "appstore") # more information: https://codesigning.guide
-    gym(scheme: "VULCAM eye", use_legacy_build_api: true) # Build your app - more options available
-    pilot
+    gym(scheme: "VULCAM eye") # Build your app - more options available
+    pilot()
 
     # sh "your_script.sh"
     # You can also use other beta testing services here (run `fastlane actions`)

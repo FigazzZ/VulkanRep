@@ -12,7 +12,7 @@
 
 @interface VUVVideoTrimmer : NSObject
 
-+ (BOOL)trimImpactVideoAtURL:(NSURL *)sourceURL
++ (void)trimImpactVideoAtURL:(NSURL *)sourceURL
               withFrameCount:(NSNumber *)frameCount
                    framerate:(NSNumber *)framerate
                  impactStart:(NSTimeInterval)impactStart

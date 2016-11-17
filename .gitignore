@@ -121,4 +121,5 @@ Podfile.lock
 fastlane/report.xml
 *.ipa
 *.app.dSYM.zip
+*.cer
 
