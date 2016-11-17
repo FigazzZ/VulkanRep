@@ -347,7 +347,7 @@
 						CreatedOnToolsVersion = 6.4;
 						DevelopmentTeam = DGW49RWNU5;
 						LastSwiftMigration = 0800;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -659,7 +659,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Oy Vulcan Vision Corporation (DGW49RWNU5)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = DGW49RWNU5;
 				GCC_PREFIX_HEADER = "vulCam eye/vulCam-eye-Prefix.pch";
@@ -668,8 +668,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.vulcanvision.ubiQVue-Cam";
 				PRODUCT_NAME = "VULCAM eye";
-				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE = "a9fa42ba-31c2-4c4f-aa54-6a31faa90a2b";
+				PROVISIONING_PROFILE_SPECIFIER = "Bitwise device development profile";
 				SWIFT_OBJC_BRIDGING_HEADER = "vulCam eye/VULCAM eye-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
@@ -684,7 +684,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Oy Vulcan Vision Corporation (DGW49RWNU5)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				DEVELOPMENT_TEAM = DGW49RWNU5;
 				GCC_PREFIX_HEADER = "vulCam eye/vulCam-eye-Prefix.pch";
@@ -693,8 +693,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.vulcanvision.ubiQVue-Cam";
 				PRODUCT_NAME = "VULCAM eye";
-				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE = "fd792fbc-44a2-4115-b93e-6bc24c524b18";
+				PROVISIONING_PROFILE_SPECIFIER = "XC iOS: com.vulcanvision.ubiQVue-Cam";
 				SWIFT_OBJC_BRIDGING_HEADER = "vulCam eye/VULCAM eye-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};

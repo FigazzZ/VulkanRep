@@ -122,4 +122,4 @@ fastlane/report.xml
 *.ipa
 *.app.dSYM.zip
 *.cer
-
+*.mobileprovision
