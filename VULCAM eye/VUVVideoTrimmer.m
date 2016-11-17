@@ -71,6 +71,8 @@ withStartingFrame:(NSNumber *)startingFrame
      andFramerate:(NSNumber *)framerate
  toDestinationURL:(NSURL *)destinationURL
 {
+    [FileLogger printAndLogToFile:@"Reading frames..."];
+    NSDate *frameProcessingStart = [NSDate date];
     [videoReader startReading];
 
     if ([startingFrame integerValue] < 0)
@@ -173,7 +175,10 @@ withStartingFrame:(NSNumber *)startingFrame
     }
 
     [videoWriter finishWritingWithCompletionHandler:^{
+        NSDate *frameProcessingEnd = [NSDate date];
         [VUVVideoTrimmer postStatusNotification:videoReader.status andDestinationURL:destinationURL];
+        NSTimeInterval processingTimeInS = [frameProcessingEnd timeIntervalSinceDate:frameProcessingStart];
+        [FileLogger printAndLogToFile:[NSString stringWithFormat:@"Video processing took %f seconds", processingTimeInS]];
     }];
 }
 
