@@ -71,7 +71,7 @@ withStartingFrame:(NSNumber *)startingFrame
      andFramerate:(NSNumber *)framerate
  toDestinationURL:(NSURL *)destinationURL
 {
-    [FileLogger printAndLogToFile:@"Reading frames..."];
+    [FileLogger printAndLogToFile:[NSString stringWithFormat:@"Reading frames %@ to %@ into final video", startingFrame, endingFrame]];
     NSDate *frameProcessingStart = [NSDate date];
     [videoReader startReading];
 
@@ -195,53 +195,6 @@ withStartingFrame:(NSNumber *)startingFrame
         [FileLogger printAndLogToFile:[NSString stringWithFormat:@"Export Session Status: %ld", (long) status]];
         [VUVAVCaptureManager deleteVideo:destinationURL];
     }
-}
-
-
-+ (void)exportVideoWithExportSession:(AVAssetExportSession *)exportSession
-                           withRange:(CMTimeRange)range
-{
-    NSURL *fileURL = [VUVAVCaptureManager generateFilePath];
-    exportSession.outputURL = fileURL;
-    exportSession.outputFileType = AVFileTypeMPEG4;
-    exportSession.timeRange = range;
-
-    [exportSession exportAsynchronouslyWithCompletionHandler:^{
-
-        if (AVAssetExportSessionStatusCompleted == exportSession.status)
-        {
-            [FileLogger printAndLogToFile:[NSString stringWithFormat:@"AVAssetExportSessionStatusCompleted"]];
-            [[NSNotificationCenter defaultCenter] postNotificationName:kNNFinishTrimming object:fileURL];
-        }
-        else if (AVAssetExportSessionStatusFailed == exportSession.status)
-        {
-            [[NSNotificationCenter defaultCenter] postNotificationName:kNNRecordingFailed object:nil];
-            [FileLogger printAndLogToFile:[NSString stringWithFormat:@"AVAssetExportSessionStatusFailed"]];
-            [VUVAVCaptureManager deleteVideo:fileURL];
-        }
-        else
-        {
-            [[NSNotificationCenter defaultCenter] postNotificationName:kNNRecordingFailed object:nil];
-            [FileLogger printAndLogToFile:[NSString stringWithFormat:@"Export Session Status: %ld", (long) exportSession.status]];
-            [VUVAVCaptureManager deleteVideo:fileURL];
-        }
-    }];
-}
-
-
-+ (CMTimeRange)calculateTimeRange:(const CMTime *)impactTime
-                        timeAfter:(const float *)timeAfter
-                       timeBefore:(const float *)timeBefore
-                         duration:(const CMTime *)duration {
-    Float64 secs = CMTimeGetSeconds(*impactTime) - *timeBefore;
-    CMTime startDiff = secs > 0.0 ? CMTimeMakeWithSeconds(secs, NSEC_PER_SEC) : kCMTimeZero;
-    if(secs < 0.0){
-        [[NSNotificationCenter defaultCenter] postNotificationName:kNNTooShortImpactVid object:nil];
-    }
-    CMTime endDiff = CMTimeMinimum(CMTimeAdd(*impactTime, CMTimeMakeWithSeconds(*timeAfter, NSEC_PER_SEC)), *duration);
-    CMTimeRange range = CMTimeRangeFromTimeToTime(startDiff, endDiff);
-    [FileLogger printAndLogToFile:[NSString stringWithFormat:@"Time Range: %@", [NSValue valueWithCMTimeRange:range]]];
-    return range;
 }
 
 
