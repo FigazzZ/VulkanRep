@@ -7,6 +7,7 @@ This is the camera software for the VULCAM system.
 
         /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 2. Install CocoaPods
+
         # Xcode 7 + 8
         $ sudo gem install cocoapods --pre
 
